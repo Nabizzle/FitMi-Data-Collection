@@ -1,0 +1,10 @@
+C:\Users\labuser\Documents\SourceTree\fitmi-streaming-app\FitMi_Research_Puck\FitMi_Research_Puck\bin\Release\FitMi_Research_Puck.dll
+C:\Users\labuser\Documents\SourceTree\fitmi-streaming-app\FitMi_Research_Puck\FitMi_Research_Puck\bin\Release\FitMi_Research_Puck.pdb
+C:\Users\labuser\Documents\SourceTree\fitmi-streaming-app\FitMi_Research_Puck\FitMi_Research_Puck\bin\Release\HidSharp.dll
+C:\Users\labuser\Documents\SourceTree\fitmi-streaming-app\FitMi_Research_Puck\FitMi_Research_Puck\bin\Release\HidSharp.pdb
+C:\Users\labuser\Documents\SourceTree\fitmi-streaming-app\FitMi_Research_Puck\FitMi_Research_Puck\bin\Release\HidSharp.xml
+C:\Users\labuser\Documents\SourceTree\fitmi-streaming-app\FitMi_Research_Puck\FitMi_Research_Puck\obj\Release\FitMi_Research_Puck.csprojAssemblyReference.cache
+C:\Users\labuser\Documents\SourceTree\fitmi-streaming-app\FitMi_Research_Puck\FitMi_Research_Puck\obj\Release\FitMi_Research_Puck.csproj.CoreCompileInputs.cache
+C:\Users\labuser\Documents\SourceTree\fitmi-streaming-app\FitMi_Research_Puck\FitMi_Research_Puck\obj\Release\FitMi_Research_Puck.csproj.CopyComplete
+C:\Users\labuser\Documents\SourceTree\fitmi-streaming-app\FitMi_Research_Puck\FitMi_Research_Puck\obj\Release\FitMi_Research_Puck.dll
+C:\Users\labuser\Documents\SourceTree\fitmi-streaming-app\FitMi_Research_Puck\FitMi_Research_Puck\obj\Release\FitMi_Research_Puck.pdb
