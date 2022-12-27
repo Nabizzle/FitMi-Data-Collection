@@ -14,7 +14,7 @@ import pygame
 from puck_packet import PuckPacket
 import numpy as np
 import os
-import Queue
+import queue
 
 RBLINK     = 0x01
 GBLINK     = 0x02

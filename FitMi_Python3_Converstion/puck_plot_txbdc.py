@@ -1,16 +1,16 @@
-import Tkinter as tk
-import ttk
+import tkinter as tk
+from tkinter import ttk
 import time
 import threading
 import random
-import Queue
+import queue
 import matplotlib
 import numpy
 import sys
 import matplotlib.animation as animation
 import datetime
 
-from Tkinter import StringVar
+from tkinter import StringVar
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
