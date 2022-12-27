@@ -1,0 +1,3 @@
+[submodule "FitMi_Python/FitMI_ResearchTools/cython-hidapi"]
+	path = FitMi_Python/FitMI_ResearchTools/cython-hidapi
+	url = https://github.com/trezor/cython-hidapi
