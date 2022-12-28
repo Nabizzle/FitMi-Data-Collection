@@ -20,6 +20,7 @@
         "MAGCALZ",
         "matplotlib",
         "MBLINK",
+        "mplot",
         "MPUENBL",
         "MPULSE",
         "nonblocking",
@@ -36,11 +37,13 @@
         "textvariable",
         "tkagg",
         "tkcanvas",
+        "toolkits",
         "TOUCHBUZ",
         "xlabel",
         "xlim",
         "ylabel",
-        "ylim"
+        "ylim",
+        "zlim"
     ],
     "editor.wordWrapColumn": 80,
     "[python]": {
