@@ -31,15 +31,15 @@ class PuckPlotter(object):
         self.plot_3 = AniPlot(self.fig, 413, buffer_min, buffer_max,
                                             -1000, 1000, double=True)
 
-        self.lc_plot = AniPlot(self.fig, 414, buffer_min, buffer_max,
+        self.load_cell_plot = AniPlot(self.fig, 414, buffer_min, buffer_max,
                                         ymin=-100, ymax=1100, double=True)
-        self.lc_plot_red = False
+        self.load_cell_plot_red = False
         self.time = 0
         self.puck = HIDPuckDongle()
         self.plot_1.set_ylabel("vert angle")
         self.plot_2.set_ylabel("gyro x")
         self.plot_3.set_ylabel("accel x")
-        self.lc_plot.set_ylabel("load cell")
+        self.load_cell_plot.set_ylabel("load cell")
 
     def start(self):
         self.puck.open()
@@ -71,24 +71,24 @@ class PuckPlotter(object):
         self.plot_1.draw(self.fig)
         self.plot_2.draw(self.fig)
         self.plot_3.draw(self.fig)
-        self.lc_plot.draw(self.fig)
+        self.load_cell_plot.draw(self.fig)
 
         if puck_data.touch:
-            self.lc_plot.plt.set_color("r")
+            self.load_cell_plot.plt.set_color("r")
         else:
-            self.lc_plot.plt.set_color("b")
+            self.load_cell_plot.plt.set_color("b")
 
-        if puck_data2.touch and self.lc_plot.plt2:
-            self.lc_plot.plt2.set_color("r")
+        if puck_data2.touch and self.load_cell_plot.plt2:
+            self.load_cell_plot.plt2.set_color("r")
         else:
-            self.lc_plot.plt2.set_color("b")
+            self.load_cell_plot.plt2.set_color("b")
 
     ##---- the real update function ------------------------------------------##
     def update_buffers(self, puck_data, puck_data2):
         self.plot_1.update(puck_data.getVertAngle(), puck_data2.getVertAngle())
         self.plot_2.update(puck_data.gyroscope[0,0], puck_data2.gyroscope[0,0])
         self.plot_3.update(puck_data.accelerometer[0,0], puck_data2.accelerometer[0,0])
-        self.lc_plot.update(puck_data.load_cell, puck_data2.load_cell)
+        self.load_cell_plot.update(puck_data.load_cell, puck_data2.load_cell)
         puck_data.getVertAngle()
 
         if np.linalg.norm(puck_data2.accelerometer) > 1500:
