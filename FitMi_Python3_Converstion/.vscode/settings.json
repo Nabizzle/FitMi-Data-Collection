@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "appendmat",
         "arccos",
         "arcsin",
         "arctan",
@@ -28,6 +29,8 @@
         "RPULSE",
         "RXCHANGEFREQ",
         "rxdata",
+        "savemat",
+        "scipy",
         "SENDVEL",
         "SETUSBPIPES",
         "textvariable",

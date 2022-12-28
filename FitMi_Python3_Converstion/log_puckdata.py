@@ -14,34 +14,34 @@ from Puck.hid_puck import *
 class PuckLogger(object):
     ##---- initialize the puck logger ----------------------------------------##
     def __init__(self):
-        self.datafolder = os.path.join(os.getcwd(), "data")
+        self.data_folder = os.path.join(os.getcwd(), "data")
         self.fname = "default"
 
         self.fs = 50.0 # 50 samples per second.
         self.keep_running = True
         self.puck = HIDPuckDongle()
 
-        self.current_samp = 0
+        self.current_sample = 0
         self.n_samples = None
-        self.p0_xl = None
-        self.p0_gy = None
-        self.p0_mag = None
-        self.p0_loadcell = None
-        self.p0_quat = None
+        self.puck_0_xl = None
+        self.puck_0_gyroscope = None
+        self.puck_0_magnetometer = None
+        self.puck_0_load_cell = None
+        self.puck_0_quaternion = None
 
-        self.p1_xl = None
-        self.p1_gy = None
-        self.p1_mag = None
-        self.p1_loadcell = None
-        self.p1_quat = None
+        self.puck_1_xl = None
+        self.puck_1_gyroscope = None
+        self.puck_1_magnetometer = None
+        self.puck_1_load_cell = None
+        self.puck_1_quaternion = None
 
-        self.checkstop_thread = threading.Thread(target=self.check_stop)
-        self.checkstop_thread.daemon = True
+        self.check_stop_thread = threading.Thread(target=self.check_stop)
+        self.check_stop_thread.daemon = True
 
     ##---- check if we want to pause the recording ---------------------------##
     def check_stop(self):
         while self.keep_running:
-            response = raw_input("press enter to stop logging.")
+            response = input("press enter to stop logging.")
             self.keep_running = False
 
     ##---- run ---------------------------------------------------------------##
@@ -52,92 +52,92 @@ class PuckLogger(object):
         self.puck.sendCommand(0,SENDVEL, 0x00, 0x00)
         self.puck.sendCommand(1,SENDVEL, 0x00, 0x00)
 
-        print "recording data"
-        self.checkstop_thread.start()
-        self.current_samp = 0
-        while self.keep_running and (self.current_samp < self.n_samples):
+        print("recording data")
+        self.check_stop_thread.start()
+        self.current_sample = 0
+        while self.keep_running and (self.current_sample < self.n_samples):
             self.puck.checkForNewPuckData()
             self.store_data(self.puck.puck_packet_0, self.puck.puck_packet_1)
             time.sleep(1.0/self.fs)
 
         ## crop away any unused space.
-        if self.current_samp < self.n_samples:
-            self.p0_xl = self.p0_xl[self.current_samp, :]
-            self.p0_gy = self.p0_gy[self.current_samp, :]
-            self.p0_mag = self.p0_mag[self.current_samp, :]
-            self.p0_loadcell = self.p0_loadcell[self.current_samp, :]
-            self.p0_quat = self.p0_quat[self.current_samp, :]
-            self.p1_xl = self.p1_xl[self.current_samp, :]
-            self.p1_gy = self.p1_gy[self.current_samp, :]
-            self.p1_mag = self.p1_mag[self.current_samp, :]
-            self.p1_loadcell = self.p1_loadcell[self.current_samp, :]
-            self.p1_quat = self.p1_quat[self.current_samp, :]
+        if self.current_sample < self.n_samples:
+            self.puck_0_xl = self.puck_0_xl[self.current_sample, :]
+            self.puck_0_gyroscope = self.puck_0_gyroscope[self.current_sample, :]
+            self.puck_0_magnetometer = self.puck_0_magnetometer[self.current_sample, :]
+            self.puck_0_load_cell = self.puck_0_load_cell[self.current_sample, :]
+            self.puck_0_quaternion = self.puck_0_quaternion[self.current_sample, :]
+            self.puck_1_xl = self.puck_1_xl[self.current_sample, :]
+            self.puck_1_gyroscope = self.puck_1_gyroscope[self.current_sample, :]
+            self.puck_1_magnetometer = self.puck_1_magnetometer[self.current_sample, :]
+            self.puck_1_load_cell = self.puck_1_load_cell[self.current_sample, :]
+            self.puck_1_quaternion = self.puck_1_quaternion[self.current_sample, :]
 
     ##---- set filename ------------------------------------------------------##
     def set_filename(self):
-        self.fname = raw_input("enter a name for the datafile: ")
+        self.fname = input("enter a name for the datafile: ")
 
     ##---- set recording length ----------------------------------------------##
     def set_recording_length(self):
-        gotdata = False
+        got_data = False
         message = "how long would you like to record (in minutes)? "
         n_minutes = -1
-        while not gotdata:
+        while not got_data:
             try:
-                n_minutes = float(raw_input(message))
-                gotdata = True
+                n_minutes = float(input(message))
+                got_data = True
             except:
-                print "you need to input a number"
+                print("you need to input a number")
 
         if (n_minutes > 60) or (n_minutes < 0):
-            print "please enter a number between 0 and 60"
+            print("please enter a number between 0 and 60")
             self.set_recording_length()
             return
 
         n_samples = int(n_minutes*60*self.fs)
         self.n_samples = n_samples
-        self.p0_xl = np.zeros([n_samples, 3])
-        self.p0_gy = np.zeros([n_samples, 3])
-        self.p0_mag = np.zeros([n_samples, 3])
-        self.p0_loadcell = np.zeros([n_samples, 1])
-        self.p0_quat = np.zeros([n_samples, 4])
-        self.p1_xl = np.zeros([n_samples, 3])
-        self.p1_gy = np.zeros([n_samples, 3])
-        self.p1_mag = np.zeros([n_samples, 3])
-        self.p1_loadcell = np.zeros([n_samples, 1])
-        self.p1_quat = np.zeros([n_samples, 4])
+        self.puck_0_xl = np.zeros([n_samples, 3])
+        self.puck_0_gyroscope = np.zeros([n_samples, 3])
+        self.puck_0_magnetometer = np.zeros([n_samples, 3])
+        self.puck_0_load_cell = np.zeros([n_samples, 1])
+        self.puck_0_quaternion = np.zeros([n_samples, 4])
+        self.puck_1_xl = np.zeros([n_samples, 3])
+        self.puck_1_gyroscope = np.zeros([n_samples, 3])
+        self.puck_1_magnetometer = np.zeros([n_samples, 3])
+        self.puck_1_load_cell = np.zeros([n_samples, 1])
+        self.puck_1_quaternion = np.zeros([n_samples, 4])
 
     ##---- write data line ---------------------------------------------------##
-    def store_data(self, ppack0, ppack1):
-        self.p0_xl[self.current_samp, :] = ppack0.accel
-        self.p0_gy[self.current_samp, :] = ppack0.gyro
-        self.p0_mag[self.current_samp, :] = ppack0.magnetometer
-        self.p0_loadcell[self.current_samp, :] = ppack0.loadcell
-        self.p0_quat[self.current_samp, :] = ppack0.quat
+    def store_data(self, puck_packet_0, puck_packet_1):
+        self.puck_0_xl[self.current_sample, :] = puck_packet_0.accelerometer
+        self.puck_0_gyroscope[self.current_sample, :] = puck_packet_0.gyroscope
+        self.puck_0_magnetometer[self.current_sample, :] = puck_packet_0.magnetometer
+        self.puck_0_load_cell[self.current_sample, :] = puck_packet_0.load_cell
+        self.puck_0_quaternion[self.current_sample, :] = puck_packet_0.quaternion
 
-        self.p1_xl[self.current_samp, :] = ppack1.accel
-        self.p1_gy[self.current_samp, :] = ppack1.gyro
-        self.p1_mag[self.current_samp, :] = ppack1.magnetometer
-        self.p1_loadcell[self.current_samp, :] = ppack1.loadcell
-        self.p1_quat[self.current_samp, :] = ppack1.quat
-        self.current_samp += 1
+        self.puck_1_xl[self.current_sample, :] = puck_packet_1.accelerometer
+        self.puck_1_gyroscope[self.current_sample, :] = puck_packet_1.gyroscope
+        self.puck_1_magnetometer[self.current_sample, :] = puck_packet_1.magnetometer
+        self.puck_1_load_cell[self.current_sample, :] = puck_packet_1.load_cell
+        self.puck_1_quaternion[self.current_sample, :] = puck_packet_1.quaternion
+        self.current_sample += 1
 
     ##---- write data to files -----------------------------------------------##
     def write_data(self):
-        ddict = {
-            "p0_xl": self.p0_xl, "p0_gy": self.p0_gy, "p0_mag": self.p0_mag,
-            "p0_loadcell": self.p0_loadcell, "p0_quat": self.p0_quat,
-            "p1_xl": self.p1_xl, "p1_gy": self.p1_gy, "p1_mag": self.p1_mag,
-            "p1_loadcell": self.p1_loadcell, "p1_quat": self.p1_quat
+        data_dictionary = {
+            "puck_0_xl": self.puck_0_xl, "p0_gyroscope": self.puck_0_gyroscope, "p0_magnetometer": self.puck_0_magnetometer,
+            "p0_load_cell": self.puck_0_load_cell, "p0_quaternion": self.puck_0_quaternion,
+            "puck_1_xl": self.puck_1_xl, "p1_gyroscope": self.puck_1_gyroscope, "p1_magnetometer": self.puck_1_magnetometer,
+            "p1_load_cell": self.puck_1_load_cell, "p1_quaternion": self.puck_1_quaternion
             }
-        shelvename = os.path.join(self.datafolder, self.fname+".shelve")
-        datash = shelve.open(shelvename)
-        for key in ddict.keys():
-            datash[key] = ddict[key]
-        datash.close()
+        shelve_name = os.path.join(self.data_folder, self.fname+".shelve")
+        data_shelve = shelve.open(shelve_name)
+        for key in data_dictionary.keys():
+            data_shelve[key] = data_dictionary[key]
+        data_shelve.close()
 
-        matpath = os.path.join(self.datafolder, self.fname+".mat")
-        io.savemat(matpath, ddict, appendmat=False)
+        mat_path = os.path.join(self.data_folder, self.fname+".mat")
+        io.savemat(mat_path, data_dictionary, appendmat=False)
 
     ##---- stop communication with the pucks ---------------------------------##
     def stop(self):
@@ -147,13 +147,13 @@ class PuckLogger(object):
         self.puck.close()
         self.write_data()
         try:
-            self.checkstop_thread.join(2)
+            self.check_stop_thread.join(2)
         except:
             pass
 
 if __name__ == "__main__":
-    plogger = PuckLogger()
+    puck_logger = PuckLogger()
     try:
-        plogger.run()
+        puck_logger.run()
     finally:
-        plogger.stop()
+        puck_logger.stop()
