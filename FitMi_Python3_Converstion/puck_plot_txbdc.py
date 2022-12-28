@@ -29,9 +29,9 @@ class MainApp:
         #Add a combo-box to the user interface
         self.selected_value = StringVar()
         self.selection_box = ttk.Combobox(self.gui, textvariable=self.selected_value, state='readonly')
-        self.selection_box['values'] = ('Loadcell', \
+        self.selection_box['values'] = ('Load cell', \
                                         'Accelerometer (x)', 'Accelerometer (y)', 'Accelerometer (z)', \
-                                        'Gyrometer (x)', 'Gyrometer (y)', 'Gyrometer (z)', \
+                                        'Gyroscope (x)', 'Gyroscope (y)', 'Gyroscope (z)', \
                                         'Magnetometer (x)', 'Magnetometer (y)', 'Magnetometer (z)', \
                                         'Velocity (x)', 'Velocity (y)', 'Velocity (z)' )
         self.selection_box.current(0)
@@ -99,7 +99,7 @@ class MainApp:
                     new_data = list(self.background_thread.msg_queue_background_to_foreground.queue)
                     self.background_thread.msg_queue_background_to_foreground.queue.clear()
                 self.plot_buffer.extend(new_data)
-            except Queue.Empty:
+            except queue.Empty:
                 pass
 
         #Keep plot buffer to 200 elements
@@ -188,8 +188,8 @@ class BackgroundThread:
         self.puck_data_1 = self.puck.puck_packet_0
 
         self.is_running = 1
-        self.msg_queue_foreground_to_background = Queue.Queue()
-        self.msg_queue_background_to_foreground = Queue.Queue()
+        self.msg_queue_foreground_to_background = queue.Queue()
+        self.msg_queue_background_to_foreground = queue.Queue()
 
         self.initiate_trial = False
         self.initiate_trial_mutex = threading.Lock()
@@ -230,7 +230,7 @@ class BackgroundThread:
                                         self.trial_state = -1
 
                         self.msg_queue_foreground_to_background.queue.clear()
-                except Queue.Empty:
+                except queue.Empty:
                     pass
 
             #Add random numbers to the queue
@@ -246,11 +246,11 @@ class BackgroundThread:
                 new_streaming_data = self.puck_data_1.accelerometer[0, 1]
             elif (selected_string == 'Accelerometer (z)'):
                 new_streaming_data = self.puck_data_1.accelerometer[0, 2]
-            elif (selected_string == 'Gyrometer (x)'):
+            elif (selected_string == 'Gyroscope (x)'):
                 new_streaming_data = self.puck_data_1.gyroscope[0, 0]
-            elif (selected_string == 'Gyrometer (y)'):
+            elif (selected_string == 'Gyroscope (y)'):
                 new_streaming_data = self.puck_data_1.gyroscope[0, 1]
-            elif (selected_string == 'Gyrometer (z)'):
+            elif (selected_string == 'Gyroscope (z)'):
                 new_streaming_data = self.puck_data_1.gyroscope[0, 2]
             elif (selected_string == 'Magnetometer (x)'):
                 new_streaming_data = self.puck_data_1.magnetometer[0, 0]
@@ -264,7 +264,7 @@ class BackgroundThread:
                 new_streaming_data = self.puck_data_1.velocity[0, 1]
             elif (selected_string == 'Velocity (z)'):
                 new_streaming_data = self.puck_data_1.velocity[0, 2]
-            elif (selected_string == 'Loadcell'):
+            elif (selected_string == 'Load cell'):
                 new_streaming_data = self.puck_data_1.load_cell
             
             #Send the data to the GUI for graphing purposes
