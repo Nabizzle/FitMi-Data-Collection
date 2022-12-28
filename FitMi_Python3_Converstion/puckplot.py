@@ -49,7 +49,7 @@ class PuckPlotter(object):
         tickup = 0
         for i in range(0, 10000):
             self.puck.checkForNewPuckData()
-            self.run(self.puck.puckpack0, self.puck.puckpack1)
+            self.run(self.puck.puck_packet_0, self.puck.puck_packet_1)
             # print "connected ", self.puck.puckpack0.connected, self.puck.puckpack1.connected
             #print "pipes ", self.puck.block0_pipe, self.puck.block1_pipe
             time.sleep(1.0/self.fs)

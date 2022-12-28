@@ -185,7 +185,7 @@ class BackgroundThread:
         self.puck.sendCommand(0, 0x10, 0x00, 0x01)
         self.puck.sendCommand(1, 0x10, 0x00, 0x01)
         self.puck.checkForNewPuckData()
-        self.puck_data_1 = self.puck.puckpack0
+        self.puck_data_1 = self.puck.puck_packet_0
 
         self.is_running = 1
         self.msg_queue_foreground_to_background = Queue.Queue()
@@ -236,7 +236,7 @@ class BackgroundThread:
             #Add random numbers to the queue
             #new_num = rand.randint(-10, 10)
             self.puck.checkForNewPuckData()
-            self.puck_data_1 = self.puck.puckpack0
+            self.puck_data_1 = self.puck.puck_packet_0
 
             #Check to see what data we need to send back to the GUI
             new_streaming_data = 0

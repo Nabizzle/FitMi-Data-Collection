@@ -63,9 +63,9 @@ class OrientationScope(object):
 
     def update_plot(self):
         if self.pucknum == 1:
-            pdata = self.puck.puckpack1
+            pdata = self.puck.puck_packet_1
         else:
-            pdata = self.puck.puckpack0
+            pdata = self.puck.puck_packet_0
 
         vx = np.array([1,0,0])
         vx = qv_mult(pdata.quat, vx)

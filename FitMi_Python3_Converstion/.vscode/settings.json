@@ -1,0 +1,31 @@
+{
+    "cSpell.words": [
+        "BBLINK",
+        "BPULSE",
+        "CHANSPY",
+        "DNGLRST",
+        "GAMEON",
+        "GBLINK",
+        "GPULSE",
+        "isopen",
+        "MAGCALX",
+        "MAGCALY",
+        "MAGCALZ",
+        "MBLINK",
+        "MPUENBL",
+        "MPULSE",
+        "nonblocking",
+        "pygame",
+        "RBLINK",
+        "RPULSE",
+        "RXCHANGEFREQ",
+        "rxdata",
+        "SENDVEL",
+        "SETUSBPIPES",
+        "TOUCHBUZ"
+    ],
+    "editor.wordWrapColumn": 80,
+    "[python]": {
+        "editor.wordWrapColumn": 200
+    }
+}

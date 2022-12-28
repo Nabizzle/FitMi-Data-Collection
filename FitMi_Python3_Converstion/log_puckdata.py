@@ -57,7 +57,7 @@ class PuckLogger(object):
         self.current_samp = 0
         while self.keep_running and (self.current_samp < self.n_samples):
             self.puck.checkForNewPuckData()
-            self.store_data(self.puck.puckpack0, self.puck.puckpack1)
+            self.store_data(self.puck.puck_packet_0, self.puck.puck_packet_1)
             time.sleep(1.0/self.fs)
 
         ## crop away any unused space.
