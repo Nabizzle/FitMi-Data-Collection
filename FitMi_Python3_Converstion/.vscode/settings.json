@@ -26,6 +26,6 @@
     ],
     "editor.wordWrapColumn": 80,
     "[python]": {
-        "editor.wordWrapColumn": 200
+        "editor.wordWrapColumn": 80
     }
 }
