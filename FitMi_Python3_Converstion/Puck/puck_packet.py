@@ -43,8 +43,8 @@ class PuckPacket(object):
     ##---- parse a data packet -----------------------------------------------##
     def parse(self, raw_data):
         data = struct.unpack(self.packet_def, raw_data)
-        self.accelerometer[0:2] = data[0:3]
-        self.gyroscope[0:2] = data[3:6]
+        self.accelerometer[0:3] = data[3:6]
+        self.gyroscope[0:3] = data[0:3]
         vel_or_mag = data[6:9]
         self.quaternion[0:4] = data[9:13]
         self.quaternion = self.quaternion / 10000.0 # we multiplied the float by 10000 before converting to an int16
