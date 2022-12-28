@@ -17,8 +17,8 @@ class PuckPlotter(object):
         buffer_min = 0
         buffer_max = 200
 
-        angle_ymax = 100
-        angle_ymin = -100
+        angle_ymax = 90
+        angle_ymin = -90
 
         gyro_ymax = 1000
         gyro_ymin = -1000
