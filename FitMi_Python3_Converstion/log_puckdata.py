@@ -131,10 +131,10 @@ class PuckLogger(object):
             "p1_load_cell": self.puck_1_load_cell, "p1_quaternion": self.puck_1_quaternion
             }
         shelve_name = os.path.join(self.data_folder, self.fname+".shelve")
-        data_shelve = shelve.open(shelve_name)
+        data_shelf = shelve.open(shelve_name)
         for key in data_dictionary.keys():
-            data_shelve[key] = data_dictionary[key]
-        data_shelve.close()
+            data_shelf[key] = data_dictionary[key]
+        data_shelf.close()
 
         mat_path = os.path.join(self.data_folder, self.fname+".mat")
         io.savemat(mat_path, data_dictionary, appendmat=False)

@@ -7,27 +7,27 @@ import numpy as np
 import os
 import shelve
 
-datafolder = os.path.join(os.getcwd(), "data")
-fname = raw_input("enter the name of the file you want to plot (without extension): ")
+data_folder = os.path.join(os.getcwd(), "data")
+fname = input("enter the name of the file you want to plot (without extension): ")
 fname += ".shelve"
-fullpath = os.path.join(datafolder, fname)
-print fullpath
+fullpath = os.path.join(data_folder, fname)
+print(fullpath)
 
 if not os.path.exists(fullpath):
-    errorstr = "%s not found" % fullpath
-    raise Exception(errorstr)
+    error_string = "%s not found" % fullpath
+    raise Exception(error_string)
 
-datash = shelve.open(fullpath)
+data_shelf = shelve.open(fullpath)
 
-print datash.keys()
+print(data_shelf.keys())
 
-for key in datash.keys():
+for key in data_shelf.keys():
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.plot(datash[key])
+    ax.plot(data_shelf[key])
     ax.set_title(key)
     fig.show()
 
-datash.close()
+data_shelf.close()
 
-raw_input("press enter to close all")
+input("press enter to close all")
