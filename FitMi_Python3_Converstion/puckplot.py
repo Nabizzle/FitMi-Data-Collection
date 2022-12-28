@@ -91,7 +91,7 @@ class PuckPlotter(object):
         self.lc_plot.update(puck_data.load_cell, puck_data2.load_cell)
         puck_data.getVertAngle()
 
-        if np.linalg.norm(puck_data2.accel) > 1500:
+        if np.linalg.norm(puck_data2.accelerometer) > 1500:
             self.puck.actuate(1, 500, 100)
         #self.puck.sendCommand(0, RBLINK, 0x01, 0x21)
         #print(puck_data.res_v5) # res_v5 is currently set up to tell us if in gaming state

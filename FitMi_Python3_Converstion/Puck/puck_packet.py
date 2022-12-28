@@ -4,7 +4,7 @@
 
 import struct
 import numpy as np
-from Quaternion import q_vector_multiply
+from Puck.Quaternion import q_vector_multiply
 import math
 
 ##---- Puck Packet -----------------------------------------------------------##

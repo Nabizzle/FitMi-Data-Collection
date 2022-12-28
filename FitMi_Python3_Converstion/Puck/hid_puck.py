@@ -11,7 +11,7 @@ import threading
 import sys
 import struct
 import pygame
-from puck_packet import PuckPacket
+from Puck.puck_packet import PuckPacket
 import numpy as np
 import os
 import queue
@@ -344,7 +344,7 @@ class HIDPuckDongle(object):
             except:
                 pass
         self.isopen = False
-        if self.iThread.isAlive():
+        if self.iThread.is_alive():
             self.iThread.join()
         self.iThread = threading.Thread(target=self.inputChecker)
 

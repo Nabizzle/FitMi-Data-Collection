@@ -9,7 +9,6 @@ class AniPlot(object):
         self.ax = fig.add_subplot(spilt_number)
         self.ax.set_xlim(buffer_min, buffer_max)
         self.ax.set_ylim(ymin, ymax)
-        self.ax.hold(True)
 
         fig.show(False)
         plt.draw()
