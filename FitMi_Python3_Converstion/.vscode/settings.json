@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
+        "arccos",
+        "arcsin",
+        "arctan",
         "BBLINK",
         "BPULSE",
         "CHANSPY",
@@ -8,6 +11,7 @@
         "GBLINK",
         "GPULSE",
         "isopen",
+        "linalg",
         "MAGCALX",
         "MAGCALY",
         "MAGCALZ",

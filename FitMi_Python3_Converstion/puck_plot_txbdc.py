@@ -241,17 +241,17 @@ class BackgroundThread:
             #Check to see what data we need to send back to the GUI
             new_streaming_data = 0
             if (selected_string == 'Accelerometer (x)'):
-                new_streaming_data = self.puck_data_1.accel[0, 0]
+                new_streaming_data = self.puck_data_1.accelerometer[0, 0]
             elif (selected_string == 'Accelerometer (y)'):
-                new_streaming_data = self.puck_data_1.accel[0, 1]
+                new_streaming_data = self.puck_data_1.accelerometer[0, 1]
             elif (selected_string == 'Accelerometer (z)'):
-                new_streaming_data = self.puck_data_1.accel[0, 2]
+                new_streaming_data = self.puck_data_1.accelerometer[0, 2]
             elif (selected_string == 'Gyrometer (x)'):
-                new_streaming_data = self.puck_data_1.gyro[0, 0]
+                new_streaming_data = self.puck_data_1.gyroscope[0, 0]
             elif (selected_string == 'Gyrometer (y)'):
-                new_streaming_data = self.puck_data_1.gyro[0, 1]
+                new_streaming_data = self.puck_data_1.gyroscope[0, 1]
             elif (selected_string == 'Gyrometer (z)'):
-                new_streaming_data = self.puck_data_1.gyro[0, 2]
+                new_streaming_data = self.puck_data_1.gyroscope[0, 2]
             elif (selected_string == 'Magnetometer (x)'):
                 new_streaming_data = self.puck_data_1.magnetometer[0, 0]
             elif (selected_string == 'Magnetometer (y)'):
@@ -265,7 +265,7 @@ class BackgroundThread:
             elif (selected_string == 'Velocity (z)'):
                 new_streaming_data = self.puck_data_1.velocity[0, 2]
             elif (selected_string == 'Loadcell'):
-                new_streaming_data = self.puck_data_1.loadcell
+                new_streaming_data = self.puck_data_1.load_cell
             
             #Send the data to the GUI for graphing purposes
             self.msg_queue_background_to_foreground.put(new_streaming_data)

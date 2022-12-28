@@ -68,13 +68,13 @@ class OrientationScope(object):
             pdata = self.puck.puck_packet_0
 
         vx = np.array([1,0,0])
-        vx = q_vector_multiply(pdata.quat, vx)
+        vx = q_vector_multiply(pdata.quaternion, vx)
 
         vy = np.array([0,1,0])
-        vy = q_vector_multiply(pdata.quat, vy)
+        vy = q_vector_multiply(pdata.quaternion, vy)
 
         vz = np.array([0,0,1])
-        vz = q_vector_multiply(pdata.quat, vz)
+        vz = q_vector_multiply(pdata.quaternion, vz)
 
         linex = [0, vx[0], vy[0], vz[0]]
         liney = [0, vx[1], vy[1], vz[1]]
