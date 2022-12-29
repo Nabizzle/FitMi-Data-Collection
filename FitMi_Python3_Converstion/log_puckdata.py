@@ -23,15 +23,15 @@ class PuckLogger(object):
 
         self.current_sample = 0
         self.n_samples = None
-        self.puck_0_xl = None
+        self.puck_0_acceleration = None
         self.puck_0_gyroscope = None
-        self.puck_0_magnetometer = None
+        self.puck_0_velocity = None
         self.puck_0_load_cell = None
         self.puck_0_quaternion = None
 
-        self.puck_1_xl = None
+        self.puck_1_acceleration = None
         self.puck_1_gyroscope = None
-        self.puck_1_magnetometer = None
+        self.puck_1_velocity = None
         self.puck_1_load_cell = None
         self.puck_1_quaternion = None
 
@@ -62,14 +62,14 @@ class PuckLogger(object):
 
         # crop away any unused space.
         if self.current_sample < self.n_samples:
-            self.puck_0_xl = self.puck_0_xl[0:self.current_sample, :]
+            self.puck_0_acceleration = self.puck_0_acceleration[0:self.current_sample, :]
             self.puck_0_gyroscope = self.puck_0_gyroscope[0:self.current_sample, :]
-            self.puck_0_magnetometer = self.puck_0_magnetometer[0:self.current_sample, :]
+            self.puck_0_velocity = self.puck_0_velocity[0:self.current_sample, :]
             self.puck_0_load_cell = self.puck_0_load_cell[0:self.current_sample, :]
             self.puck_0_quaternion = self.puck_0_quaternion[0:self.current_sample, :]
-            self.puck_1_xl = self.puck_1_xl[0:self.current_sample, :]
+            self.puck_1_acceleration = self.puck_1_acceleration[0:self.current_sample, :]
             self.puck_1_gyroscope = self.puck_1_gyroscope[0:self.current_sample, :]
-            self.puck_1_magnetometer = self.puck_1_magnetometer[0:self.current_sample, :]
+            self.puck_1_velocity = self.puck_1_velocity[0:self.current_sample, :]
             self.puck_1_load_cell = self.puck_1_load_cell[0:self.current_sample, :]
             self.puck_1_quaternion = self.puck_1_quaternion[0:self.current_sample, :]
 
@@ -96,28 +96,28 @@ class PuckLogger(object):
 
         n_samples = int(n_minutes*60*self.fs)
         self.n_samples = n_samples
-        self.puck_0_xl = np.zeros([n_samples, 3])
+        self.puck_0_acceleration = np.zeros([n_samples, 3])
         self.puck_0_gyroscope = np.zeros([n_samples, 3])
-        self.puck_0_magnetometer = np.zeros([n_samples, 3])
+        self.puck_0_velocity = np.zeros([n_samples, 3])
         self.puck_0_load_cell = np.zeros([n_samples, 1])
         self.puck_0_quaternion = np.zeros([n_samples, 4])
-        self.puck_1_xl = np.zeros([n_samples, 3])
+        self.puck_1_acceleration = np.zeros([n_samples, 3])
         self.puck_1_gyroscope = np.zeros([n_samples, 3])
-        self.puck_1_magnetometer = np.zeros([n_samples, 3])
+        self.puck_1_velocity = np.zeros([n_samples, 3])
         self.puck_1_load_cell = np.zeros([n_samples, 1])
         self.puck_1_quaternion = np.zeros([n_samples, 4])
 
     ##---- write data line ---------------------------------------------------##
     def store_data(self, puck_packet_0, puck_packet_1):
-        self.puck_0_xl[self.current_sample, :] = puck_packet_0.accelerometer
+        self.puck_0_acceleration[self.current_sample, :] = puck_packet_0.accelerometer
         self.puck_0_gyroscope[self.current_sample, :] = puck_packet_0.gyroscope
-        self.puck_0_magnetometer[self.current_sample, :] = puck_packet_0.magnetometer
+        self.puck_0_velocity[self.current_sample, :] = puck_packet_0.velocity
         self.puck_0_load_cell[self.current_sample, :] = puck_packet_0.load_cell
         self.puck_0_quaternion[self.current_sample, :] = puck_packet_0.quaternion
 
-        self.puck_1_xl[self.current_sample, :] = puck_packet_1.accelerometer
+        self.puck_1_acceleration[self.current_sample, :] = puck_packet_1.accelerometer
         self.puck_1_gyroscope[self.current_sample, :] = puck_packet_1.gyroscope
-        self.puck_1_magnetometer[self.current_sample, :] = puck_packet_1.magnetometer
+        self.puck_1_velocity[self.current_sample, :] = puck_packet_1.velocity
         self.puck_1_load_cell[self.current_sample, :] = puck_packet_1.load_cell
         self.puck_1_quaternion[self.current_sample, :] = puck_packet_1.quaternion
         self.current_sample += 1
@@ -125,9 +125,9 @@ class PuckLogger(object):
     ##---- write data to files -----------------------------------------------##
     def write_data(self):
         data_dictionary = {
-            "puck_0_xl": self.puck_0_xl, "p0_gyroscope": self.puck_0_gyroscope, "p0_magnetometer": self.puck_0_magnetometer,
+            "puck_0_xl": self.puck_0_acceleration, "p0_gyroscope": self.puck_0_gyroscope, "p0_velocity": self.puck_0_velocity,
             "p0_load_cell": self.puck_0_load_cell, "p0_quaternion": self.puck_0_quaternion,
-            "puck_1_xl": self.puck_1_xl, "p1_gyroscope": self.puck_1_gyroscope, "p1_magnetometer": self.puck_1_magnetometer,
+            "puck_1_xl": self.puck_1_acceleration, "p1_gyroscope": self.puck_1_gyroscope, "p1_velocity": self.puck_1_velocity,
             "p1_load_cell": self.puck_1_load_cell, "p1_quaternion": self.puck_1_quaternion
             }
         shelve_name = os.path.join(self.data_folder, self.fname+".shelve")
