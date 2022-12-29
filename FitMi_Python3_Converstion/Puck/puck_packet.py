@@ -80,8 +80,8 @@ class PuckPacket(object):
         q3 = self.quaternion[3]
 
         self.rpy[0,2] = np.arctan2(2.0 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)*180.0/np.pi
-        self.rpy[0,1] = -np.arcsin(2.0 * (q1 * q3 - q0 * q2))*180.0/np.pi
-        self.rpy[0,0]  = np.arctan2(2.0 * (q0 * q1 + q2 * q3), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)*180.0/np.pi
+        self.rpy[0,0] = -np.arcsin(2.0 * (q1 * q3 - q0 * q2))*180.0/np.pi
+        self.rpy[0,1]  = np.arctan2(2.0 * (q0 * q1 + q2 * q3), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)*180.0/np.pi
 
     def getVertAngle(self):
         # rotate the z unit vector by our quaternion.

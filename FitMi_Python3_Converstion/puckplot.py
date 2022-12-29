@@ -37,9 +37,9 @@ class PuckPlotter(object):
         self.fig.set_size_inches(20, 10, forward = True)
         plt.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9, wspace=0.4, hspace=0.4)
 
-        self.roll_plot = AniPlot(self.fig, [5, 3, 1], buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
+        self.roll_plot = AniPlot(self.fig, [5, 3, 1], buffer_min, buffer_max, angle_ymin / 2, angle_ymax / 2, second_puck=True)
         self.roll_plot.set_ylabel("roll angle")
-        self.pitch_plot = AniPlot(self.fig, [5, 3, 2], buffer_min, buffer_max, angle_ymin / 2, angle_ymax / 2, second_puck=True)
+        self.pitch_plot = AniPlot(self.fig, [5, 3, 2], buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
         self.pitch_plot.set_ylabel("pitch angle")
         self.yaw_plot = AniPlot(self.fig, [5, 3, 3], buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
         self.yaw_plot.set_ylabel("yaw angle")
