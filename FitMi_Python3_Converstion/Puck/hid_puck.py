@@ -106,8 +106,6 @@ class HIDPuckDongle(object):
 
         self.plugState = True
         self.emptyDataCount = 0
-        #self.wait_for_data() # give thread time to start
-        #self.sendCommand(0,DNGLRST, 0x00, 0x00)  # pipe and data are irrelevant
         self.receivingData = False
         self.check_connection()
         self.wait_for_data()
@@ -150,9 +148,7 @@ class HIDPuckDongle(object):
 
         touch_history = {"puck0": False, "puck1": False}
         while self.isopen:
-            #self.lock.acquire()
             try:
-                #self.input_count += 1
                 self.input = self.dongle.read(62)
                 if not self.input:
                     readFailCount += 1;
@@ -166,31 +162,14 @@ class HIDPuckDongle(object):
                     self.check_for_touch(self.input, touch_history, puck_number=1)
 
                 if not self.usb_out_queue.empty():
-                    # self.dongle.set_nonblocking(1)
-                    # if self.verbosity < 0: print "Trying to write"
-                    #self.note_sending(1)
                     self.dongle.write(self.usb_out_queue.get()) # first byte is report id
-                    #self.note_sending(0)
-                    # if self.verbosity < 0: print "wrote!"
-                    # self.dongle.set_nonblocking(0)
-                    # pygame.time.wait(1)
-                    # self.note_sending(0)
+                    
             except Exception as e:
                 self.receivingData = False
                 if self.verbosity > 1: print(e)
             finally:
                 time.sleep(0.00001)
-                #self.lock.release()
-            #time.sleep(0.00001)
-            #pygame.time.wait(3)  # wait until we are getting data
-            #time.sleep(0.003)
-            #self.puck_packet_0.parse(bytearray(input[0:30]))
-            #self.puck_packet_1.parse(bytearray(input[30:60]))
-            #print self.puck_packet_1
-            #print input
-            #self.callback(self.puck_packet_0, self.puck_packet_1)
-            #pygame.time.wait(3)
-
+                
         # Make sure we clear the queue
         for i in range(10):
             if not self.usb_out_queue.empty():
@@ -209,7 +188,7 @@ class HIDPuckDongle(object):
         if puck_number == 1:
             index = 59
 
-        status = input[index]#struct.unpack("<B", input[index]) ## unpack last byte into uint
+        status = input[index]
         touch = (status & 0b00000100) >> 2
 
         if puck_number == 0:
@@ -234,9 +213,6 @@ class HIDPuckDongle(object):
     def checkForNewPuckData(self):
         if self.receivingData:
             try:
-                #print self.puck_packet_1.connected
-                #self.input_count -= 1
-                #self.lock.acquire()
                 input = list(self.input)
                 self.parse_rxdata(bytearray(input[60:62]))
                 self.puck_packet_0.parse(bytearray(input[0:30]))
@@ -254,7 +230,6 @@ class HIDPuckDongle(object):
                 if self.verbosity > 0: print(e)
             finally:
                 pass
-                #self.lock.release()
 
     ##----
     def parse_rxdata(self, rxdata):
@@ -267,21 +242,12 @@ class HIDPuckDongle(object):
     ##---- send a command to the pucks ---------------------------------------##
     def sendCommand(self, puck_number, cmd, msb, lsb):
         command = (0b11100000 & (puck_number << 5)) | cmd
-        #for i in range(0, 6):
         if self.is_plugged():
             pass
-            # self.note_sending(1)
             ## put our message in the usb out queue
             if not self.usb_out_queue.full():
                 self.usb_out_queue.put([0x00, command, msb, lsb])
                 if self.verbosity > 0: print("queued 0x%x , 0x%x to puck %s" % (cmd, msb << 8 | lsb, puck_number))
-            # self.dongle.set_nonblocking(1)
-            # if self.verbosity < 0: print "Trying to write"
-            # self.dongle.write() # first byte is report id
-            # if self.verbosity < 0: print "wrote!"
-            # self.dongle.set_nonblocking(0)
-            # pygame.time.wait(1)
-            # self.note_sending(0)
 
 
     def note_sending(self, value):
@@ -322,7 +288,6 @@ class HIDPuckDongle(object):
     ##---- spy on a particular channel for a limited amount of time ---------##
     def startSpy(self, spy_channel=12, duration=100):
         # note that spy_channel is  the channel (0, 127)
-        #duration is in TENS of milliseconds. (0, 255)
         if duration > 255:
             duration = 255
         self.sendCommand(0, CHANSPY, spy_channel, duration)
@@ -335,12 +300,8 @@ class HIDPuckDongle(object):
     def close(self):
         if self.is_plugged() and self.isopen:
             try:
-                #self.sendCommand(0,GAMEON, 0x00, 0x00) ## puts puck 0 into standby
-                #self.sendCommand(1,GAMEON, 0x00, 0x00) ## puts puck 1 into standby
                 self.setTouchBuzz(0,1)
                 self.setTouchBuzz(1,1)
-                #pygame.time.wait(20)
-                #self.dongle.close()
             except:
                 pass
         self.isopen = False
@@ -358,8 +319,6 @@ class HIDPuckDongle(object):
             if device['product_id'] == self.idProduct and \
                device['vendor_id'] == self.idVendor:
                return True
-            # else:
-            #    print device['product_id'], device['vendor_id']
 
     ##---- infrequently check if the device is plugged in --------------------##
     def is_plugged_fast(self):

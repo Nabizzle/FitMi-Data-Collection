@@ -57,8 +57,7 @@ class PuckPacket(object):
             self.velocity[0:3] = vel_or_mag
         else:
             self.magnetometer[0:3] = vel_or_mag
-            self.magnetometer = self.magnetometer / 100.0 # Must be done this way to make the mac happy. Likely a numpy version difference
-            #self.magnetometer/=100.0
+            self.magnetometer /= 100.0
         try:
             self.rpy[0:3] = self.get_rpy() # gets rpy angles from quaternion
         except:
@@ -79,7 +78,7 @@ class PuckPacket(object):
         q1 = self.quaternion[1]
         q2 = self.quaternion[2]
         q3 = self.quaternion[3]
-        #print "%s, %s, %s, %s" % (q0, q1, q2, q3)
+
         self.rpy[0,2] = np.arctan2(2.0 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)*180.0/np.pi
         self.rpy[0,1] = -np.arcsin(2.0 * (q1 * q3 - q0 * q2))*180.0/np.pi
         self.rpy[0,0]  = np.arctan2(2.0 * (q0 * q1 + q2 * q3), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)*180.0/np.pi
@@ -97,9 +96,9 @@ class PuckPacket(object):
         nvt = np.linalg.norm(vt)
         if nvt > 0:
             vt = vt / nvt
-        #print np.arccos(np.linalg.norm(vt[0:2]))*180.0/np.pi * np.sign(vt[2])
+
         ZAngle = np.arccos(np.linalg.norm(vt[0:2]))*180.0/np.pi * np.sign(vt[2])
-        #val = vt
+
         if math.isnan(ZAngle):
             return None
         else:
@@ -112,10 +111,9 @@ class PuckPacket(object):
         nvt = np.linalg.norm(vt)
         if nvt > 0:
             vt = vt / nvt
-        #print np.arccos(np.linalg.norm(vt[0:2]))*180.0/np.pi * np.sign(vt[2])
+
         XAngle = np.arccos(np.linalg.norm(vt[0:2]))*180.0/np.pi * np.sign(vt[2])
-        #print int(XAngle)
-        #val = vt
+
         if math.isnan(XAngle):
             return None
         else:
@@ -128,14 +126,13 @@ class PuckPacket(object):
         nvt = np.linalg.norm(vt)
         if nvt > 0:
             vt = vt / nvt
-        #print np.arccos(np.linalg.norm(vt[0:2]))*180.0/np.pi * np.sign(vt[2])
-        XAngle = np.arccos(np.linalg.norm(vt[0:2]))*180.0/np.pi * np.sign(vt[2])
-        #print int(XAngle)
-        #val = vt
-        if math.isnan(XAngle):
+
+        YAngle = np.arccos(np.linalg.norm(vt[0:2]))*180.0/np.pi * np.sign(vt[2])
+ 
+        if math.isnan(YAngle):
             return None
         else:
-            return XAngle
+            return YAngle
 
     def __str__(self):
         f = (self.accelerometer, self.gyroscope, self.magnetometer, self.quaternion, self.load_cell,

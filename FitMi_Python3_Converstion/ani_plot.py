@@ -26,11 +26,11 @@ class AniPlot(object):
             self.puck_2_plot = self.ax.plot(self.x_points, self.zero_line_2, '-', color="g")[0]
 
     def set_xlabel(self, axis_name):
-        self.ax.set(xlabel = axis_name)
+        self.ax.set_xlabel(axis_name, fontsize = 12)
         self.fig.canvas.draw()
 
     def set_ylabel(self, axis_name):
-        self.ax.set(ylabel = axis_name)
+        self.ax.set_ylabel(axis_name, fontsize = 12)
         self.fig.canvas.draw()
 
     def update(self, data1, data2=None):

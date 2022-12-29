@@ -2,7 +2,6 @@
 
 import numpy as np
 import time
-import matplotlib
 from matplotlib import pyplot as plt
 from ani_plot import AniPlot
 
@@ -18,10 +17,10 @@ class PuckPlotter(object):
         buffer_min = 0
         buffer_max = 200
 
-        angle_ymax = 90
+        angle_ymax = 180
         angle_ymin = -angle_ymax
 
-        gyro_ymax = 1000
+        gyro_ymax = 1100
         gyro_ymin = -gyro_ymax
 
         acceleration_ymax = 1000
@@ -34,11 +33,13 @@ class PuckPlotter(object):
         load_cell_ymin = 0
 
         self.fig = plt.figure()
-        self.fig.set_size_inches(20, 9, forward = True)
+        self.fig.suptitle("FitMi Puck Data", fontsize = 20)
+        self.fig.set_size_inches(20, 10, forward = True)
+        plt.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9, wspace=0.4, hspace=0.4)
 
         self.roll_plot = AniPlot(self.fig, [5, 3, 1], buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
         self.roll_plot.set_ylabel("roll angle")
-        self.pitch_plot = AniPlot(self.fig, [5, 3, 2], buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
+        self.pitch_plot = AniPlot(self.fig, [5, 3, 2], buffer_min, buffer_max, angle_ymin / 2, angle_ymax / 2, second_puck=True)
         self.pitch_plot.set_ylabel("pitch angle")
         self.yaw_plot = AniPlot(self.fig, [5, 3, 3], buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
         self.yaw_plot.set_ylabel("yaw angle")
@@ -58,14 +59,17 @@ class PuckPlotter(object):
         self.z_acceleration_plot.set_ylabel("z rotational acceleration")
 
         self.x_velocity_plot = AniPlot(self.fig, [5, 3, 10], buffer_min, buffer_max, velocity_ymin, velocity_ymax, second_puck=True)
-        self.x_velocity_plot.set_ylabel("x linear velocity")
+        self.x_velocity_plot.set_ylabel("x velocity")
         self.y_velocity_plot = AniPlot(self.fig, [5, 3, 11], buffer_min, buffer_max, velocity_ymin, velocity_ymax, second_puck=True)
-        self.y_velocity_plot.set_ylabel("y linear velocity")
+        self.y_velocity_plot.set_ylabel("y velocity")
         self.z_velocity_plot = AniPlot(self.fig, [5, 3, 12], buffer_min, buffer_max, velocity_ymin, velocity_ymax, second_puck=True)
-        self.z_velocity_plot.set_ylabel("z linear velocity")
+        self.z_velocity_plot.set_ylabel("z velocity")
 
         self.load_cell_plot = AniPlot(self.fig, [5, 1, 5], buffer_min, buffer_max, ymin=load_cell_ymin, ymax=load_cell_ymax, second_puck=True)
         self.load_cell_plot.set_ylabel("load cell")
+
+        self.fig.align_ylabels(self.fig.axes)
+        self.fig.canvas.draw()
 
         self.puck = HIDPuckDongle()
 
@@ -78,18 +82,14 @@ class PuckPlotter(object):
         for i in range(0, 10000):
             self.puck.checkForNewPuckData()
             self.run(self.puck.puck_packet_0, self.puck.puck_packet_1)
-            # print "connected ", self.puck.puck_packet_0.connected, self.puck.puck_packet_1.connected
-            #print "pipes ", self.puck.block0_pipe, self.puck.block1_pipe
             time.sleep(1.0/self.fs)
             tick_up+=1
             if tick_up > self.fs:
                 tick_up=0
-                #print".",
 
     def stop(self):
         self.puck.sendCommand(0,SENDVEL, 0x00, 0x00)
         self.puck.sendCommand(1,SENDVEL, 0x00, 0x00)
-        #self.puck.setTouchBuzz(1,1)
         self.puck.close()
 
     def run(self, puck_data=None, puck_data2=None):
@@ -143,12 +143,9 @@ class PuckPlotter(object):
         self.z_velocity_plot.update(puck_data.velocity[0,2], puck_data2.velocity[0,2])
         
         self.load_cell_plot.update(puck_data.load_cell, puck_data2.load_cell)
-        print(puck_data2.load_cell)
 
         if np.linalg.norm(puck_data2.accelerometer) > 1500:
             self.puck.actuate(1, 500, 100)
-        #self.puck.sendCommand(0, RBLINK, 0x01, 0x21)
-        #print(puck_data.res_v5) # res_v5 is currently set up to tell us if in gaming state
 
 if __name__ == '__main__':
     plotter = PuckPlotter()
@@ -156,5 +153,3 @@ if __name__ == '__main__':
         plotter.start()
     finally:
         plotter.stop()
-    #for i in range(0, 500):
-    #    plotter.run()

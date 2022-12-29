@@ -85,8 +85,6 @@ class OrientationScope(object):
         self.data_plot = self.ax.scatter(line_x, line_y, line_z, c="b")
         plt.pause(.00005)
 
-        # self.data_plot._offsets3d = juggle_axes(line_x, liney, line_z, 'z')
-
 if __name__ == "__main__":
     orientation_scope = OrientationScope()
     try:
