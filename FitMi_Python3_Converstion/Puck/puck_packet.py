@@ -54,12 +54,15 @@ class PuckPacket(object):
 
         # if "send velocity" is enabled, update velocity. else update magnetometer
         if (self.velocity_md):
-            self.velocity[0:2] = vel_or_mag
+            self.velocity[0:3] = vel_or_mag
         else:
-            self.magnetometer[0:2] = vel_or_mag
+            self.magnetometer[0:3] = vel_or_mag
             self.magnetometer = self.magnetometer / 100.0 # Must be done this way to make the mac happy. Likely a numpy version difference
             #self.magnetometer/=100.0
-        self.get_rpy() # gets rpy angles from quaternion
+        try:
+            self.rpy[0:3] = self.get_rpy() # gets rpy angles from quaternion
+        except:
+            pass
 
     ##---- parse the status byte of the data packet --------------------------##
     def parse_status(self, status):

@@ -19,7 +19,7 @@ from Puck.hid_puck import *
 matplotlib.interactive(True)
 
 class OrientationScope(object):
-    def __init__(self, puck_number = 0):
+    def __init__(self, puck_number = 1):
         self.puck = HIDPuckDongle()
         self.fs = 40
         self.n_seconds = 100
