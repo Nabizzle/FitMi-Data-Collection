@@ -49,8 +49,8 @@ class PuckLogger(object):
         self.set_recording_length()
         self.set_filename()
         self.puck.open()
-        self.puck.sendCommand(0,SENDVEL, 0x00, 0x00)
-        self.puck.sendCommand(1,SENDVEL, 0x00, 0x00)
+        self.puck.sendCommand(0,SENDVEL, 0x00, 0x01)
+        self.puck.sendCommand(1,SENDVEL, 0x00, 0x01)
 
         print("recording data")
         self.check_stop_thread.start()
@@ -60,18 +60,18 @@ class PuckLogger(object):
             self.store_data(self.puck.puck_packet_0, self.puck.puck_packet_1)
             time.sleep(1.0/self.fs)
 
-        ## crop away any unused space.
+        # crop away any unused space.
         if self.current_sample < self.n_samples:
-            self.puck_0_xl = self.puck_0_xl[self.current_sample, :]
-            self.puck_0_gyroscope = self.puck_0_gyroscope[self.current_sample, :]
-            self.puck_0_magnetometer = self.puck_0_magnetometer[self.current_sample, :]
-            self.puck_0_load_cell = self.puck_0_load_cell[self.current_sample, :]
-            self.puck_0_quaternion = self.puck_0_quaternion[self.current_sample, :]
-            self.puck_1_xl = self.puck_1_xl[self.current_sample, :]
-            self.puck_1_gyroscope = self.puck_1_gyroscope[self.current_sample, :]
-            self.puck_1_magnetometer = self.puck_1_magnetometer[self.current_sample, :]
-            self.puck_1_load_cell = self.puck_1_load_cell[self.current_sample, :]
-            self.puck_1_quaternion = self.puck_1_quaternion[self.current_sample, :]
+            self.puck_0_xl = self.puck_0_xl[0:self.current_sample, :]
+            self.puck_0_gyroscope = self.puck_0_gyroscope[0:self.current_sample, :]
+            self.puck_0_magnetometer = self.puck_0_magnetometer[0:self.current_sample, :]
+            self.puck_0_load_cell = self.puck_0_load_cell[0:self.current_sample, :]
+            self.puck_0_quaternion = self.puck_0_quaternion[0:self.current_sample, :]
+            self.puck_1_xl = self.puck_1_xl[0:self.current_sample, :]
+            self.puck_1_gyroscope = self.puck_1_gyroscope[0:self.current_sample, :]
+            self.puck_1_magnetometer = self.puck_1_magnetometer[0:self.current_sample, :]
+            self.puck_1_load_cell = self.puck_1_load_cell[0:self.current_sample, :]
+            self.puck_1_quaternion = self.puck_1_quaternion[0:self.current_sample, :]
 
     ##---- set filename ------------------------------------------------------##
     def set_filename(self):
