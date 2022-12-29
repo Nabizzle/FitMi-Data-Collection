@@ -14,6 +14,7 @@ class PuckPlotter(object):
         self.fs = 60
         self.n_seconds = 100
         self.max_samples = self.fs*self.n_seconds
+        
         buffer_min = 0
         buffer_max = 200
 
@@ -32,47 +33,30 @@ class PuckPlotter(object):
         self.fig = plt.figure()
         self.fig.set_size_inches(20, 9, forward = True)
 
-        self.x_angle_fig_axis = self.fig.add_subplot(4, 3, 1, ylim = (angle_ymin, angle_ymax))
-        self.y_angle_fig_axis = self.fig.add_subplot(4, 3, 2, ylim = (angle_ymin, angle_ymax))
-        self.z_angle_fig_axis = self.fig.add_subplot(4, 3, 3,ylim = (angle_ymin, angle_ymax))
+        self.x_angle_plot = AniPlot(self.fig, [4, 3, 1], buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
+        self.x_angle_plot.set_ylabel("x angle")
+        self.y_angle_plot = AniPlot(self.fig, [4, 3, 2], buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
+        self.y_angle_plot.set_ylabel("y angle")
+        self.z_angle_plot = AniPlot(self.fig, [4, 3, 3], buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
+        self.z_angle_plot.set_ylabel("z angle")
 
-        self.gyro_x_fig_axis = self.fig.add_subplot(4, 3, 4, ylim = (gyro_ymin, gyro_ymax))
-        self.gyro_y_fig_axis = self.fig.add_subplot(4, 3, 5, ylim = (gyro_ymin, gyro_ymax))
-        self.gyro_z_fig_axis = self.fig.add_subplot(4, 3, 6, ylim = (gyro_ymin, gyro_ymax))
+        self.x_gyro_plot = AniPlot(self.fig, [4, 3, 4], buffer_min, buffer_max, gyro_ymin, gyro_ymax, second_puck=True)
+        self.x_gyro_plot.set_ylabel("x gyroscope")
+        self.y_gyro_plot = AniPlot(self.fig, [4, 3, 5], buffer_min, buffer_max, gyro_ymin, gyro_ymax, second_puck=True)
+        self.y_gyro_plot.set_ylabel("y gyroscope")
+        self.z_gyro_plot = AniPlot(self.fig, [4, 3, 6], buffer_min, buffer_max, gyro_ymin, gyro_ymax, second_puck=True)
+        self.z_gyro_plot.set_ylabel("z gyroscope")
 
-        self.acceleration_x_fig_axis = self.fig.add_subplot(4, 3, 7, ylim = (acceleration_ymin, acceleration_ymax))
-        self.acceleration_y_fig_axis = self.fig.add_subplot(4, 3, 8, ylim = (acceleration_ymin, acceleration_ymax))
-        self.acceleration_z_fig_axis = self.fig.add_subplot(4, 3, 9, ylim = (acceleration_ymin, acceleration_ymax))
+        self.x_acceleration_plot = AniPlot(self.fig, [4, 3, 7], buffer_min, buffer_max, acceleration_ymin, acceleration_ymax, second_puck=True)
+        self.x_acceleration_plot.set_ylabel("x acceleration")
+        self.y_acceleration_plot = AniPlot(self.fig, [4, 3, 8], buffer_min, buffer_max, acceleration_ymin, acceleration_ymax, second_puck=True)
+        self.y_acceleration_plot.set_ylabel("y acceleration")
+        self.z_acceleration_plot = AniPlot(self.fig, [4, 3, 9], buffer_min, buffer_max, acceleration_ymin, acceleration_ymax, second_puck=True)
+        self.z_acceleration_plot.set_ylabel("z acceleration")
 
-        self.load_cell_fig_axis = self.fig.add_subplot(4, 1, 4, ylim = (load_cell_ymin, load_cell_ymax))
+        self.load_cell_plot = AniPlot(self.fig, [4, 1, 4], buffer_min, buffer_max, ymin=load_cell_ymin, ymax=load_cell_ymax, second_puck=True)
+        self.load_cell_plot.set_ylabel("load cell")
 
-        self.x_angle_fig_axis.set_ylabel("x angle")
-        self.y_angle_fig_axis.set_ylabel("y angle")
-        self.z_angle_fig_axis.set_ylabel("z angle")
-
-        self.gyro_x_fig_axis.set_ylabel("x gyroscope")
-        self.gyro_y_fig_axis.set_ylabel("y gyroscope")
-        self.gyro_z_fig_axis.set_ylabel("z gyroscope")
-
-        self.acceleration_x_fig_axis.set_ylabel("x acceleration")
-        self.acceleration_y_fig_axis.set_ylabel("y acceleration")
-        self.acceleration_z_fig_axis.set_ylabel("z acceleration")
-        
-        self.load_cell_fig_axis.set_ylabel("load cell")
-
-        self.x_angle_plot = AniPlot(self.fig, self.x_angle_fig_axis, buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
-        self.y_angle_plot = AniPlot(self.fig, self.y_angle_fig_axis, buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
-        self.z_angle_plot = AniPlot(self.fig, self.z_angle_fig_axis, buffer_min, buffer_max, angle_ymin, angle_ymax, second_puck=True)
-
-        self.x_gyro_plot = AniPlot(self.fig, self.gyro_x_fig_axis, buffer_min, buffer_max, -500, 500, second_puck=True)
-        self.y_gyro_plot = AniPlot(self.fig, self.gyro_y_fig_axis, buffer_min, buffer_max, -500, 500, second_puck=True)
-        self.z_gyro_plot = AniPlot(self.fig, self.gyro_z_fig_axis, buffer_min, buffer_max, -500, 500, second_puck=True)
-
-        self.x_acceleration_plot = AniPlot(self.fig, self.acceleration_x_fig_axis, buffer_min, buffer_max, -1000, 1000, second_puck=True)
-        self.y_acceleration_plot = AniPlot(self.fig, self.acceleration_y_fig_axis, buffer_min, buffer_max, -1000, 1000, second_puck=True)
-        self.z_acceleration_plot = AniPlot(self.fig, self.acceleration_z_fig_axis, buffer_min, buffer_max, -1000, 1000, second_puck=True)
-
-        self.load_cell_plot = AniPlot(self.fig, self.load_cell_fig_axis, buffer_min, buffer_max, ymin=-100, ymax=1100, second_puck=True)
         self.load_cell_plot_red = False
         self.time = 0
         self.puck = HIDPuckDongle()

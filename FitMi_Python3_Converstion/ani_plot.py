@@ -5,14 +5,13 @@
 from matplotlib import pyplot as plt
 
 class AniPlot(object):
-    def __init__(self, fig, ax, buffer_min=0, buffer_max=200, ymin=-180, ymax=180, second_puck=False):
-        self.ax = ax
-        self.ax.set_xlim(buffer_min, buffer_max)
+    def __init__(self, fig, split, buffer_min=0, buffer_max=200, ymin=-180, ymax=180, second_puck=False):
+        self.fig = fig
+        self.ax = fig.add_subplot(split[0], split[1], split[2], xlim = (buffer_min, buffer_max), ylim = (ymin, ymax))
 
         fig.show(False)
-        plt.draw()
+        fig.canvas.draw()
 
-        
         self.bg = fig.canvas.copy_from_bbox(self.ax.bbox)
 
         self.zero_line = [0]*(buffer_max - buffer_min)
@@ -28,9 +27,11 @@ class AniPlot(object):
 
     def set_xlabel(self, axis_name):
         self.ax.set(xlabel = axis_name)
+        self.fig.canvas.draw()
 
     def set_ylabel(self, axis_name):
         self.ax.set(ylabel = axis_name)
+        self.fig.canvas.draw()
 
     def update(self, data1, data2=None):
         self.zero_line.pop(0)
