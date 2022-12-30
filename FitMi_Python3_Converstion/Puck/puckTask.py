@@ -13,7 +13,7 @@ class PuckTask(object):
 
     def checkStateATrigger(self, rehab_touch):
         if self.state == 1: return
-        pos = rehab_touch.puck_packet_1.rpy[0,self.dof]
+        pos = rehab_touch.puck_packet_1.roll_pitch_yaw[0,self.dof]
         if not pos: return
         if (pos - self.pos_reference) < -self.target:
             self.state = 1
@@ -23,7 +23,7 @@ class PuckTask(object):
 
     def checkStateBTrigger(self, rehab_touch):
         if self.state == 0: return
-        pos = rehab_touch.puck_packet_1.rpy[0,self.dof]
+        pos = rehab_touch.puck_packet_1.roll_pitch_yaw[0,self.dof]
         if not pos: return
         if (pos - self.pos_reference) > self.target:
             self.state = 0

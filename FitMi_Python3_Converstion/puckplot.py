@@ -226,9 +226,9 @@ class PuckPlotter(object):
         puck_1_data : PuckPacket object
             Contains all of the polled data from puck 1, the yellow one
         '''
-        self.roll_plot.update(puck_0_data.rpy[0,0], puck_1_data.rpy[0,0])
-        self.pitch_plot.update(puck_0_data.rpy[0,1], puck_1_data.rpy[0,1])
-        self.yaw_plot.update(puck_0_data.rpy[0,2], puck_1_data.rpy[0,2])
+        self.roll_plot.update(puck_0_data.roll_pitch_yaw[0,0], puck_1_data.roll_pitch_yaw[0,0])
+        self.pitch_plot.update(puck_0_data.roll_pitch_yaw[0,1], puck_1_data.roll_pitch_yaw[0,1])
+        self.yaw_plot.update(puck_0_data.roll_pitch_yaw[0,2], puck_1_data.roll_pitch_yaw[0,2])
 
         self.x_gyro_plot.update(puck_0_data.gyroscope[0,0], puck_1_data.gyroscope[0,0])
         self.y_gyro_plot.update(puck_0_data.gyroscope[0,1], puck_1_data.gyroscope[0,1])

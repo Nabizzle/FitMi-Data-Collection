@@ -15,7 +15,7 @@ class PuckPacket(object):
         self.magnetometer = np.matrix([0,0,0])
         self.velocity = np.matrix([0,0,0]) #linear velocity in global ref - only updates if activated.
         self.quaternion = np.array([0,0,0,0])
-        self.rpy = np.matrix([0,0,0])
+        self.roll_pitch_yaw = np.matrix([0,0,0])
         self.load_cell = 0
         self.battery = 0
         self.charging = 0
@@ -59,7 +59,7 @@ class PuckPacket(object):
             self.magnetometer[0:3] = vel_or_mag
             self.magnetometer /= 100.0
         try:
-            self.rpy[0:3] = self.get_rpy() # gets rpy angles from quaternion
+            self.roll_pitch_yaw[0:3] = self.getRollPitchYaw() # gets the roll, pitch and yaw angles from quaternion
         except:
             pass
 
@@ -72,16 +72,16 @@ class PuckPacket(object):
         self.state =     (status & 0b01110000) >> 4
         self.res_v5 =     (status & 0b10000000) >> 7
 
-    ##---- get rpy angles from quaternion ------------------------------------##
-    def get_rpy(self):
+    ##---- gets the roll, pitch, and yaw angles from quaternion ------------------------------------##
+    def getRollPitchYaw(self):
         q0 = self.quaternion[0]
         q1 = self.quaternion[1]
         q2 = self.quaternion[2]
         q3 = self.quaternion[3]
 
-        self.rpy[0,2] = np.arctan2(2.0 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)*180.0/np.pi
-        self.rpy[0,0] = -np.arcsin(2.0 * (q1 * q3 - q0 * q2))*180.0/np.pi
-        self.rpy[0,1]  = np.arctan2(2.0 * (q0 * q1 + q2 * q3), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)*180.0/np.pi
+        self.roll_pitch_yaw[0,2] = np.arctan2(2.0 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)*180.0/np.pi
+        self.roll_pitch_yaw[0,0] = -np.arcsin(2.0 * (q1 * q3 - q0 * q2))*180.0/np.pi
+        self.roll_pitch_yaw[0,1]  = np.arctan2(2.0 * (q0 * q1 + q2 * q3), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)*180.0/np.pi
 
     def getVertAngle(self):
         # rotate the z unit vector by our quaternion.
