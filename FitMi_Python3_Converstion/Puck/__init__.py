@@ -1,4 +1,13 @@
-from Puck.hid_puck import HIDPuckDongle
-from Puck.puck_packet import PuckPacket
-from Puck.puckTask import PuckTask
+'''
+A library to connect to each of the FitMi pucks, poll their data and process it.
 
+This library has code to connect the dongle for the FitMi pucks and poll data from their accelerometers, gyroscope, magnetometer, and load cell. Data also available is the linear velocity and quaternion representing the rotation of each puck, the battery, and status of the pucks among other variables and helper functions for analyzing the data.
+
+Modules
+-------
+hid_puck
+    The definition for the HIDPuckDongle class. It controls all of the communication to and from the dongle for the FitMi pucks
+puck_packet
+    The definition for the PuckPacket class. It parses and contains the data from the pucks for the accelerometer, gyroscope, magnetometer, velocity measurement, quaternion, roll, pitch, and yaw angles; load cell, battery, charging indicator, connection indicator, touch status, status for the IMU, status for if the velocity is polled, the state, and a variable called res_v5
+puck
+'''
