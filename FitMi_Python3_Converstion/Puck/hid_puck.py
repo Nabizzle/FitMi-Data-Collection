@@ -10,30 +10,31 @@ import time
 import threading
 import sys
 import struct
+import os
+# os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from Puck.puck_packet import PuckPacket
 import numpy as np
-import os
 import queue
 
-RBLINK     = 0x01
-GBLINK     = 0x02
-BBLINK     = 0x03
-RPULSE     = 0x05
-MBLINK     = 0x04
-GPULSE     = 0x06
-BPULSE     = 0x07
-MPULSE     = 0x08
-MPUENBL    = 0x09
-PWR        = 0x0A
-GAMEON     = 0x0B
-MAGCALX    = 0x0C    ## send mag cal data back to puck
-MAGCALY    = 0x0D    ## send mag cal data back to puck
-MAGCALZ    = 0x0E    ## send mag cal data back to puck
-DNGLRST    = 0x0F    ## reset the dongle
-SENDVEL    = 0x10    ## send velocity (data==1) or send magnetometer (data==0)
-TOUCHBUZ   = 0x11    ## turn touch buz on and off (1 and 0)
-CHANGEFREQ = 0x12
+RBLINK       = 0x01
+GBLINK       = 0x02
+BBLINK       = 0x03
+RPULSE       = 0x05
+MBLINK       = 0x04
+GPULSE       = 0x06
+BPULSE       = 0x07
+MPULSE       = 0x08
+MPUENBL      = 0x09
+PWR          = 0x0A
+GAMEON       = 0x0B
+MAGCALX      = 0x0C    ## send mag cal data back to puck
+MAGCALY      = 0x0D    ## send mag cal data back to puck
+MAGCALZ      = 0x0E    ## send mag cal data back to puck
+DNGLRST      = 0x0F    ## reset the dongle
+SENDVEL      = 0x10    ## send velocity (data==1) or send magnetometer (data==0)
+TOUCHBUZ     = 0x11    ## turn touch buz on and off (1 and 0)
+CHANGEFREQ   = 0x12
 RXCHANGEFREQ = 0x13
 CHANSPY      = 0x14
 SETUSBPIPES  = 0x15
