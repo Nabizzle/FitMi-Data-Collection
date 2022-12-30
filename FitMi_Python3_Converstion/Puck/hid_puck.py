@@ -63,8 +63,8 @@ class HIDPuckDongle(object):
 
         ## packet definitions specifies the structure of the packet.
         self.receivingData = False
-        self.puck_packet_0 = PuckPacket()
-        self.puck_packet_1 = PuckPacket()
+        self.puck_0_packet = PuckPacket()
+        self.puck_1_packet = PuckPacket()
         self.rx_hardware_state = 0;
         self.rx_channel = 0;
         self.block0_pipe = 0;
@@ -121,7 +121,7 @@ class HIDPuckDongle(object):
         radio_working = False
         for i in range(0, 200):
             self.checkForNewPuckData()
-            if self.puck_packet_0.connected or self.puck_packet_1.connected:
+            if self.puck_0_packet.connected or self.puck_1_packet.connected:
                 radio_working = True
                 break
             pygame.time.wait(1)
@@ -215,15 +215,15 @@ class HIDPuckDongle(object):
             try:
                 input = list(self.input)
                 self.parse_rxdata(bytearray(input[60:62]))
-                self.puck_packet_0.parse(bytearray(input[0:30]))
-                self.puck_packet_1.parse(bytearray(input[30:60]))
+                self.puck_0_packet.parse(bytearray(input[0:30]))
+                self.puck_1_packet.parse(bytearray(input[30:60]))
 
                 while not self.touch_queue.empty():
                     puck_number, state = self.touch_queue.get()
                     if puck_number == 0 and state:
-                        self.puck_packet_0.touch = state
+                        self.puck_0_packet.touch = state
                     elif puck_number == 1 and state:
-                        self.puck_packet_1.touch = state
+                        self.puck_1_packet.touch = state
 
 
             except Exception as e:
@@ -343,7 +343,7 @@ if __name__ == "__main__":
         pk.startSpy(12, 200)
         for i in range(0, 2500):
             pk.checkForNewPuckData()
-            print(pk.rx_channel, pk.puck_packet_0.connected, pk.puck_packet_1.connected)
+            print(pk.rx_channel, pk.puck_0_packet.connected, pk.puck_1_packet.connected)
             time.sleep(0.01)
     except Exception as e:
         print(e)

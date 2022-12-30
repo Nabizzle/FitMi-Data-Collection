@@ -159,7 +159,7 @@ class PuckPlotter(object):
         # sample both pucks and pause by the sample rate
         for i in range(self.max_samples):
             self.puck.checkForNewPuckData()
-            self.run(self.puck.puck_packet_0, self.puck.puck_packet_1)# send queried data to the plots and update them
+            self.run(self.puck.puck_0_packet, self.puck.puck_1_packet)# send queried data to the plots and update them
             time.sleep(1.0/self.samples_per_second)
 
     def stop(self):

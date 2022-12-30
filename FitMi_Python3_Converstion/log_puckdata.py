@@ -134,7 +134,7 @@ class PuckLogger(object):
         # Record data according to the sample rate
         while self.keep_running and (self.samples_taken < self.max_samples):
             self.puck.checkForNewPuckData()
-            self.store_data(self.puck.puck_packet_0, self.puck.puck_packet_1)
+            self.store_data(self.puck.puck_0_packet, self.puck.puck_1_packet)
             time.sleep(1.0/self.samples_per_second)
 
         # crop away any unused space.

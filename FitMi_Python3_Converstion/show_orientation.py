@@ -106,9 +106,9 @@ class OrientationScope(object):
         '''
         # selects the puck data packet based on the puck's id
         if self.puck_number == 1:
-            puck_data = self.puck.puck_packet_1
+            puck_data = self.puck.puck_1_packet
         else:
-            puck_data = self.puck.puck_packet_0
+            puck_data = self.puck.puck_0_packet
 
         # make a vector of each axis and rotate it by the puck's quaternion
         vx = np.array([1,0,0])
