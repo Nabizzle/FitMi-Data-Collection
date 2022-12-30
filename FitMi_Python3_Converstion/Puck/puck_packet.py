@@ -4,7 +4,7 @@
 
 import struct
 import numpy as np
-from Puck.Quaternion import q_vector_multiply
+from Puck.Quaternion import q_rotate_vector
 import math
 
 ##---- Puck Packet -----------------------------------------------------------##
@@ -86,13 +86,13 @@ class PuckPacket(object):
     def getVertAngle(self):
         # rotate the z unit vector by our quaternion.
         v1 = np.array([0,0,1])
-        vt = q_vector_multiply(self.quaternion, v1)
+        vt = q_rotate_vector(self.quaternion, v1)
         return np.arccos(np.linalg.norm(vt[0:2]))*180.0/np.pi * np.sign(vt[2])
 
     def getZAngle(self):
         # rotate the z unit vector by our quaternion.
         v1 = np.array([0.0,0.0,1.0])
-        vt = q_vector_multiply(self.quaternion, v1)
+        vt = q_rotate_vector(self.quaternion, v1)
         nvt = np.linalg.norm(vt)
         if nvt > 0:
             vt = vt / nvt
@@ -107,7 +107,7 @@ class PuckPacket(object):
     def getXAngle(self):
         # rotate the z unit vector by our quaternion.
         v1 = np.array([1.0,0.0,0.0])
-        vt = q_vector_multiply(self.quaternion, v1)
+        vt = q_rotate_vector(self.quaternion, v1)
         nvt = np.linalg.norm(vt)
         if nvt > 0:
             vt = vt / nvt
@@ -122,7 +122,7 @@ class PuckPacket(object):
     def getYAngle(self):
         # rotate the z unit vector by our quaternion.
         v1 = np.array([0.0,1.0,0.0])
-        vt = q_vector_multiply(self.quaternion, v1)
+        vt = q_rotate_vector(self.quaternion, v1)
         nvt = np.linalg.norm(vt)
         if nvt > 0:
             vt = vt / nvt

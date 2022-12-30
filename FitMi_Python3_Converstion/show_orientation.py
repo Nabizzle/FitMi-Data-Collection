@@ -112,13 +112,13 @@ class OrientationScope(object):
 
         # make a vector of each axis and rotate it by the puck's quaternion
         vx = np.array([1,0,0])
-        vx = q_vector_multiply(puck_data.quaternion, vx)
+        vx = q_rotate_vector(puck_data.quaternion, vx)
 
         vy = np.array([0,1,0])
-        vy = q_vector_multiply(puck_data.quaternion, vy)
+        vy = q_rotate_vector(puck_data.quaternion, vy)
 
         vz = np.array([0,0,1])
-        vz = q_vector_multiply(puck_data.quaternion, vz)
+        vz = q_rotate_vector(puck_data.quaternion, vz)
 
         # draw a line to each rotated axis
         line_x = [0, vx[0], vy[0], vz[0]]
