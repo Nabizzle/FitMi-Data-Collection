@@ -1,6 +1,6 @@
 import struct
 import numpy as np
-from Puck.Quaternion import q_rotate_vector
+from Puck.quaternion import q_rotate_vector
 import math
 
 class PuckPacket(object):

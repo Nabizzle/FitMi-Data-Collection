@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import juggle_axes
 import matplotlib
-from Puck.Quaternion import *
+from Puck.quaternion import *
 from Puck.hid_puck import HIDPuckDongle
 from Puck.hid_puck import *
 
