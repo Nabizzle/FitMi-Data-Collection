@@ -42,13 +42,13 @@ class OrientationScope(object):
     update_plot()
         Takes the puck data and updates the 3D plot of orientation
     '''
-    def __init__(self, puck_number = 1):
+    def __init__(self, puck_number = 0):
         '''
         Creates the initial 3D plot of the puck axes
 
         Parameters
         ----------
-        puck_number : int
+        puck_number : int, default = 1
             id of the puck. 0 = blue puck, 1 = yellow puck
         '''
         self.puck = HIDPuckDongle()
