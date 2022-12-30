@@ -75,7 +75,7 @@ class PuckPacket(object):
         self.gyroscope = np.array([0,0,0])
         self.magnetometer = np.array([0,0,0])
         self.velocity = np.array([0,0,0]) # only updates if activated when puck connected to.
-        self.quaternion = np.array([0,0,0,0])
+        self.quaternion = np.array([0.0, 0.0, 0.0, 0.0])
         self.roll_pitch_yaw = np.array([0,0,0])
         self.load_cell = 0
         self.battery = 0
