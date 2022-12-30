@@ -11,7 +11,7 @@ import threading
 import sys
 import struct
 import os
-# os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide" # suppresses pygame welcome message
 import pygame
 from Puck.puck_packet import PuckPacket
 import numpy as np
