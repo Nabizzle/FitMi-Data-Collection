@@ -49,6 +49,8 @@ class PuckPlotter(object):
         Plots the z linear velocity of one or both pucks
     load_cell_plot : AniPlot object
         Plots the force on the load cell of one or both pucks
+    puck : HIDPuckDongle object
+        Connects to the dongle for communicating to and from the pucks
 
     Methods
     -------
@@ -219,9 +221,9 @@ class PuckPlotter(object):
 
         Parameters
         ----------
-        puck_0_data : PuckPacket object, optional
+        puck_0_data : PuckPacket object
             Contains all of the polled data from puck 0, the blue one
-        puck_1_data : PuckPacket object, optional
+        puck_1_data : PuckPacket object
             Contains all of the polled data from puck 1, the yellow one
         '''
         self.roll_plot.update(puck_0_data.rpy[0,0], puck_1_data.rpy[0,0])

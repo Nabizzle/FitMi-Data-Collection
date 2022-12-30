@@ -1,29 +1,60 @@
-##----------------------------------------------------------------------------##
-##---- show the orientation of our device ------------------------------------##
-##----------------------------------------------------------------------------##
-## the accuracy of our velocity estimates is limited by the accuracy of our
-## orientation estimates. Even a small amount of error builds up over time.
-## we need to improve our orientation estimates. To do that I need a better tool
-## for visualizing our error.
-
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import juggle_axes
 import matplotlib
-
 from Puck.Quaternion import *
-
 from Puck import HIDPuckDongle
 from Puck.hid_puck import *
 
 matplotlib.interactive(True)
 
 class OrientationScope(object):
+    '''
+    Creates a visualization of the puck in 3D space
+
+    Allows the user to visualize the rotations of one of the two pucks on a 3D axis. This is done as a x, y, z gizmo that rotates with the puck.
+
+    Attributes
+    ----------
+    puck : HIDPuckDongle object
+        Connects to the dongle for communicating to and from the pucks
+    samples_per_second : int
+        The number of times the pucks are queried per second
+    max_run_time_seconds : int
+        Total amount of time the code runs for
+    max_samples : int
+        The total number of samples to take
+    puck_number : int
+        The blue puck (0) or the yellow puck (1)
+    fig : matplotlib.pyplot.figure
+        The 3D figure for showing the orientation of the puck
+    ax : matplotlib.pyplot.axis
+        The axis of the 3D figure
+    data_point : matplotlib.pyplot.scatter
+        Scatter plot showing the x, y, z axis of the puck
+
+    Methods
+    -------
+    __init__(puck_number)
+        Creates the initial 3D plot of the puck axes
+    start_scope()
+        Starts communication with puck and updates plot with rotation
+    update_plot()
+        Takes the puck data and updates the 3D plot of orientation
+    '''
     def __init__(self, puck_number = 1):
+        '''
+        Creates the initial 3D plot of the puck axes
+
+        Parameters
+        ----------
+        puck_number : int
+            id of the puck. 0 = blue puck, 1 = yellow puck
+        '''
         self.puck = HIDPuckDongle()
-        self.fs = 40
-        self.n_seconds = 100
-        self.max_samples = self.fs*self.n_seconds
+        self.samples_per_second = 40
+        self.max_run_time_seconds = 100
+        self.max_samples = self.samples_per_second*self.max_run_time_seconds
         self.puck_number = puck_number
 
         self.fig = plt.figure()
@@ -35,26 +66,32 @@ class OrientationScope(object):
 
         self.fig.show(False)
         plt.draw()
-        self.bg = self.fig.canvas.copy_from_bbox(self.ax.bbox)
         line_x = [0, 1, 0, 0]
         line_y = [0, 0, 1, 0]
         line_z = [0, 0, 0, 1]
         self.data_plot = self.ax.scatter(line_x, line_y, line_z, c="b")
 
     def start_scope(self):
+        '''
+        Starts communication with puck and updates plot with rotation
+
+        Records for the number of samples to reach the max test time with the sample rate of the scope. Communication is cut off at the end of the sampling.
+        '''
+        # Creates the connection to the selected puck
         self.puck.open()
         self.puck.sendCommand(self.puck_number,SENDVEL, 0x00, 0x01)
 
-        tick_up = 0
+        tick_up = 0 # counter to indicate when a second has passed
         print("recording data")
-        for i in range(0, self.max_samples):
+        # records data at a time period based on the samples per second
+        for i in range(self.max_samples):
             self.puck.checkForNewPuckData()
-            self.update_plot()
+            self.update_plot() # updates the plots based on the puck data
 
-
-            time.sleep(1.0/self.fs)
+            time.sleep(1.0/self.samples_per_second)
             tick_up+=1
-            if tick_up > self.fs:
+            # plot a dot when a second has passed
+            if tick_up > self.samples_per_second:
                 tick_up=0
                 print(".")
 
@@ -62,11 +99,18 @@ class OrientationScope(object):
 
 
     def update_plot(self):
+        '''
+        Takes the puck data and updates the 3D plot of orientation
+
+        Selects which puck data packet to use and updates orientation based on the puck's quaternion
+        '''
+        # selects the puck data packet based on the puck's id
         if self.puck_number == 1:
             puck_data = self.puck.puck_packet_1
         else:
             puck_data = self.puck.puck_packet_0
 
+        # make a vector of each axis and rotate it by the puck's quaternion
         vx = np.array([1,0,0])
         vx = q_vector_multiply(puck_data.quaternion, vx)
 
@@ -76,16 +120,21 @@ class OrientationScope(object):
         vz = np.array([0,0,1])
         vz = q_vector_multiply(puck_data.quaternion, vz)
 
+        # draw a line to each rotated axis
         line_x = [0, vx[0], vy[0], vz[0]]
         line_y = [0, vx[1], vy[1], vz[1]]
         line_z = [0, vx[2], vy[2], vz[2]]
 
+        # redraw the scatter plot of the puck's orientation
         if self.data_plot:
             self.ax.collections.remove(self.data_plot)
         self.data_plot = self.ax.scatter(line_x, line_y, line_z, c="b")
-        plt.pause(.00005)
+        plt.pause(.00005) # pause an infinitesimal amount of time to allow update.
 
 if __name__ == "__main__":
+    '''
+    start the scope to watch the puck orientation
+    '''
     orientation_scope = OrientationScope()
     try:
         orientation_scope.start_scope()
