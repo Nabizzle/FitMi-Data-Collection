@@ -4,7 +4,7 @@ import numpy as np
 import time
 from matplotlib import pyplot as plt
 from ani_plot import AniPlot
-from Puck import HIDPuckDongle
+from Puck.hid_puck import HIDPuckDongle
 from Puck.hid_puck import *
 
 class PuckPlotter(object):
