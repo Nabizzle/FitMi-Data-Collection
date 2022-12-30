@@ -226,21 +226,21 @@ class PuckPlotter(object):
         puck_1_data : PuckPacket object
             Contains all of the polled data from puck 1, the yellow one
         '''
-        self.roll_plot.update(puck_0_data.roll_pitch_yaw[0,0], puck_1_data.roll_pitch_yaw[0,0])
-        self.pitch_plot.update(puck_0_data.roll_pitch_yaw[0,1], puck_1_data.roll_pitch_yaw[0,1])
-        self.yaw_plot.update(puck_0_data.roll_pitch_yaw[0,2], puck_1_data.roll_pitch_yaw[0,2])
+        self.roll_plot.update(puck_0_data.roll_pitch_yaw[0], puck_1_data.roll_pitch_yaw[0])
+        self.pitch_plot.update(puck_0_data.roll_pitch_yaw[1], puck_1_data.roll_pitch_yaw[1])
+        self.yaw_plot.update(puck_0_data.roll_pitch_yaw[2], puck_1_data.roll_pitch_yaw[2])
 
-        self.x_gyro_plot.update(puck_0_data.gyroscope[0,0], puck_1_data.gyroscope[0,0])
-        self.y_gyro_plot.update(puck_0_data.gyroscope[0,1], puck_1_data.gyroscope[0,1])
-        self.z_gyro_plot.update(puck_0_data.gyroscope[0,2], puck_1_data.gyroscope[0,2])
+        self.x_gyro_plot.update(puck_0_data.gyroscope[0], puck_1_data.gyroscope[0])
+        self.y_gyro_plot.update(puck_0_data.gyroscope[1], puck_1_data.gyroscope[1])
+        self.z_gyro_plot.update(puck_0_data.gyroscope[2], puck_1_data.gyroscope[2])
 
-        self.x_acceleration_plot.update(puck_0_data.accelerometer[0,0], puck_1_data.accelerometer[0,0])
-        self.y_acceleration_plot.update(puck_0_data.accelerometer[0,1], puck_1_data.accelerometer[0,1])
-        self.z_acceleration_plot.update(puck_0_data.accelerometer[0,2], puck_1_data.accelerometer[0,2])
+        self.x_acceleration_plot.update(puck_0_data.accelerometer[0], puck_1_data.accelerometer[0])
+        self.y_acceleration_plot.update(puck_0_data.accelerometer[1], puck_1_data.accelerometer[1])
+        self.z_acceleration_plot.update(puck_0_data.accelerometer[2], puck_1_data.accelerometer[2])
 
-        self.x_velocity_plot.update(puck_0_data.velocity[0,0], puck_1_data.velocity[0,0])
-        self.y_velocity_plot.update(puck_0_data.velocity[0,1], puck_1_data.velocity[0,1])
-        self.z_velocity_plot.update(puck_0_data.velocity[0,2], puck_1_data.velocity[0,2])
+        self.x_velocity_plot.update(puck_0_data.velocity[0], puck_1_data.velocity[0])
+        self.y_velocity_plot.update(puck_0_data.velocity[1], puck_1_data.velocity[1])
+        self.z_velocity_plot.update(puck_0_data.velocity[2], puck_1_data.velocity[2])
         
         self.load_cell_plot.update(puck_0_data.load_cell, puck_1_data.load_cell)
 

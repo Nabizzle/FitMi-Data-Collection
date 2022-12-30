@@ -1,7 +1,3 @@
-##----------------------------------------------------------------------------##
-##---- Rehab puck data packet ------------------------------------------------##
-##----------------------------------------------------------------------------##
-
 import struct
 import numpy as np
 from Puck.Quaternion import q_rotate_vector
@@ -9,13 +5,22 @@ import math
 
 ##---- Puck Packet -----------------------------------------------------------##
 class PuckPacket(object):
+    '''
+    Class containing all of the data from the puck as well as calculated data
+
+    This class contains all of the data parsed from the puck's data stream for its sensors as well as status indicators and one calculated variable for the roll, pitch, and yaw of the puck.
+
+    Attributes
+    ----------
+    accelerometer : 
+    '''
     def __init__(self):
-        self.accelerometer = np.matrix([0,0,0])
-        self.gyroscope = np.matrix([0,0,0])
-        self.magnetometer = np.matrix([0,0,0])
-        self.velocity = np.matrix([0,0,0]) #linear velocity in global ref - only updates if activated.
+        self.accelerometer = np.array([0,0,0])
+        self.gyroscope = np.array([0,0,0])
+        self.magnetometer = np.array([0,0,0])
+        self.velocity = np.array([0,0,0]) #linear velocity in global ref - only updates if activated.
         self.quaternion = np.array([0,0,0,0])
-        self.roll_pitch_yaw = np.matrix([0,0,0])
+        self.roll_pitch_yaw = np.array([0,0,0])
         self.load_cell = 0
         self.battery = 0
         self.charging = 0
@@ -79,9 +84,9 @@ class PuckPacket(object):
         q2 = self.quaternion[2]
         q3 = self.quaternion[3]
 
-        self.roll_pitch_yaw[0,2] = np.arctan2(2.0 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)*180.0/np.pi
-        self.roll_pitch_yaw[0,0] = -np.arcsin(2.0 * (q1 * q3 - q0 * q2))*180.0/np.pi
-        self.roll_pitch_yaw[0,1]  = np.arctan2(2.0 * (q0 * q1 + q2 * q3), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)*180.0/np.pi
+        self.roll_pitch_yaw[2] = np.arctan2(2.0 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)*180.0/np.pi
+        self.roll_pitch_yaw[0] = -np.arcsin(2.0 * (q1 * q3 - q0 * q2))*180.0/np.pi
+        self.roll_pitch_yaw[1]  = np.arctan2(2.0 * (q0 * q1 + q2 * q3), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)*180.0/np.pi
 
     def getVertAngle(self):
         # rotate the z unit vector by our quaternion.

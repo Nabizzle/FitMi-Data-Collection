@@ -63,7 +63,7 @@ class PuckTask(object):
             return
 
         # get the desired degree of freedom's angle
-        pos = puck.puck_1_packet.roll_pitch_yaw[0,self.dof]
+        pos = puck.puck_1_packet.roll_pitch_yaw[self.dof]
 
         # if the angle does not exist, return nothing
         if not pos:
@@ -97,7 +97,7 @@ class PuckTask(object):
             return
 
         # get the desired degree of freedom's angle
-        pos = puck.puck_1_packet.roll_pitch_yaw[0,self.dof]
+        pos = puck.puck_1_packet.roll_pitch_yaw[self.dof]
 
         # if the angle does not exist, return nothing
         if not pos:
