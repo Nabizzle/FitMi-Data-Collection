@@ -4,7 +4,6 @@ import numpy as np
 import time
 from matplotlib import pyplot as plt
 from ani_plot import AniPlot
-
 from Puck import HIDPuckDongle
 from Puck.hid_puck import *
 
@@ -55,10 +54,20 @@ class PuckPlotter(object):
     -------
     __init__()
         Creates subplots to show data from the FitMi pucks
+    start()
+        Starts recording from the pucks and polls based on sample rate
+    stop()
+        Stops recording from the pucks and close the dongle connection
+    run(puck_0_data, puck_1_data)
+        Updates each data plot based on the polled data
+    update_buffers(puck_0_data, puck_1_data)
+        Uses polled data to update AniPlot subplots
     '''
     def __init__(self):
         '''
-        Creates subplots to show data from the FitMi pucks     
+        Creates subplots to show data from the FitMi pucks
+
+        Formats the figure the data is plotted on. Allows the user to tweak plotting ranges and labels.     
         '''
         self.samples_per_second = 60
         self.max_run_time_seconds = 100
@@ -137,27 +146,42 @@ class PuckPlotter(object):
         self.puck = HIDPuckDongle()
 
     def start(self):
+        '''
+        Starts recording from the pucks and polls based on sample rate
+        '''
+        # Send command to communicate with both pucks
         self.puck.open()
         self.puck.sendCommand(0,SENDVEL, 0x00, 0x01)
         self.puck.sendCommand(1,SENDVEL, 0x00, 0x01)
-        #self.puck.setTouchBuzz(1,0)
-        tick_up = 0
+
+        # sample both pucks and pause by the sample rate
         for i in range(self.max_samples):
             self.puck.checkForNewPuckData()
-            self.run(self.puck.puck_packet_0, self.puck.puck_packet_1)
+            self.run(self.puck.puck_packet_0, self.puck.puck_packet_1)# send queried data to the plots and update them
             time.sleep(1.0/self.samples_per_second)
-            tick_up+=1
-            if tick_up > self.samples_per_second:
-                tick_up=0
 
     def stop(self):
+        '''
+        Stops recording from the pucks and close the dongle connection
+        '''
         self.puck.sendCommand(0,SENDVEL, 0x00, 0x00)
         self.puck.sendCommand(1,SENDVEL, 0x00, 0x00)
         self.puck.close()
 
-    def run(self, puck_data=None, puck_data2=None):
-        # update the xy data
-        self.update_buffers(puck_data, puck_data2)
+    def run(self, puck_0_data=None, puck_1_data=None):
+        '''
+        Updates each data plot based on the polled data
+
+        Sends the polled data to each of the AniPlot objects to update them and then redraws the plots. This also checks if you are touching the pucks to change the color of the load cell plots.
+
+        Parameters
+        ----------
+        puck_0_data : PuckPacket object, optional
+            Contains all of the polled data from puck 0, the blue one
+        puck_1_data : PuckPacket object, optional
+            Contains all of the polled data from puck 1, the yellow one
+        '''
+        self.update_buffers(puck_0_data, puck_1_data)
 
         self.roll_plot.draw(self.fig)
         self.pitch_plot.draw(self.fig)
@@ -177,40 +201,54 @@ class PuckPlotter(object):
 
         self.load_cell_plot.draw(self.fig)
 
-        if puck_data.touch:
+        if puck_0_data.touch:
             self.load_cell_plot.puck_1_plot.set_color("r")
         else:
             self.load_cell_plot.puck_1_plot.set_color("b")
 
-        if puck_data2.touch and self.load_cell_plot.puck_2_plot:
+        if puck_1_data.touch and self.load_cell_plot.puck_2_plot:
             self.load_cell_plot.puck_2_plot.set_color("m")
         else:
             self.load_cell_plot.puck_2_plot.set_color("g")
 
-    ##---- the real update function ------------------------------------------##
-    def update_buffers(self, puck_data, puck_data2):
-        self.roll_plot.update(puck_data.rpy[0,0], puck_data2.rpy[0,0])
-        self.pitch_plot.update(puck_data.rpy[0,1], puck_data2.rpy[0,1])
-        self.yaw_plot.update(puck_data.rpy[0,2], puck_data2.rpy[0,2])
+    def update_buffers(self, puck_0_data, puck_1_data):
+        '''
+        Uses polled data to update AniPlot subplots
 
-        self.x_gyro_plot.update(puck_data.gyroscope[0,0], puck_data2.gyroscope[0,0])
-        self.y_gyro_plot.update(puck_data.gyroscope[0,1], puck_data2.gyroscope[0,1])
-        self.z_gyro_plot.update(puck_data.gyroscope[0,2], puck_data2.gyroscope[0,2])
+        Takes an input of data from the pucks and parses the data to update individual plots. This method also buzzes the puck if the user moves it fast.
 
-        self.x_acceleration_plot.update(puck_data.accelerometer[0,0], puck_data2.accelerometer[0,0])
-        self.y_acceleration_plot.update(puck_data.accelerometer[0,1], puck_data2.accelerometer[0,1])
-        self.z_acceleration_plot.update(puck_data.accelerometer[0,2], puck_data2.accelerometer[0,2])
+        Parameters
+        ----------
+        puck_0_data : PuckPacket object, optional
+            Contains all of the polled data from puck 0, the blue one
+        puck_1_data : PuckPacket object, optional
+            Contains all of the polled data from puck 1, the yellow one
+        '''
+        self.roll_plot.update(puck_0_data.rpy[0,0], puck_1_data.rpy[0,0])
+        self.pitch_plot.update(puck_0_data.rpy[0,1], puck_1_data.rpy[0,1])
+        self.yaw_plot.update(puck_0_data.rpy[0,2], puck_1_data.rpy[0,2])
 
-        self.x_velocity_plot.update(puck_data.velocity[0,0], puck_data2.velocity[0,0])
-        self.y_velocity_plot.update(puck_data.velocity[0,1], puck_data2.velocity[0,1])
-        self.z_velocity_plot.update(puck_data.velocity[0,2], puck_data2.velocity[0,2])
+        self.x_gyro_plot.update(puck_0_data.gyroscope[0,0], puck_1_data.gyroscope[0,0])
+        self.y_gyro_plot.update(puck_0_data.gyroscope[0,1], puck_1_data.gyroscope[0,1])
+        self.z_gyro_plot.update(puck_0_data.gyroscope[0,2], puck_1_data.gyroscope[0,2])
+
+        self.x_acceleration_plot.update(puck_0_data.accelerometer[0,0], puck_1_data.accelerometer[0,0])
+        self.y_acceleration_plot.update(puck_0_data.accelerometer[0,1], puck_1_data.accelerometer[0,1])
+        self.z_acceleration_plot.update(puck_0_data.accelerometer[0,2], puck_1_data.accelerometer[0,2])
+
+        self.x_velocity_plot.update(puck_0_data.velocity[0,0], puck_1_data.velocity[0,0])
+        self.y_velocity_plot.update(puck_0_data.velocity[0,1], puck_1_data.velocity[0,1])
+        self.z_velocity_plot.update(puck_0_data.velocity[0,2], puck_1_data.velocity[0,2])
         
-        self.load_cell_plot.update(puck_data.load_cell, puck_data2.load_cell)
+        self.load_cell_plot.update(puck_0_data.load_cell, puck_1_data.load_cell)
 
-        if np.linalg.norm(puck_data2.accelerometer) > 1500:
+        if np.linalg.norm(puck_1_data.accelerometer) > 1500:
             self.puck.actuate(1, 500, 100)
 
 if __name__ == '__main__':
+    '''
+    Creates the puck plotter and starts it.
+    '''
     plotter = PuckPlotter()
     try:
         plotter.start()
