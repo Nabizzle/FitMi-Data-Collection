@@ -1,31 +1,111 @@
-##----------------------------------------------------------------------------##
-##---- puck task -------------------------------------------------------------##
-##----------------------------------------------------------------------------##
-## HID puck version of the puck task class - try to make it similar.
-
 class PuckTask(object):
-    degrees_of_freedom = {'r':0, 'p': 1, 'y': 2}
-    def __init__(self, dof='p'):
-        self.dof = self.degrees_of_freedom[dof]  # we actually want the index
-        self.state = 0
-        self.pos_reference = 0
+    '''
+    Attributes
+    ----------
+    degrees_of_freedom : dict
+        Dictionary of the roll, pitch, and yaw of the puck
+    dof : string
+        index to the roll_pitch_yaw variable of the yellow puck
+    state : bool
+        state for if the yellow puck's desired degree of freedom is less than the negative of the target value (True) or greater than the target value (False)
+    angle_reference : int
+        Angle to subtract from the degree of freedom when comparing to the target angle
+    target : int
+        The +/- range the desired degree of freedom needs to be outside of to trigger a state change
+
+    Methods
+    -------
+    __init__(dof_key)
+        Initializes the dof, state, angle_reference, and target values
+    checkStateATrigger
+        Checks if the puck has moved to a negative angle past the target range.
+    checkStateBTrigger
+        Checks if the puck has moved to a positive angle past the target range.
+    '''
+    degrees_of_freedom = {'roll' : 0, 'pitch': 1, 'yaw': 2}
+
+    def __init__(self, dof_key = 'pitch'):
+        '''
+        Initializes the dof, state, angle_reference, and target values
+
+        Initializes the class attributes and selects the desired roll_pitch_yaw variable index based on the dof_key input parameter
+
+        Parameters
+        ----------
+        dof_key : string
+            Key for the degrees of freedom dictionary of indices
+        '''
+        self.dof = self.degrees_of_freedom[dof_key]  # gets the index for the roll_pitch_yaw data variable
+
+        #sets the other attributes to their default states
+        self.state = False
+        self.angle_reference = 0
         self.target = 15
 
-    def checkStateATrigger(self, rehab_touch):
-        if self.state == 1: return
-        pos = rehab_touch.puck_packet_1.roll_pitch_yaw[0,self.dof]
-        if not pos: return
-        if (pos - self.pos_reference) < -self.target:
-            self.state = 1
-            return True
+    def checkStateATrigger(self, puck):
+        '''
+        Checks if the puck has moved to a negative angle past the target range.
 
-        return False
+        Triggers a change to the state value if the puck's desired degree of freedom has moved from a positive value above the target number to a negative value below the negative of the target value.
 
-    def checkStateBTrigger(self, rehab_touch):
-        if self.state == 0: return
-        pos = rehab_touch.puck_packet_1.roll_pitch_yaw[0,self.dof]
-        if not pos: return
-        if (pos - self.pos_reference) > self.target:
-            self.state = 0
-            return True
-        return False
+        Parameters
+        ----------
+        puck : HIDPuckDongle object
+            connection to the dongle for accessing the yellow puck's roll, pitch, or yaw angle
+
+        Returns
+        -------
+        state : bool
+            Returns if the state has switched values. True is it changed from False to True
+        '''
+        # if the state is already true, this method does not need to run
+        if self.state:
+            return
+
+        # get the desired degree of freedom's angle
+        pos = puck.puck_1_packet.roll_pitch_yaw[0,self.dof]
+
+        # if the angle does not exist, return nothing
+        if not pos:
+            return
+
+        # switch the state's value if the degree of freedom is below the negative of the target
+        if (pos - self.angle_reference) < -self.target:
+            self.state = True
+
+        # return the state value as if it was true, the value switched and if its false, nothing changed.
+        return self.state
+
+    def checkStateBTrigger(self, puck):
+        '''
+        Checks if the puck has moved to a positive angle past the target range.
+
+        Triggers a change to the state value if the puck's desired degree of freedom has moved from a negative value below the negative of the target number to a positive value above the target value.
+
+        Parameters
+        ----------
+        puck : HIDPuckDongle object
+            connection to the dongle for accessing the yellow puck's roll, pitch, or yaw angle
+
+        Returns
+        -------
+        bool
+            Returns if the state has switched values. True is it changed from True to False
+        '''
+        # if the state is already false, this method does not need to run
+        if not self.state:
+            return
+
+        # get the desired degree of freedom's angle
+        pos = puck.puck_1_packet.roll_pitch_yaw[0,self.dof]
+
+        # if the angle does not exist, return nothing
+        if not pos:
+            return
+
+        # switch the state's value if the degree of freedom is above the the target value
+        if (pos - self.angle_reference) > self.target:
+            self.state = False
+
+        # return the opposite of the state value as if it was false, the value switched and if its true, nothing changed.
+        return not self.state
