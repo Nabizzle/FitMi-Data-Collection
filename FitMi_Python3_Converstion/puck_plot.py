@@ -244,10 +244,6 @@ class PuckPlotter(object):
         
         self.load_cell_plot.update(puck_0_data.load_cell, puck_1_data.load_cell)
 
-        # if the acceleration of the puck is high, pulse the motor
-        if np.linalg.norm(puck_1_data.accelerometer) > 1500:
-            self.puck.actuate(1, 500, 100)
-
 if __name__ == '__main__':
     '''
     Creates the puck plotter and starts it.
