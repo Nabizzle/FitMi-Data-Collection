@@ -52,11 +52,11 @@ class ScanPacket(object):
         string
             The combined format string for parsing the incoming byte data in the scan packet
         '''
-        pipe_channel = "hhhhhh"
-        found_count  = "hhhhhh"
-        scan_time = "h"
-        battery  = "B"
-        status   = "B"
+        pipe_channel = "hhhhhh" # six shorts
+        found_count  = "hhhhhh" # six shorts
+        scan_time = "h" # one short
+        battery  = "B" # one char
+        status   = "B" # one char
         return "<"+pipe_channel+found_count+scan_time+battery+status
 
     def parse(self, raw_data):
