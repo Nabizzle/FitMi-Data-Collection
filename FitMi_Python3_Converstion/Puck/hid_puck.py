@@ -221,43 +221,59 @@ class HIDPuckDongle(object):
             if self.receiving_data:
                 return
 
-    ##---- input checker -----------------------------------------------------##
-    ## checks whether the input value has changed.
     def inputChecker(self):
-        readFailCount = 0
-        tooManyFails = 70
-        tick = 0
+        '''
+        Tries to read in input data from the pucks
 
-        touch_history = {"puck0": False, "puck1": False}
+        Makes an attempt to read the input data from the pucks up to a certain number of times. Once a successful read happens, the pucks are checked for if they are being touched and usb queue is sent out
+        '''
+        # set the read counter variables
+        read_failure_count = 0
+        max_read_failures = 70
+
+        # Create a dictionary for if the pucks have been touched
+        touch_history = {"puck_0": False, "puck_1": False}
+
+        # While the dongle is connected to, try to read in the inputs, check if
+        # the pucks are touched and write out the usb queue over the dongle
         while self.is_open:
+            # read in the puck data
             try:
                 self.input = self.dongle.read(62)
+                # if the read failed, increment the read failure counter
                 if not self.input:
-                    readFailCount += 1
-                    if readFailCount > tooManyFails:
+                    read_failure_count += 1
+                    # If the reads have reached the maximum amount, indicate
+                    # the connection is likely severed
+                    if read_failure_count >= max_read_failures:
                         self.receiving_data = False
                 else:
-                    readFailCount = 0
+                    read_failure_count = 0
                     self.receiving_data = True
-                    ## quickly catch touch events.
+                    # poll for touch events on each puck
                     self.check_for_touch(self.input, touch_history, puck_number=0)
                     self.check_for_touch(self.input, touch_history, puck_number=1)
 
+                # if there is data in the usb queue send it out
                 if not self.usb_out_queue.empty():
-                    self.dongle.write(self.usb_out_queue.get()) # first byte is report id
+                    # first byte is report id
+                    self.dongle.write(self.usb_out_queue.get()) 
                     
             except Exception as e:
                 self.receiving_data = False
                 if self.print_debug: print(e)
+
             finally:
-                time.sleep(0.00001)
+                time.sleep(0.00001) # wait in infinitesimal amount of time
                 
-        # Make sure we clear the queue
-        for i in range(10):
+        # clear the queue when the connection is meant to close
+        for _ in range(10):
             if not self.usb_out_queue.empty():
-                self.dongle.write(self.usb_out_queue.get()) # first byte is report id
+                # first byte is report id
+                self.dongle.write(self.usb_out_queue.get())
             else:
                 break
+        # close the connection to the dongle
         self.dongle.close()
 
     ##---- parse the status byte to determine if there was a touch event -----##
@@ -274,22 +290,22 @@ class HIDPuckDongle(object):
         touch = (status & 0b00000100) >> 2
 
         if puck_number == 0:
-            if touch and not touch_history["puck0"]:
+            if touch and not touch_history["puck_0"]:
                 if not self.touch_queue.full():
                     self.touch_queue.put([0,True]) ## put in the puck number
-            elif not touch and touch_history["puck0"]:
+            elif not touch and touch_history["puck_0"]:
                 if not self.touch_queue.full():
                     self.touch_queue.put([0,False]) ## put in the puck number
-            touch_history["puck0"] = touch
+            touch_history["puck_0"] = touch
 
         if puck_number == 1:
-            if touch and not touch_history["puck1"]:
+            if touch and not touch_history["puck_1"]:
                 if not self.touch_queue.full():
                     self.touch_queue.put([1,True]) ## put in the puck number
-            elif not touch and touch_history["puck1"]:
+            elif not touch and touch_history["puck_1"]:
                 if not self.touch_queue.full():
                     self.touch_queue.put([1,False]) ## put in the puck number
-            touch_history["puck1"] = touch
+            touch_history["puck_1"] = touch
 
     ##---- run this method in game loop to parse incoming data.
     def checkForNewPuckData(self):
