@@ -1,7 +1,6 @@
 import hid
 import time
 import threading
-import sys
 import struct
 import os
 # suppresses pygame welcome message
@@ -27,8 +26,8 @@ MAGCALY      = 0x0D # Send magnetometer calibration data back to puck
 MAGCALZ      = 0x0E # Send magnetometer calibration data back to puck
 DNGLRST      = 0x0F # Reset the dongle
 SENDVEL      = 0x10 # Send velocity (data==1) or send magnetometer (data==0)
-TOUCHBUZ     = 0x11 # Turn touch buz on and off (1 and 0)
-CHANGEFREQ   = 0x12 # Change the frequency of data polling?
+TOUCHBUZ     = 0x11 # Turn touch buzz on and off (1 and 0)
+CHANGEFREQ   = 0x12 # Change the frequency of the RX radio
 RXCHANGEFREQ = 0x13 # Change the frequency of sending data with the dongle
 CHANSPY      = 0x14 # Spy on a channel
 SETUSBPIPES  = 0x15 # Tell the dongle which pipes to send over usb
@@ -107,6 +106,32 @@ class HIDPuckDongle(object):
         Directs the incoming data the correct parsing functions
     parse_rx_data(rx_data)
         Extract out the RX radio data from the input stream
+    send_command(puck_number, command, message, last_byte)
+        Formats a command to one of the pucks
+    note_sending(value)
+        Sends a message to the error log
+    actuate(puck_number, duration, amplitude, action_type, actuator)
+        Sends a command to "blink" or pulse one of the lights or the motor
+    set_touch_buzz(puck_number, value)
+        Turns the vibration when touched feature on or off
+    change_rx_freq(new_frequency)
+        Changes the frequency of the RX radio
+    set_usb_pipes(packet_0_pipe, packet_1_pipe)
+        Tell the dongle which pipes to send over the usb connection
+    start_spy(channel, duration)
+        Spy on a particular channel for a specific amount of time
+    stop()
+        Set the is_open value to False
+    close()
+        Reset the puck's to default state and close the input thread
+    is_opened()
+        Returns the is_open variable
+    is_plugged()
+        Checks if the dongle is in the list of hardware input devices
+    is_plugged_fast()
+        Simplified is_plugged method to check if the dongle is receiving data
+    get_device_info()
+        Finds the hardware input device for the dongle
     '''
     def __init__(self, error_report=None):
         '''
@@ -426,105 +451,210 @@ class HIDPuckDongle(object):
             ## put the message in the usb out queue
             if not self.usb_out_queue.full():
                 self.usb_out_queue.put([0x00, command, message, last_byte])
-                if self.print_debug: print("queued 0x%x , 0x%x to puck %s" % (command, message << 8 | last_byte, puck_number))
+                if self.print_debug:
+                    print("queued 0x%x , 0x%x to puck %s" % (command,
+                        message << 8 | last_byte, puck_number))
 
     def note_sending(self, value):
-        # if the error report path is set
+        '''
+        Sends a message to the error log
+        '''
+        # if the error report path is set, log a message to the error log
         if self.error_report_path:
-            with open(os.path.join(self.error_report_path, "usb_sending.txt"), 'w') as f:
-                f.write("%s"%value)
+            with open(os.path.join(self.error_report_path,
+                "usb_sending.txt"), 'w') as output_stream:
+                output_stream.write("%s"%value)
 
-    ##---- buzz motor --------------------------------------------------------##
-    def actuate(self, puck_number, duration, amp, action_type="blink", actuator="motor"):
-        ## do not spam the pucks with actuator commands
+    def actuate(self, puck_number, duration, amplitude, action_type="blink",
+    actuator="motor"):
+        '''
+        Sends a command to "blink" or pulse one of the lights or the motor
+
+        This method turns one of the lights or the motor on for a specified
+        duration. It also makes sure that actuation method is not used to often.
+
+        Parameters
+        ----------
+        puck_number : int
+            ID for which puck is sent the actuate command
+        duration : int
+            The amount of time to actuate the puck
+        amplitude : int
+            The strength of the actuation
+        action_type : string, default = "blink"
+            What kind of action to take. Should be "pulse" or "blink"
+        actuator : string, default = "motor"
+            Which light to actuate or the motor
+        '''
+        # checks if the puck has been actuated recently
         if puck_number == 0 and ((time.time() - self.last_sent[0]) < 0.2):
             return
         elif puck_number == 1 and ((time.time() - self.last_sent[1]) < 0.2):
             return
+        # sets when the puck was actuated last
         self.last_sent[puck_number] = time.time()
+        # converts the duration to a byte value
         duration_byte = min(duration*255/1500, 255)
-        amp = min(amp, 100)
+        # saturates the amplitude to 100
+        amplitude = min(amplitude, 100)
+
+        # send the formatted actuation command
         try:
-            cmd = COMMANDS.get(actuator).get(action_type)
-            self.send_command(puck_number, cmd, duration_byte, amp)
+            command = COMMANDS.get(actuator).get(action_type)
+            self.send_command(puck_number, command, duration_byte, amplitude)
         except Exception as e:
             if self.print_debug: print("in hid_puck, actuate - " + str(e))
 
-    ##---- set touch buzz ----------------------------------------------------##
-    def setTouchBuzz(self, puck_number, value):
+    def set_touch_buzz(self, puck_number, value):
+        '''
+        Turns the vibration when touched feature on or off
+
+        Parameters
+        ----------
+        puck_number : int
+            ID for which puck is sent the actuate command
+        value : int
+            message for if the vibration should be on (1) or off (0)
+        '''
         self.send_command(puck_number, TOUCHBUZ, 0, value)
 
-    ##---- change RX frequency -----------------------------------------------##
-    def changeRXFreq(self, new_frequency ):
+    def change_rx_freq(self, new_frequency ):
+        '''
+        Changes the frequency of the RX radio
+
+        Parameters
+        ----------
+        new_frequency : int
+            The desired communication frequency of the RX radio
+        '''
         self.send_command(0, RXCHANGEFREQ, 0, new_frequency)
 
-    ##---- tell the receiver which pipes to send over the usb connection -----##
-    def setUSBPipes(self, pack0_pipe=0, pack1_pipe=1):
-        pack0_pipe = min(pack0_pipe, 5)
-        pack1_pipe = min(pack1_pipe, 5)
-        self.send_command(0, SETUSBPIPES, pack0_pipe, pack1_pipe)
+    def set_usb_pipes(self, packet_0_pipe=0, packet_1_pipe=1):
+        '''
+        Tell the dongle which pipes to send over the usb connection
 
-    ##---- spy on a particular channel for a limited amount of time ---------##
-    def startSpy(self, spy_channel=12, duration=100):
-        # note that spy_channel is  the channel (0, 127)
-        if duration > 255:
+        Parameters
+        ----------
+        packet_0_pipe : int, default = 0
+            pipe for the blue puck's data
+        packet_1_pipe : int, default = 1
+            pipe for the yellow puck's data
+        '''
+        packet_0_pipe = min(packet_0_pipe, 5)
+        packet_1_pipe = min(packet_1_pipe, 5)
+        self.send_command(0, SETUSBPIPES, packet_0_pipe, packet_1_pipe)
+
+    def start_spy(self, channel = 12, duration = 100):
+        '''
+        Spy on a particular channel for a specific amount of time
+
+        Parameters
+        ----------
+        channel : int, default = 12
+            Channel to spy on
+        duration : int
+            a byte for the length of time to spy
+        '''
+        # note that spy_channel is the channel (0, 127)
+        if duration > 255: # limit duration to 255
             duration = 255
-        self.send_command(0, CHANSPY, spy_channel, duration)
+        self.send_command(0, CHANSPY, channel, duration)
 
-    ##---- thread start ------------------------------------------------------##
     def stop(self):
+        '''
+        Set the is_open value to False
+        '''
         self.is_open = False
 
-    ##---- thread start ------------------------------------------------------##
     def close(self):
+        '''
+        Reset the puck's to default state and close the input thread
+        '''
+        # resets the motor buzz on touch feature
         if self.is_plugged() and self.is_open:
             try:
-                self.setTouchBuzz(0,1)
-                self.setTouchBuzz(1,1)
+                self.set_touch_buzz(0,1)
+                self.set_touch_buzz(1,1)
             except:
                 pass
+
+        # sets the open flag to false and terminate the input thread
         self.is_open = False
         if self.input_thread.is_alive():
             self.input_thread.join()
         self.input_thread = threading.Thread(target=self.input_checker)
 
-    ##---- is connected ------------------------------------------------------##
     def is_opened(self):
+        '''
+        Returns the is_open variable
+
+        Returns
+        -------
+        bool
+            is_open value
+        '''
         return self.is_open
 
-    ##---- check connection --------------------------------------------------##
     def is_plugged(self):
+        '''
+        Checks if the dongle is in the list of hardware input devices
+
+        Returns
+        -------
+        bool
+            True if the dongle if found
+        '''
         for device in hid.enumerate():
             if device['product_id'] == self.PRODUCT_ID and \
                device['vendor_id'] == self.VENDOR_ID:
                return True
+        
+        return False
 
-    ##---- infrequently check if the device is plugged in --------------------##
     def is_plugged_fast(self):
-        # return the value from our thread
+        '''
+        Simplified is_plugged method to check if the dongle is receiving data
+
+        Returns
+        -------
+        bool
+            Returns the receiving_data flag
+        '''
         return self.receiving_data
 
-    ##---- get the information about the device ------------------------------##
-    def getDeviceInfo(self):
+    def get_device_info(self):
+        '''
+        Finds the hardware input device for the dongle
+
+        Returns
+        -------
+        hid.device()
+            Returns device for the dongle base on the product id and vendor id
+        '''
+        # for all devices on a computer return device for the dongle if found
         for device in hid.enumerate():
             if device['product_id'] == self.PRODUCT_ID and \
                device['vendor_id'] == self.VENDOR_ID:
                return device
 
 if __name__ == "__main__":
+    '''
+    Spy on channel 12 and connect to both pucks
+
+    Does a simple check on the function of the dongle
+    '''
     print("spy on channel 12")
-    import time
-    import os
+ 
     try:
-        pk = HIDPuckDongle()
-        pk.open()
-        print(pk.is_open)
-        pk.startSpy(12, 200)
+        puck = HIDPuckDongle()
+        puck.open()
+        print(puck.is_open)
+        puck.start_spy(12, 200)
         for i in range(0, 2500):
-            pk.checkForNewPuckData()
-            print(pk.rx_channel, pk.puck_0_packet.connected, pk.puck_1_packet.connected)
+            puck.checkForNewPuckData()
+            print(puck.rx_channel, puck.puck_0_packet.connected, puck.puck_1_packet.connected)
             time.sleep(0.01)
     except Exception as e:
         print(e)
     finally:
-        pk.close()
+        puck.close()
