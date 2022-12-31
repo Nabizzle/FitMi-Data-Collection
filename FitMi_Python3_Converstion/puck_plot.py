@@ -1,11 +1,9 @@
-#!/usr/bin/env python
-
-import numpy as np
 import time
 from matplotlib import pyplot as plt
 from ani_plot import AniPlot
 from Puck.hid_puck import HIDPuckDongle
 from Puck.hid_puck import *
+
 
 class PuckPlotter(object):
     '''
@@ -170,6 +168,7 @@ class PuckPlotter(object):
         # Connect to the dongle for puck communication
         self.puck = HIDPuckDongle()
 
+
     def start(self):
         '''
         Starts recording from the pucks and polls based on sample rate
@@ -186,6 +185,7 @@ class PuckPlotter(object):
             self.run(self.puck.puck_0_packet, self.puck.puck_1_packet)
             time.sleep(1.0/self.samples_per_second)
 
+
     def stop(self):
         '''
         Stops recording from the pucks and close the dongle connection
@@ -194,7 +194,9 @@ class PuckPlotter(object):
         self.puck.send_command(1, SENDVEL, 0x00, 0x00)
         self.puck.close()
 
-    def run(self, puck_0_data=None, puck_1_data=None):
+
+    def run(self, puck_0_data: PuckPacket = None,
+        puck_1_data: PuckPacket = None):
         '''
         Updates each data plot based on the polled data
 
@@ -239,7 +241,8 @@ class PuckPlotter(object):
         else:
             self.load_cell_plot.puck_2_plot.set_color("g")
 
-    def update_buffers(self, puck_0_data, puck_1_data):
+
+    def update_buffers(self, puck_0_data: PuckPacket, puck_1_data: PuckPacket):
         '''
         Uses polled data to update AniPlot subplots
 
@@ -283,6 +286,7 @@ class PuckPlotter(object):
             puck_1_data.velocity[2])
         
         self.load_cell_plot.update(puck_0_data.load_cell, puck_1_data.load_cell)
+
 
 if __name__ == '__main__':
     '''
