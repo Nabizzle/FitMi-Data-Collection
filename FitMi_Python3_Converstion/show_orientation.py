@@ -1,10 +1,8 @@
 import matplotlib.pyplot as plt
-import matplotlib
 from Puck.quaternion import *
 from Puck.hid_puck import HIDPuckDongle
 from Puck.hid_puck import *
 
-matplotlib.interactive(True)
 
 class OrientationScope(object):
     '''
@@ -41,7 +39,7 @@ class OrientationScope(object):
     update_plot()
         Takes the puck data and updates the 3D plot of orientation
     '''
-    def __init__(self, puck_number = 0):
+    def __init__(self, puck_number: int = 0):
         '''
         Creates the initial 3D plot of the puck axes
 
@@ -70,6 +68,7 @@ class OrientationScope(object):
         line_z = [0, 0, 0, 1]
         self.data_plot = self.ax.scatter(line_x, line_y, line_z, c="b")
 
+
     def start_scope(self):
         '''
         Starts communication with puck and updates plot with rotation
@@ -97,6 +96,7 @@ class OrientationScope(object):
                 print(".")
 
         self.puck.stop()
+
 
 
     def update_plot(self):
@@ -132,6 +132,7 @@ class OrientationScope(object):
             self.ax.collections.remove(self.data_plot)
         self.data_plot = self.ax.scatter(line_x, line_y, line_z, c="b")
         plt.pause(.00005) # pause infinitesimal amount of time to allow update.
+
 
 if __name__ == "__main__":
     '''
