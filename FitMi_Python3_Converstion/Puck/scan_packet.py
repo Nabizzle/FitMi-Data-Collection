@@ -46,7 +46,7 @@ class ScanPacket(object):
         self.status = -1
         self.packet_def = self.create_packet_definition()
 
-    def create_packet_definition(self):
+    def create_packet_definition(self) -> str:
         '''
         Creates the string for parsing the scan data stream
 
@@ -63,7 +63,7 @@ class ScanPacket(object):
         status   = "B" # one char
         return "<"+pipe_channel+found_count+scan_time+battery+status
 
-    def parse(self, raw_data):
+    def parse(self, raw_data: bytearray):
         '''
         Uses the packet definition to parse the scan data.
 
@@ -82,12 +82,18 @@ class ScanPacket(object):
         self.battery = data[13]
         self.status = data[14]
 
-    def __str__(self):
+    def __str__(self) -> str:
         '''
         Prints the pipe channels, the number of channels, and the scan channel
 
         When the ScanPacket object is printed, it prints the pipe channels, how
         many were found, and the scan channel.
+
+        Returns
+        -------
+        output_string : str
+            A string for the pipe channels, the number found, and the scan
+            channel
         '''
         number_found = sum([n for n in self.pipe_found_count if n > 0])
         output_string =\
