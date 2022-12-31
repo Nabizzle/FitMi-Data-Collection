@@ -16,28 +16,30 @@ import pygame
 from Puck.puck_packet import PuckPacket
 import queue
 
-RBLINK       = 0x01
-GBLINK       = 0x02
-BBLINK       = 0x03
-RPULSE       = 0x05
-MBLINK       = 0x04
-GPULSE       = 0x06
-BPULSE       = 0x07
-MPULSE       = 0x08
-MPUENBL      = 0x09
-PWR          = 0x0A
-GAMEON       = 0x0B
-MAGCALX      = 0x0C    ## send mag cal data back to puck
-MAGCALY      = 0x0D    ## send mag cal data back to puck
-MAGCALZ      = 0x0E    ## send mag cal data back to puck
-DNGLRST      = 0x0F    ## reset the dongle
-SENDVEL      = 0x10    ## send velocity (data==1) or send magnetometer (data==0)
-TOUCHBUZ     = 0x11    ## turn touch buz on and off (1 and 0)
-CHANGEFREQ   = 0x12
-RXCHANGEFREQ = 0x13
-CHANSPY      = 0x14
-SETUSBPIPES  = 0x15
+# command definitions
+RBLINK       = 0x01 # Blink the red light
+GBLINK       = 0x02 # Blink the green light
+BBLINK       = 0x03 # Blink the blue light
+RPULSE       = 0x05 # Pulse the red light
+MBLINK       = 0x04 # "Blink" the motor
+GPULSE       = 0x06 # Pulse the green light
+BPULSE       = 0x07 # Pulse the green light
+MPULSE       = 0x08 # Pulse the motor
+MPUENBL      = 0x09 #
+PWR          = 0x0A # Turn the puck on or off?
+GAMEON       = 0x0B # Puts the puck in "game mode"
+MAGCALX      = 0x0C # Send magnetometer calibration data back to puck
+MAGCALY      = 0x0D # Send magnetometer calibration data back to puck
+MAGCALZ      = 0x0E # Send magnetometer calibration data back to puck
+DNGLRST      = 0x0F # Reset the dongle
+SENDVEL      = 0x10 # Send velocity (data==1) or send magnetometer (data==0)
+TOUCHBUZ     = 0x11 # Turn touch buz on and off (1 and 0)
+CHANGEFREQ   = 0x12 # Change the frequency of data polling?
+RXCHANGEFREQ = 0x13 # Change the frequency of sending data with the dongle
+CHANSPY      = 0x14 # Spy on a channel
+SETUSBPIPES  = 0x15 # Tell the dongle which pipes to send over usb
 
+# Dictionary for addressing the lights or motor blinking and pulsing
 COMMANDS = {"red": {"blink": RBLINK, "pulse": RPULSE},
             "green": {"blink": GBLINK, "pulse": GPULSE},
             "blue": {"blink": BBLINK, "pulse": BPULSE},
