@@ -99,6 +99,10 @@ class HIDPuckDongle(object):
         Check if the pucks are sending data or if the radio should reset
     wait_for_data()
         Check if data has been received by the input_checking thread
+    input_checker()
+        Thread for checking if input data is coming in
+    check_for_touch(input, touch_history, puck_number)
+        Parse the status byte of the input data to see if there was a touch
     '''
     def __init__(self, error_report=None):
         '''
@@ -107,6 +111,11 @@ class HIDPuckDongle(object):
         Setup the threads for communicating with the pucks and the data
         variables that store communication data. Performs the relevant steps to
         set up the dongle as a hardware input device.
+
+        Parameters
+        ----------
+        error_report : file path, optional
+            path to the error log text file
         '''
         # set the hardware ids of the dongle
         self.VENDOR_ID = 0x04d8 # do not change this
@@ -139,7 +148,7 @@ class HIDPuckDongle(object):
         self.block1_pipe = 1
 
         # setup the input checking thread
-        self.input_thread = threading.Thread(target=self.inputChecker)
+        self.input_thread = threading.Thread(target=self.input_checker)
         self.input = None
 
         # setup the queues of output data and the log of touches to the puck
@@ -214,18 +223,22 @@ class HIDPuckDongle(object):
         '''
         Check if data has been received by the input_checking thread
 
-        Waits about 200 ms for data to be received before moving on. This affects when the open method finishes and sends the command to switch the pucks into "game on" mode.
+        Waits about 200 ms for data to be received before moving on. This
+        affects when the open method finishes and sends the command to switch
+        the pucks into "game on" mode.
         '''
         for i in range(0, 200):
             pygame.time.wait(1)  # wait until we are getting data
             if self.receiving_data:
                 return
 
-    def inputChecker(self):
+    def input_checker(self):
         '''
         Tries to read in input data from the pucks
 
-        Makes an attempt to read the input data from the pucks up to a certain number of times. Once a successful read happens, the pucks are checked for if they are being touched and usb queue is sent out
+        Makes an attempt to read the input data from the pucks up to a certain
+        number of times. Once a successful read happens, the pucks are checked
+        for if they are being touched and usb queue is sent out
         '''
         # set the read counter variables
         read_failure_count = 0
@@ -251,8 +264,10 @@ class HIDPuckDongle(object):
                     read_failure_count = 0
                     self.receiving_data = True
                     # poll for touch events on each puck
-                    self.check_for_touch(self.input, touch_history, puck_number=0)
-                    self.check_for_touch(self.input, touch_history, puck_number=1)
+                    self.check_for_touch(self.input,
+                        touch_history, puck_number=0)
+                    self.check_for_touch(self.input,
+                        touch_history, puck_number=1)
 
                 # if there is data in the usb queue send it out
                 if not self.usb_out_queue.empty():
@@ -276,35 +291,65 @@ class HIDPuckDongle(object):
         # close the connection to the dongle
         self.dongle.close()
 
-    ##---- parse the status byte to determine if there was a touch event -----##
-    ## Touch event can be too fast for the game loop to catch them. Missing
-    ## touch events can make the game feel broken. This thread runs faster than
-    ## the game loop and makes it more likely that we will catch touch events
-    ## that the game loop might have missed.
-    def check_for_touch(self, input, touch_history, puck_number=0):
-        index = 29
-        if puck_number == 1:
-            index = 59
+    def check_for_touch(self, input, touch_history, puck_number = 0):
+        '''
+        Parse the status byte of the input data to see if there was a touch
 
-        status = input[index]
+        Looks at the touch bit of the status byte to see if the puck is being
+        touched. If this touch value is different than the previous touch
+        value, then it is added to the touch queue.
+
+        Parameters
+        ----------
+        input : byte array
+            The data stream from both pucks
+        touch_history : dict
+            A dictionary containing if either puck was being touched the last
+            time this method was called
+        puck_number : int, default = 0
+            The puck checked for this method. 0 is the blue puck and 1 is the
+            yellow puck
+            
+        Notes
+        -----
+        Touch events can be too fast for the game loop to catch. Missing touch
+        events can make the game feel broken. This thread runs faster than the
+        game loop and makes it more likely that we will catch touch events that
+        the game loop might have missed.
+        '''
+        # sets the index for the status byte in the input byte array
+        status_byte_index = 29
+        if puck_number == 1:
+            status_byte_index = 59
+
+        # sets the status byte and extracts out the touch indicator from it
+        status = input[status_byte_index]
         touch = (status & 0b00000100) >> 2
 
+        # adds True to the blue puck's touch queue if it wasn't touched before
+        # and is now and adds False to the queue if it isn't being touched, but
+        # is now
         if puck_number == 0:
             if touch and not touch_history["puck_0"]:
                 if not self.touch_queue.full():
-                    self.touch_queue.put([0,True]) ## put in the puck number
+                    self.touch_queue.put([0,True])
             elif not touch and touch_history["puck_0"]:
                 if not self.touch_queue.full():
-                    self.touch_queue.put([0,False]) ## put in the puck number
+                    self.touch_queue.put([0,False])
+            # sets the touch history of the blue puck to the current touch value
             touch_history["puck_0"] = touch
 
+        # adds True to the yellow puck's touch queue if it wasn't touched before
+        # and is now and adds False to the queue if it isn't being touched, but
+        # is now
         if puck_number == 1:
             if touch and not touch_history["puck_1"]:
                 if not self.touch_queue.full():
-                    self.touch_queue.put([1,True]) ## put in the puck number
+                    self.touch_queue.put([1,True])
             elif not touch and touch_history["puck_1"]:
                 if not self.touch_queue.full():
-                    self.touch_queue.put([1,False]) ## put in the puck number
+                    self.touch_queue.put([1,False])
+            # sets the touch history of the yellow puck to the current value
             touch_history["puck_1"] = touch
 
     ##---- run this method in game loop to parse incoming data.
@@ -405,7 +450,7 @@ class HIDPuckDongle(object):
         self.is_open = False
         if self.input_thread.is_alive():
             self.input_thread.join()
-        self.input_thread = threading.Thread(target=self.inputChecker)
+        self.input_thread = threading.Thread(target=self.input_checker)
 
     ##---- is connected ------------------------------------------------------##
     def is_opened(self):
