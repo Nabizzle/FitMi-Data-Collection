@@ -5,11 +5,11 @@ Takes in a Python data file and plots each of the data types to their own plot.
 
 Parameters
 ----------
-data_folder : file path
+data_folder : str
     Path to the data folder
 file_name : string
     name of the data file
-full_path : file path
+full_path : str
     Path to the data file
 error_string : string
     error message if the path to the file does not exist

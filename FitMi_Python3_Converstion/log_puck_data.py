@@ -17,7 +17,7 @@ class PuckLogger(object):
 
     Attributes
     ----------
-    data_folder : file path
+    data_folder : str
         The path to the data folder. It has to be named data and he a subfolder
         in the current working directory
     file_name : string
