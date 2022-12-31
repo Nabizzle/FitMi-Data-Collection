@@ -1,9 +1,7 @@
-##----------------------------------------------------------------------------##
-##---------------- Rehab puck hid interface ----------------------------------##
-##----------------------------------------------------------------------------##
-## note that the puck must not be configured as a joystick. pygame automatically
-## tries to take control of joysticks and that prevents us from handling the
-## device ourselves.
+
+'''
+NOTE: Do not configure the dongle as a joystick hardware input device (hid). pygame is used to wait in specific threads and will take control of it automatically.
+'''
 
 import hid
 import time
@@ -47,38 +45,37 @@ COMMANDS = {"red": {"blink": RBLINK, "pulse": RPULSE},
 
 class HIDPuckDongle(object):
     ##---- initialization ----------------------------------------------------##
-    def __init__(self, err_rpt=None, operating_system="Windows"):
-        self.idVendor = 0x04d8 # do not change this
-        self.idProduct = 0x2742 # do not change this
+    def __init__(self, error_report=None, operating_system="Windows"):
+        self.VENDOR_ID = 0x04d8 # do not change this
+        self.PRODUCT_ID = 0x2742 # do not change this
         self.release = 0
         self.verbosity = 0
         self.dongle = hid.device()
-        self.inputPrev = None
-        self.isopen = False
+        self.is_open = False
 
-        if err_rpt is not None:
-            self.err_rpt_path = err_rpt
-            if not os.path.exists(self.err_rpt_path):
-                os.makedirs(self.err_rpt_path)
+        if error_report is not None:
+            self.error_report_path = error_report
+            if not os.path.exists(self.error_report_path):
+                os.makedirs(self.error_report_path)
         else:
-            self.err_rpt_path = None
+            self.error_report_path = None
 
         ## packet definitions specifies the structure of the packet.
-        self.receivingData = False
+        self.receiving_data = False
         self.puck_0_packet = PuckPacket()
         self.puck_1_packet = PuckPacket()
-        self.rx_hardware_state = 0;
-        self.rx_channel = 0;
-        self.block0_pipe = 0;
-        self.block1_pipe = 1;
+        self.rx_hardware_state = 0
+        self.rx_channel = 0
+        self.block0_pipe = 0
+        self.block1_pipe = 1
 
         self.iThread = threading.Thread(target=self.inputChecker)
         self.lock = threading.Lock()
         self.input = None
         self.input_count = 0
         self.callback = lambda input: sys.stdout.write(str(input) + "\n")
-        self.emptyDataCount = 0
-        self.plugState = False
+        self.empty_data_count = 0
+        self.plug_state = False
 
         self.usb_out_queue = queue.Queue(maxsize=10)
         self.touch_queue = queue.Queue(maxsize=10)
@@ -99,16 +96,16 @@ class HIDPuckDongle(object):
         except:
             pass
 
-        self.dongle.open(self.idVendor, self.idProduct)
+        self.dongle.open(self.VENDOR_ID, self.PRODUCT_ID)
         if self.verbosity > 0: print("manufacturer: %s" % self.dongle.get_manufacturer_string())
         if self.verbosity > 0: print("product: %s" % self.dongle.get_product_string())
 
-        self.isopen = True
+        self.is_open = True
         self.iThread.start()
 
-        self.plugState = True
-        self.emptyDataCount = 0
-        self.receivingData = False
+        self.plug_state = True
+        self.empty_data_count = 0
+        self.receiving_data = False
         self.check_connection()
         self.wait_for_data()
 
@@ -134,7 +131,7 @@ class HIDPuckDongle(object):
     def wait_for_data(self):
         for i in range(0, 200):
             pygame.time.wait(1)  # wait until we are getting data
-            if self.receivingData:
+            if self.receiving_data:
                 break
 
     ##---- set input change callback -----------------------------------------##
@@ -149,16 +146,16 @@ class HIDPuckDongle(object):
         tick = 0
 
         touch_history = {"puck0": False, "puck1": False}
-        while self.isopen:
+        while self.is_open:
             try:
                 self.input = self.dongle.read(62)
                 if not self.input:
-                    readFailCount += 1;
+                    readFailCount += 1
                     if readFailCount > tooManyFails:
-                        self.receivingData = False
+                        self.receiving_data = False
                 else:
                     readFailCount = 0
-                    self.receivingData = True
+                    self.receiving_data = True
                     ## quickly catch touch events.
                     self.check_for_touch(self.input, touch_history, puck_number=0)
                     self.check_for_touch(self.input, touch_history, puck_number=1)
@@ -167,7 +164,7 @@ class HIDPuckDongle(object):
                     self.dongle.write(self.usb_out_queue.get()) # first byte is report id
                     
             except Exception as e:
-                self.receivingData = False
+                self.receiving_data = False
                 if self.verbosity > 1: print(e)
             finally:
                 time.sleep(0.00001)
@@ -213,7 +210,7 @@ class HIDPuckDongle(object):
 
     ##---- run this method in game loop to parse incoming data.
     def checkForNewPuckData(self):
-        if self.receivingData:
+        if self.receiving_data:
             try:
                 input = list(self.input)
                 self.parse_rxdata(bytearray(input[60:62]))
@@ -236,8 +233,8 @@ class HIDPuckDongle(object):
     ##----
     def parse_rxdata(self, rxdata):
         rxdata = struct.unpack("<H", rxdata)[0]
-        self.rx_hardware_state = rxdata >> 13;
-        self.rx_channel = (rxdata & 0b0001111111000000) >> 6;
+        self.rx_hardware_state = rxdata >> 13
+        self.rx_channel = (rxdata & 0b0001111111000000) >> 6
         self.block1_pipe = (rxdata & 0b111000) >> 3
         self.block0_pipe = (rxdata & 0b111)
 
@@ -253,8 +250,8 @@ class HIDPuckDongle(object):
 
 
     def note_sending(self, value):
-        if self.err_rpt_path:
-            with open(os.path.join(self.err_rpt_path, "usb_sending.txt"), 'w') as f:
+        if self.error_report_path:
+            with open(os.path.join(self.error_report_path, "usb_sending.txt"), 'w') as f:
                 f.write("%s"%value)
 
     ##---- buzz motor --------------------------------------------------------##
@@ -296,42 +293,42 @@ class HIDPuckDongle(object):
 
     ##---- thread start ------------------------------------------------------##
     def stop(self):
-        self.isopen = False
+        self.is_open = False
 
     ##---- thread start ------------------------------------------------------##
     def close(self):
-        if self.is_plugged() and self.isopen:
+        if self.is_plugged() and self.is_open:
             try:
                 self.setTouchBuzz(0,1)
                 self.setTouchBuzz(1,1)
             except:
                 pass
-        self.isopen = False
+        self.is_open = False
         if self.iThread.is_alive():
             self.iThread.join()
         self.iThread = threading.Thread(target=self.inputChecker)
 
     ##---- is connected ------------------------------------------------------##
     def is_opened(self):
-        return self.isopen
+        return self.is_open
 
     ##---- check connection --------------------------------------------------##
     def is_plugged(self):
         for device in hid.enumerate():
-            if device['product_id'] == self.idProduct and \
-               device['vendor_id'] == self.idVendor:
+            if device['product_id'] == self.PRODUCT_ID and \
+               device['vendor_id'] == self.VENDOR_ID:
                return True
 
     ##---- infrequently check if the device is plugged in --------------------##
     def is_plugged_fast(self):
         # return the value from our thread
-        return self.receivingData
+        return self.receiving_data
 
     ##---- get the information about the device ------------------------------##
     def getDeviceInfo(self):
         for device in hid.enumerate():
-            if device['product_id'] == self.idProduct and \
-               device['vendor_id'] == self.idVendor:
+            if device['product_id'] == self.PRODUCT_ID and \
+               device['vendor_id'] == self.VENDOR_ID:
                return device
 
 if __name__ == "__main__":
@@ -341,7 +338,7 @@ if __name__ == "__main__":
     try:
         pk = HIDPuckDongle()
         pk.open()
-        print(pk.isopen)
+        print(pk.is_open)
         pk.startSpy(12, 200)
         for i in range(0, 2500):
             pk.checkForNewPuckData()
