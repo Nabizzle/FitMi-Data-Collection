@@ -103,6 +103,10 @@ class HIDPuckDongle(object):
         Thread for checking if input data is coming in
     check_for_touch(input, touch_history, puck_number)
         Parse the status byte of the input data to see if there was a touch
+    checkForNewPuckData()
+        Directs the incoming data the correct parsing functions
+    parse_rx_data(rx_data)
+        Extract out the RX radio data from the input stream
     '''
     def __init__(self, error_report=None):
         '''
@@ -145,7 +149,7 @@ class HIDPuckDongle(object):
         self.rx_hardware_state = 0
         self.rx_channel = 0
         self.block_0_pipe = 0
-        self.block1_pipe = 1
+        self.block_1_pipe = 1
 
         # setup the input checking thread
         self.input_thread = threading.Thread(target=self.input_checker)
@@ -309,7 +313,7 @@ class HIDPuckDongle(object):
         puck_number : int, default = 0
             The puck checked for this method. 0 is the blue puck and 1 is the
             yellow puck
-            
+
         Notes
         -----
         Touch events can be too fast for the game loop to catch. Missing touch
@@ -328,7 +332,7 @@ class HIDPuckDongle(object):
 
         # adds True to the blue puck's touch queue if it wasn't touched before
         # and is now and adds False to the queue if it isn't being touched, but
-        # is now
+        # is now. Each value is added with the puck number.
         if puck_number == 0:
             if touch and not touch_history["puck_0"]:
                 if not self.touch_queue.full():
@@ -341,7 +345,7 @@ class HIDPuckDongle(object):
 
         # adds True to the yellow puck's touch queue if it wasn't touched before
         # and is now and adds False to the queue if it isn't being touched, but
-        # is now
+        # is now. Each value is added with the puck number.
         if puck_number == 1:
             if touch and not touch_history["puck_1"]:
                 if not self.touch_queue.full():
@@ -352,15 +356,26 @@ class HIDPuckDongle(object):
             # sets the touch history of the yellow puck to the current value
             touch_history["puck_1"] = touch
 
-    ##---- run this method in game loop to parse incoming data.
     def checkForNewPuckData(self):
+        '''
+        Directs the incoming data the correct parsing functions
+
+        Directs the full input byte array to the PuckPacket parsing functions
+        for each puck and for parsing the RX radio data.
+        '''
+        # if data is being received, divide the data to the right functions
         if self.receiving_data:
             try:
                 input = list(self.input)
-                self.parse_rxdata(bytearray(input[60:62]))
+                # parse the dongle's RX radio data
+                self.parse_rx_data(bytearray(input[60:62]))
+                # parse the blue puck's data packet
                 self.puck_0_packet.parse(bytearray(input[0:30]))
+                # parse the yellow puck's data
                 self.puck_1_packet.parse(bytearray(input[30:60]))
 
+                # set each puck's touch attribute from the touch queue until
+                # its empty
                 while not self.touch_queue.empty():
                     puck_number, state = self.touch_queue.get()
                     if puck_number == 0 and state:
@@ -368,19 +383,27 @@ class HIDPuckDongle(object):
                     elif puck_number == 1 and state:
                         self.puck_1_packet.touch = state
 
-
             except Exception as e:
                 if self.print_debug: print(e)
             finally:
                 pass
 
-    ##----
-    def parse_rxdata(self, rxdata):
-        rxdata = struct.unpack("<H", rxdata)[0]
-        self.rx_hardware_state = rxdata >> 13
-        self.rx_channel = (rxdata & 0b0001111111000000) >> 6
-        self.block1_pipe = (rxdata & 0b111000) >> 3
-        self.block_0_pipe = (rxdata & 0b111)
+    def parse_rx_data(self, rx_data):
+        '''
+        Extract out the RX radio data from the input stream
+
+        Parameters
+        ----------
+        rx_data : byte array
+            The radio data part of the input byte array
+        '''
+        # get the rx_data as an unsigned short
+        rx_data = struct.unpack("<H", rx_data)[0]
+        # use bit shifts to get each of the radio data values
+        self.rx_hardware_state = rx_data >> 13
+        self.rx_channel = (rx_data & 0b0001111111000000) >> 6
+        self.block_1_pipe = (rx_data & 0b111000) >> 3
+        self.block_0_pipe = (rx_data & 0b111)
 
     ##---- send a command to the pucks ---------------------------------------##
     def sendCommand(self, puck_number, cmd, msb, lsb):
