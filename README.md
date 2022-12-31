@@ -122,7 +122,7 @@ script was called.
 ### hid_puck
 
 Defines a class for handling communication to and from the dongle to the computer and the pucks. It recieves a 62 byte array of information and parses that information
-into the RX radio values, and the data packets for the pucks handled in the [PuckPacket](puck_packetpy) class.
+into the RX radio values, and the data packets for the pucks handled in the [PuckPacket](#puck_packetpy) class.
 
 ### puck_packet.py
 
