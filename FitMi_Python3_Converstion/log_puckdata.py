@@ -247,6 +247,10 @@ class PuckLogger(object):
         # creates the path to the log file self
         data_shelf_name = os.path.join(self.data_folder, self.file_name+".shelve")
 
+        # creates the data folder if it did not exist
+        if not os.path.exists(self.data_folder):
+            os.makedirs(data_shelf_name)
+
         # saves the data into the data self
         data_shelf = shelve.open(data_shelf_name)
         for key in data_dictionary.keys():
