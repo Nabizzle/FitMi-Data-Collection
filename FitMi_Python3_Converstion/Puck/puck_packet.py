@@ -293,4 +293,6 @@ class PuckPacket(object):
             self.quaternion, self.load_cell,
             self.battery, self.charging, self.connected,
             self.touch, self.imu_ok)
-        return "accelerometer: %s, gyroscope: %s, magnetometer: %s, velocity: %s, quaternion: %s, load cell: %s, battery: %s, charging: %s, connected: %s, touch: %s, imu ok: %s" % output_string
+        return "accelerometer: %s, gyroscope: %s, magnetometer: %s,\
+            velocity: %s, quaternion: %s, load cell: %s, battery: %s,\
+            charging: %s, connected: %s, touch: %s, imu ok: %s" % output_string
