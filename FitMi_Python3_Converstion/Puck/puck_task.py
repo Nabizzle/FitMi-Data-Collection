@@ -1,3 +1,6 @@
+from Puck.hid_puck import HIDPuckDongle
+
+
 class PuckTask(object):
     '''
     Attributes
@@ -28,7 +31,7 @@ class PuckTask(object):
     '''
     degrees_of_freedom = {'roll' : 0, 'pitch': 1, 'yaw': 2}
 
-    def __init__(self, dof_key = 'pitch'):
+    def __init__(self, dof_key: str = 'pitch'):
         '''
         Initializes the dof, state, angle_reference, and target values
 
@@ -48,7 +51,8 @@ class PuckTask(object):
         self.angle_reference = 0
         self.target = 15
 
-    def checkStateATrigger(self, puck):
+
+    def checkStateATrigger(self, puck: HIDPuckDongle) -> bool:
         '''
         Checks if the puck has moved to a negative angle past the target range.
 
@@ -88,7 +92,7 @@ class PuckTask(object):
         # its false, nothing changed.
         return self.state
 
-    def checkStateBTrigger(self, puck):
+    def checkStateBTrigger(self, puck: HIDPuckDongle) -> bool:
         '''
         Checks if the puck has moved to a positive angle past the target range.
 
