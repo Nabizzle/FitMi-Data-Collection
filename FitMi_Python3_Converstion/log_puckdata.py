@@ -5,6 +5,7 @@ from scipy import io
 import threading
 from Puck.hid_puck import *
 
+
 class PuckLogger(object):
     '''
     Saves puck data as a dictionary and .mat file
@@ -109,6 +110,7 @@ class PuckLogger(object):
         self.check_stop_thread = threading.Thread(target=self.check_stop)
         self.check_stop_thread.daemon = True
 
+
     def check_stop(self):
         '''
         Asks the user to press enter to stop recording.
@@ -121,6 +123,7 @@ class PuckLogger(object):
         while self.keep_running:
             _ = input("press enter to stop logging.")
             self.keep_running = False
+
 
     def run(self):
         '''
@@ -175,11 +178,13 @@ class PuckLogger(object):
             self.puck_1_quaternion =\
                 self.puck_1_quaternion[0 : self.samples_taken, :]
 
+
     def set_filename(self):
         '''
         Ask the user for the log file's name
         '''
         self.file_name = input("enter a name for the datafile: ")
+
 
     def set_recording_length(self):
         '''
@@ -209,7 +214,6 @@ class PuckLogger(object):
             else:
                 correct_input_format = True
 
-
         max_samples_needed =\
             int(recording_length_minutes*  60 * self.samples_per_second)
         self.max_samples = max_samples_needed
@@ -228,7 +232,8 @@ class PuckLogger(object):
         self.puck_1_load_cell = np.zeros([max_samples_needed, 1])
         self.puck_1_quaternion = np.zeros([max_samples_needed, 4])
 
-    def store_data(self, puck_0_packet, puck_1_packet):
+
+    def store_data(self, puck_0_packet: PuckPacket, puck_1_packet: PuckPacket):
         '''
         Extracts each data type from the pucks total data.
 
@@ -258,6 +263,7 @@ class PuckLogger(object):
         self.puck_1_quaternion[self.samples_taken, :] = puck_1_packet.quaternion
 
         self.samples_taken += 1 # increment the sample number
+
 
     def write_data(self):
         '''
@@ -299,6 +305,7 @@ class PuckLogger(object):
         mat_path = os.path.join(self.data_folder, self.file_name+".mat")
         io.savemat(mat_path, data_dictionary, appendmat=False)
 
+
     def stop(self):
         '''
         Closes communication with the pucks and saves the log file data
@@ -314,6 +321,7 @@ class PuckLogger(object):
             self.check_stop_thread.join(2) # stop the thread after 2 seconds
         except:
             pass
+
 
 if __name__ == "__main__":
     '''
