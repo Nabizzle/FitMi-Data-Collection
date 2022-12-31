@@ -97,6 +97,8 @@ class HIDPuckDongle(object):
         Open the connection to the dongle
     check_connection()
         Check if the pucks are sending data or if the radio should reset
+    wait_for_data()
+        Check if data has been received by the input_checking thread
     '''
     def __init__(self, error_report=None):
         '''
@@ -208,12 +210,16 @@ class HIDPuckDongle(object):
         self.sendCommand(0, DNGLRST, 0x00, 0x00)
         pygame.time.wait(600) # wait 600ms for data to come in
 
-    ##---- wait till receiving data ------------------------------------------##
     def wait_for_data(self):
+        '''
+        Check if data has been received by the input_checking thread
+
+        Waits about 200 ms for data to be received before moving on. This affects when the open method finishes and sends the command to switch the pucks into "game on" mode.
+        '''
         for i in range(0, 200):
             pygame.time.wait(1)  # wait until we are getting data
             if self.receiving_data:
-                break
+                return
 
     ##---- input checker -----------------------------------------------------##
     ## checks whether the input value has changed.
