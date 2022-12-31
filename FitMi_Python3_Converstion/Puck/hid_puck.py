@@ -1,8 +1,3 @@
-
-'''
-NOTE: Do not configure the dongle as a joystick hardware input device (hid). pygame is used to wait in specific threads and will take control of it automatically.
-'''
-
 import hid
 import time
 import threading
@@ -14,7 +9,7 @@ import pygame
 from Puck.puck_packet import PuckPacket
 import queue
 
-# command definitions
+# Command definitions
 RBLINK       = 0x01 # Blink the red light
 GBLINK       = 0x02 # Blink the green light
 BBLINK       = 0x03 # Blink the blue light
@@ -50,6 +45,9 @@ class HIDPuckDongle(object):
         self.PRODUCT_ID = 0x2742 # do not change this
         self.release = 0
         self.verbosity = 0
+        # NOTE: Do not configure the dongle as a joystick hardware input device
+        # (hid). pygame is used to wait in specific threads and will take
+        # control of it automatically.
         self.dongle = hid.device()
         self.is_open = False
 
@@ -60,7 +58,7 @@ class HIDPuckDongle(object):
         else:
             self.error_report_path = None
 
-        ## packet definitions specifies the structure of the packet.
+        # packet definitions specifies the structure of the packet.
         self.receiving_data = False
         self.puck_0_packet = PuckPacket()
         self.puck_1_packet = PuckPacket()

@@ -1,7 +1,8 @@
 '''
 Helper functions for working with quaternions
 
-Functions to help with using quaternions when rotating a point around the global reference frame.
+Functions to help with using quaternions when rotating a point around the
+global reference frame.
 
 Functions
 ---------
@@ -98,7 +99,9 @@ def q_rotate_vector(q, v):
     '''
     q_v = np.insert(v, 0,0) # make the vector into a pure quaternion
 
-    # rotate the vector by left multiplying it by the quaternion and right multiplying it by the conjugate of the quaternion. Return only the vector part of the new quaternion
+    # rotate the vector by left multiplying it by the quaternion and right
+    # multiplying it by the conjugate of the quaternion. Return only the vector
+    # part of the new quaternion
     return q_multiply(q_multiply(q, q_v), q_conjugate(q))[1:]
 
 if __name__ == "__main__":

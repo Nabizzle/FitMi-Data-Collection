@@ -2,7 +2,8 @@ class AniPlot(object):
     '''
     Creates a subplot to display a buffer to data
 
-    Sets up the subplot for one or both pucks and updates the plots upon function call. NOTE: AniPlot stands for animated plot
+    Sets up the subplot for one or both pucks and updates the plots upon
+    function call. NOTE: AniPlot stands for animated plot
 
     Attributes
     ----------
@@ -26,11 +27,13 @@ class AniPlot(object):
     set_ylabel
         Sets the y axis label of the subplot
     '''
-    def __init__(self, fig, split, buffer_min=0, buffer_max=200, ymin=-180, ymax=180, second_puck=False):
+    def __init__(self, fig, split, buffer_min=0, buffer_max=200, ymin=-180,
+        ymax=180, second_puck=False):
         '''
         Create the base data subplot
 
-        Create the subplot for the data with a buffer of base line values before the data gets updated.
+        Create the subplot for the data with a buffer of base line values
+        before the data gets updated.
 
         Parameters
         ----------
@@ -50,8 +53,10 @@ class AniPlot(object):
             Indicates if you want to plot the second puck's data (True = yes)
         '''
         self.fig = fig # moves the data figure a class attribute
-        # create the subplot based on input parameters for the plot number and the axis limits
-        self.ax = fig.add_subplot(split[0], split[1], split[2], xlim = (buffer_min, buffer_max), ylim = (ymin, ymax))
+        # create the subplot based on input parameters for the plot number and
+        # the axis limits
+        self.ax = fig.add_subplot(split[0], split[1], split[2],
+            xlim = (buffer_min, buffer_max), ylim = (ymin, ymax))
 
         # display the figure and update it
         fig.show(False)
@@ -60,11 +65,13 @@ class AniPlot(object):
         # copy the subplot region
         self.bg = fig.canvas.copy_from_bbox(self.ax.bbox)
 
-        # create the base line for the blue puck and set the puck puck's line to None
+        # create the base line for the blue puck and set the puck puck's line
+        # to None
         self.puck_0_data = [0]*(buffer_max - buffer_min)
         self.puck_1_data = None
 
-        # If you want to plot the second puck's data, create the base line for the yellow puck
+        # If you want to plot the second puck's data, create the base line for
+        # the yellow puck
         if second_puck:
             self.puck_1_data = [0]*(buffer_max - buffer_min)
 
@@ -72,12 +79,15 @@ class AniPlot(object):
         self.x_points = range(buffer_min, buffer_max)
 
         # plot the base line of the blue puck in blue
-        self.puck_1_plot = self.ax.plot(self.x_points, self.puck_0_data, '-', color="b")[0]
+        self.puck_1_plot = self.ax.plot(self.x_points, self.puck_0_data, '-',
+            color="b")[0]
         self.puck_2_plot = None
 
-        # if there is a need to plot a second puck, plot the yellow puck in green
+        # if there is a need to plot a second puck, plot the yellow puck in
+        # green
         if second_puck:
-            self.puck_2_plot = self.ax.plot(self.x_points, self.puck_1_data, '-', color="g")[0]
+            self.puck_2_plot = self.ax.plot(self.x_points, self.puck_1_data,
+            '-', color="g")[0]
 
     def set_xlabel(self, axis_name):
         '''
@@ -109,7 +119,8 @@ class AniPlot(object):
         '''
         Add the new data to the end of the buffer of data
 
-        Adds new data to the end of the data buffer and removes the first point in the buffer.
+        Adds new data to the end of the data buffer and removes the first point
+        in the buffer.
 
         Parameters
         ----------
@@ -118,11 +129,13 @@ class AniPlot(object):
         puck_1_data : int
             new data from the yellow puck
         '''
-        # adds data to the end of the blue puck buffer and removes the first point
+        # adds data to the end of the blue puck buffer and removes the first
+        # point
         self.puck_0_data.pop(0)
         self.puck_0_data.append(puck_0_data)
 
-        # if you want to track two pucks, adds data to the end of the yellow puck buffer and removes the first point
+        # if you want to track two pucks, adds data to the end of the yellow
+        # puck buffer and removes the first point
         if (not puck_1_data is None) and (not self.puck_1_data is None):
             self.puck_1_data.pop(0)
             self.puck_1_data.append(puck_1_data)
@@ -131,7 +144,8 @@ class AniPlot(object):
         '''
         Adds the data to the subplot
 
-        Adds the data from the data buffers to the plot and redraws it for the animation.
+        Adds the data from the data buffers to the plot and redraws it for the
+        animation.
 
         Parameters
         ----------

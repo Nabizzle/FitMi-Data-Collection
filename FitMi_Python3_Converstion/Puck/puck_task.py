@@ -7,11 +7,15 @@ class PuckTask(object):
     dof : string
         index to the roll_pitch_yaw variable of the yellow puck
     state : bool
-        state for if the yellow puck's desired degree of freedom is less than the negative of the target value (True) or greater than the target value (False)
+        state for if the yellow puck's desired degree of freedom is less than
+        the negative of the target value (True) or greater than the target
+        value (False)
     angle_reference : int
-        Angle to subtract from the degree of freedom when comparing to the target angle
+        Angle to subtract from the degree of freedom when comparing to the
+        target angle
     target : int
-        The +/- range the desired degree of freedom needs to be outside of to trigger a state change
+        The +/- range the desired degree of freedom needs to be outside of to
+        trigger a state change
 
     Methods
     -------
@@ -28,14 +32,16 @@ class PuckTask(object):
         '''
         Initializes the dof, state, angle_reference, and target values
 
-        Initializes the class attributes and selects the desired roll_pitch_yaw variable index based on the dof_key input parameter
+        Initializes the class attributes and selects the desired roll_pitch_yaw
+        variable index based on the dof_key input parameter
 
         Parameters
         ----------
         dof_key : string
             Key for the degrees of freedom dictionary of indices
         '''
-        self.dof = self.degrees_of_freedom[dof_key]  # gets the index for the roll_pitch_yaw data variable
+        # gets the index for the roll_pitch_yaw data variable
+        self.dof = self.degrees_of_freedom[dof_key]
 
         #sets the other attributes to their default states
         self.state = False
@@ -46,17 +52,21 @@ class PuckTask(object):
         '''
         Checks if the puck has moved to a negative angle past the target range.
 
-        Triggers a change to the state value if the puck's desired degree of freedom has moved from a positive value above the target number to a negative value below the negative of the target value.
+        Triggers a change to the state value if the puck's desired degree of
+        freedom has moved from a positive value above the target number to a
+        negative value below the negative of the target value.
 
         Parameters
         ----------
         puck : HIDPuckDongle object
-            connection to the dongle for accessing the yellow puck's roll, pitch, or yaw angle
+            connection to the dongle for accessing the yellow puck's roll,
+            pitch, or yaw angle
 
         Returns
         -------
         state : bool
-            Returns if the state has switched values. True is it changed from False to True
+            Returns if the state has switched values. True is it changed from
+            False to True
         '''
         # if the state is already true, this method does not need to run
         if self.state:
@@ -69,28 +79,34 @@ class PuckTask(object):
         if not pos:
             return
 
-        # switch the state's value if the degree of freedom is below the negative of the target
+        # switch the state's value if the degree of freedom is below the
+        # negative of the target
         if (pos - self.angle_reference) < -self.target:
             self.state = True
 
-        # return the state value as if it was true, the value switched and if its false, nothing changed.
+        # return the state value as if it was true, the value switched and if
+        # its false, nothing changed.
         return self.state
 
     def checkStateBTrigger(self, puck):
         '''
         Checks if the puck has moved to a positive angle past the target range.
 
-        Triggers a change to the state value if the puck's desired degree of freedom has moved from a negative value below the negative of the target number to a positive value above the target value.
+        Triggers a change to the state value if the puck's desired degree of
+        freedom has moved from a negative value below the negative of the
+        target number to a positive value above the target value.
 
         Parameters
         ----------
         puck : HIDPuckDongle object
-            connection to the dongle for accessing the yellow puck's roll, pitch, or yaw angle
+            connection to the dongle for accessing the yellow puck's roll,
+            pitch, or yaw angle
 
         Returns
         -------
         bool
-            Returns if the state has switched values. True is it changed from True to False
+            Returns if the state has switched values. True is it changed from
+            True to False
         '''
         # if the state is already false, this method does not need to run
         if not self.state:
@@ -103,9 +119,11 @@ class PuckTask(object):
         if not pos:
             return
 
-        # switch the state's value if the degree of freedom is above the the target value
+        # switch the state's value if the degree of freedom is above the the
+        # target value
         if (pos - self.angle_reference) > self.target:
             self.state = False
 
-        # return the opposite of the state value as if it was false, the value switched and if its true, nothing changed.
+        # return the opposite of the state value as if it was false, the value
+        # switched and if its true, nothing changed.
         return not self.state

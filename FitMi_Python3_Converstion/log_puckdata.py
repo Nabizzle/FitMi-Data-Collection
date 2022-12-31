@@ -9,12 +9,16 @@ class PuckLogger(object):
     '''
     Saves puck data as a dictionary and .mat file
 
-    Saves the base data from each puck, the acceleration, gyroscope, velocity, load cell, and quaternion, as a python dictionary and then a .mat file. This class when run also allows you to stop the recording early by pressing enter in the console.
+    Saves the base data from each puck, the acceleration, gyroscope, velocity,
+    load cell, and quaternion, as a python dictionary and then a .mat file.
+    This class when run also allows you to stop the recording early by pressing
+    enter in the console.
 
     Attributes
     ----------
     data_folder : file path
-        The path to the data folder. It has to be named data and he a subfolder in the current working directory
+        The path to the data folder. It has to be named data and he a subfolder
+        in the current working directory
     file_name : string
         The name of the log file
     samples_per_second : int
@@ -75,7 +79,10 @@ class PuckLogger(object):
         '''
         Initializes the variables needed to record into a log file
 
-        Creates the path to where the log file will be stored, sets up what is needed to communicate and log all of the pucks' data into variables, and sets up the thread looking to see if the user wants to stop recording early.
+        Creates the path to where the log file will be stored, sets up what is
+        needed to communicate and log all of the pucks' data into variables,
+        and sets up the thread looking to see if the user wants to stop
+        recording early.
         '''
         self.data_folder = os.path.join(os.getcwd(), "data")
         self.file_name = "temp"
@@ -106,7 +113,10 @@ class PuckLogger(object):
         '''
         Asks the user to press enter to stop recording.
 
-        Asks the user to press enter to stop logging data. The user can enter anything they want into the console to stop recording. This is just a thread that will change the check_stop_thread variable to False when it completes.
+        Asks the user to press enter to stop logging data. The user can enter
+        anything they want into the console to stop recording. This is just a
+        thread that will change the check_stop_thread variable to False when it
+        completes.
         '''
         while self.keep_running:
             _ = input("press enter to stop logging.")
@@ -116,7 +126,10 @@ class PuckLogger(object):
         '''
         Sets up the length of recording and stores the data on each sample step.
 
-        Sets up the recording location and connection to the pucks. Then records data according to the sample rate and trims off the end of the data arrays if they were unused. This occurs when stopping the recording early.
+        Sets up the recording location and connection to the pucks. Then
+        records data according to the sample rate and trims off the end of the
+        data arrays if they were unused. This occurs when stopping the
+        recording early.
         '''
         # Set up how long to record and where to record to
         self.set_recording_length()
@@ -128,7 +141,8 @@ class PuckLogger(object):
         self.puck.sendCommand(1,SENDVEL, 0x00, 0x01)
 
         print("recording data")
-        self.check_stop_thread.start() # Start the thread looking for the recording to stop early
+        # Start the thread looking for the recording to stop early
+        self.check_stop_thread.start()
         self.samples_taken = 0
 
         # Record data according to the sample rate
@@ -139,17 +153,27 @@ class PuckLogger(object):
 
         # crop away any unused space.
         if self.samples_taken < self.max_samples:
-            self.puck_0_acceleration = self.puck_0_acceleration[0 : self.samples_taken, :]
-            self.puck_0_gyroscope = self.puck_0_gyroscope[0 : self.samples_taken, :]
-            self.puck_0_velocity = self.puck_0_velocity[0 : self.samples_taken, :]
-            self.puck_0_load_cell = self.puck_0_load_cell[0 : self.samples_taken, :]
-            self.puck_0_quaternion = self.puck_0_quaternion[0 : self.samples_taken, :]
+            self.puck_0_acceleration =\
+                self.puck_0_acceleration[0 : self.samples_taken, :]
+            self.puck_0_gyroscope =\
+                self.puck_0_gyroscope[0 : self.samples_taken, :]
+            self.puck_0_velocity =\
+                self.puck_0_velocity[0 : self.samples_taken, :]
+            self.puck_0_load_cell =\
+                self.puck_0_load_cell[0 : self.samples_taken, :]
+            self.puck_0_quaternion =\
+                self.puck_0_quaternion[0 : self.samples_taken, :]
 
-            self.puck_1_acceleration = self.puck_1_acceleration[0 : self.samples_taken, :]
-            self.puck_1_gyroscope = self.puck_1_gyroscope[0 : self.samples_taken, :]
-            self.puck_1_velocity = self.puck_1_velocity[0 : self.samples_taken, :]
-            self.puck_1_load_cell = self.puck_1_load_cell[0 : self.samples_taken, :]
-            self.puck_1_quaternion = self.puck_1_quaternion[0 : self.samples_taken, :]
+            self.puck_1_acceleration =\
+                self.puck_1_acceleration[0 : self.samples_taken, :]
+            self.puck_1_gyroscope =\
+                self.puck_1_gyroscope[0 : self.samples_taken, :]
+            self.puck_1_velocity =\
+                self.puck_1_velocity[0 : self.samples_taken, :]
+            self.puck_1_load_cell =\
+                self.puck_1_load_cell[0 : self.samples_taken, :]
+            self.puck_1_quaternion =\
+                self.puck_1_quaternion[0 : self.samples_taken, :]
 
     def set_filename(self):
         '''
@@ -161,30 +185,37 @@ class PuckLogger(object):
         '''
         Finds the total recording time and initializes the pucks' data arrays
 
-        Asks the user to a recording time and finds the amount of samples to record based on the sample rate to achieve that length of recording. Based on this, the data arrays for each puck are initialized
+        Asks the user to a recording time and finds the amount of samples to
+        record based on the sample rate to achieve that length of recording.
+        Based on this, the data arrays for each puck are initialized
         '''
-        correct_input_format = False # boolean to check if the user input a valid recording length
-        recording_length_message = "how long would you like to record (in minutes)? "
+        # boolean to check if the user input a valid recording length
+        correct_input_format = False
+        recording_length_message =\
+            "how long would you like to record (in minutes)? "
         recording_length_minutes = -1
 
         # Ask the user for a recording length until they enter a number
         while not correct_input_format:
             try:
-                recording_length_minutes = float(input(recording_length_message))
+                recording_length_minutes =\
+                     float(input(recording_length_message))
             except:
                 print("you need to input a number")
             
-            if (recording_length_minutes > 60) or (recording_length_minutes < 0):
+            if (recording_length_minutes>60) or (recording_length_minutes<0):
                 print("please enter a number between 0 and 60")
                 correct_input_format = False
             else:
                 correct_input_format = True
 
 
-        max_samples_needed = int(recording_length_minutes*60*self.samples_per_second)
+        max_samples_needed =\
+            int(recording_length_minutes*  60 * self.samples_per_second)
         self.max_samples = max_samples_needed
 
-        # initialize the data arrays of each puck to the total number of samples needed
+        # initialize the data arrays of each puck to the total number of
+        # samples needed
         self.puck_0_acceleration = np.zeros([max_samples_needed, 3])
         self.puck_0_gyroscope = np.zeros([max_samples_needed, 3])
         self.puck_0_velocity = np.zeros([max_samples_needed, 3])
@@ -201,7 +232,9 @@ class PuckLogger(object):
         '''
         Extracts each data type from the pucks total data.
 
-        Saves each puck's PuckPacket class variables for the accelerometer, gyroscope, velocity, load_cell, and quaternion. Then the sample number is incremented.
+        Saves each puck's PuckPacket class variables for the accelerometer,
+        gyroscope, velocity, load_cell, and quaternion. Then the sample number
+        is incremented.
 
         Parameters
         ----------
@@ -210,13 +243,15 @@ class PuckLogger(object):
         puck_1_packet : PuckPacket object
             Contains the polled data from the yellow puck
         '''
-        self.puck_0_acceleration[self.samples_taken, :] = puck_0_packet.accelerometer
+        self.puck_0_acceleration[self.samples_taken, :] =\
+            puck_0_packet.accelerometer
         self.puck_0_gyroscope[self.samples_taken, :] = puck_0_packet.gyroscope
         self.puck_0_velocity[self.samples_taken, :] = puck_0_packet.velocity
         self.puck_0_load_cell[self.samples_taken, :] = puck_0_packet.load_cell
         self.puck_0_quaternion[self.samples_taken, :] = puck_0_packet.quaternion
 
-        self.puck_1_acceleration[self.samples_taken, :] = puck_1_packet.accelerometer
+        self.puck_1_acceleration[self.samples_taken, :] =\
+            puck_1_packet.accelerometer
         self.puck_1_gyroscope[self.samples_taken, :] = puck_1_packet.gyroscope
         self.puck_1_velocity[self.samples_taken, :] = puck_1_packet.velocity
         self.puck_1_load_cell[self.samples_taken, :] = puck_1_packet.load_cell
@@ -228,7 +263,9 @@ class PuckLogger(object):
         '''
         Writes the logged data to a python dictionary and .mat file
 
-        Saves the python data into a dictionary and then converts that into a self saved to the data folder. That shelf is then converted to a .mat file.
+        Saves the python data into a dictionary and then converts that into a
+        self saved to the data folder. That shelf is then converted to a .mat
+        file.
         '''
         data_dictionary = {
             "puck_0_acceleration": self.puck_0_acceleration,
@@ -245,7 +282,8 @@ class PuckLogger(object):
             }
 
         # creates the path to the log file self
-        data_shelf_name = os.path.join(self.data_folder, self.file_name+".shelve")
+        data_shelf_name = os.path.join(self.data_folder,
+            self.file_name+".shelve")
 
         # creates the data folder if it did not exist
         if not os.path.exists(self.data_folder):

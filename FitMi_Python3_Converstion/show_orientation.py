@@ -10,7 +10,8 @@ class OrientationScope(object):
     '''
     Creates a visualization of the puck in 3D space
 
-    Allows the user to visualize the rotations of one of the two pucks on a 3D axis. This is done as a x, y, z gizmo that rotates with the puck.
+    Allows the user to visualize the rotations of one of the two pucks on a 3D
+    axis. This is done as a x, y, z gizmo that rotates with the puck.
 
     Attributes
     ----------
@@ -73,7 +74,9 @@ class OrientationScope(object):
         '''
         Starts communication with puck and updates plot with rotation
 
-        Records for the number of samples to reach the max test time with the sample rate of the scope. Communication is cut off at the end of the sampling.
+        Records for the number of samples to reach the max test time with the
+        sample rate of the scope. Communication is cut off at the end of the
+        sampling.
         '''
         # Creates the connection to the selected puck
         self.puck.open()
@@ -100,7 +103,8 @@ class OrientationScope(object):
         '''
         Takes the puck data and updates the 3D plot of orientation
 
-        Selects which puck data packet to use and updates orientation based on the puck's quaternion
+        Selects which puck data packet to use and updates orientation based on
+        the puck's quaternion
         '''
         # selects the puck data packet based on the puck's id
         if self.puck_number == 1:
@@ -127,7 +131,7 @@ class OrientationScope(object):
         if self.data_plot:
             self.ax.collections.remove(self.data_plot)
         self.data_plot = self.ax.scatter(line_x, line_y, line_z, c="b")
-        plt.pause(.00005) # pause an infinitesimal amount of time to allow update.
+        plt.pause(.00005) # pause infinitesimal amount of time to allow update.
 
 if __name__ == "__main__":
     '''

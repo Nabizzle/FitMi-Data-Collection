@@ -4,14 +4,16 @@ class ScanPacket(object):
     '''
     Helper functions for analyzing the scan data packet
 
-    Analyzes which channels were found, how many were found, and what the scanning channel was.
+    Analyzes which channels were found, how many were found, and what the
+    scanning channel was.
 
     Attributes
     ----------
     pipe_channels : List[int]
         A list of six pipe channels for data
     pipe_found_count : List[int]
-        A list of six counter variables to indicate if each pipe channel was found
+        A list of six counter variables to indicate if each pipe channel was
+        found
     scan_channel : int
         The channel the data was scanned on
     battery : int
@@ -19,7 +21,8 @@ class ScanPacket(object):
     status : int
         The status of the puck
     packet_def : string
-        A string used to parse the data stream for the pipe channels, found channels, scanning time, battery percentage, and status
+        A string used to parse the data stream for the pipe channels, found
+        channels, scanning time, battery percentage, and status
     
     Methods
     -------
@@ -50,7 +53,8 @@ class ScanPacket(object):
         Returns
         -------
         string
-            The combined format string for parsing the incoming byte data in the scan packet
+            The combined format string for parsing the incoming byte data in
+            the scan packet
         '''
         pipe_channel = "hhhhhh" # six shorts
         found_count  = "hhhhhh" # six shorts
@@ -63,7 +67,8 @@ class ScanPacket(object):
         '''
         Uses the packet definition to parse the scan data.
 
-        Scan data is parsed into the found pipe channels, the count of the pipe channels found, the scan channel, battery percentage, and status.
+        Scan data is parsed into the found pipe channels, the count of the pipe
+        channels found, the scan channel, battery percentage, and status.
 
         Parameters
         ----------
@@ -81,8 +86,10 @@ class ScanPacket(object):
         '''
         Prints the pipe channels, the number of channels, and the scan channel
 
-        When the ScanPacket object is printed, it prints the pipe channels, how many were found, and the scan channel.
+        When the ScanPacket object is printed, it prints the pipe channels, how
+        many were found, and the scan channel.
         '''
         number_found = sum([n for n in self.pipe_found_count if n > 0])
-        f = self.pipe_channels + [number_found] + [self.scan_channel]
-        return str(f)#"channels: p0 %s, p1 %s, p2 %s, p3 %s, p4 %s, p5 %s, number_found: %s, scan_channel: %s" % f
+        output_string =\
+            self.pipe_channels + [number_found] + [self.scan_channel]
+        return str(output_string)

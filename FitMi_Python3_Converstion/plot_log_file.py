@@ -28,7 +28,7 @@ import shelve
 data_folder = os.path.join(os.getcwd(), "data")
 
 # ask for the data file name and add the right extension
-file_name = input("enter the name of the file you want to plot (without extension): ")
+file_name = input("enter the name of the file you want to plot: ")
 file_name += ".shelve"
 
 # create the file path to the data file
