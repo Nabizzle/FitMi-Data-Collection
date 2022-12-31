@@ -52,14 +52,49 @@ class HIDPuckDongle(object):
         The product id of the dongle in the hardware input device list. Make
         sure this number does not change or else the dongle will not be
         connected to.
-    release : int
+    print_debug : bool
+        True is the debug messages should print out
+    dongle : hid.device
+        A hardware input device
+    is_open : bool
+        Indicator for if the dongle connection has been opened
+    error_report_path : file path
+        A file location of logging what data has been sent
+    receiving_data : bool
+        An indicator for if input data is coming in
+    puck_0_packet : PuckPacket object
+        The data from the blue puck
+    puck_1_packet : PuckPacket object
+        The data from the yellow puck
+    rx_hardware_state : int
+        The state indicator from a received data packet
+    rx_channel : int
+        The channel data was received on
+    block_0_pipe : int
+        A three bit value indicating the pipe for the blue puck
+    block_1_pipe : int
+        A three bit value indicating the pipe for the yellow puck
+    input_thread : threading.Thread
+        A thread for checking if data has come in
+    input : byte array
+        A 62 bit array of read values that are parsed into the received rx and
+        block variables and the data for each puck data packet.
+    usb_out_queue : queue.Queue
+        A queue of commands to send over usb
+    touch_queue : queue.Queue
+        A queue of touch events in pairs of the puck number (blue = 0,
+        yellow = 1) and then a boolean for if there was a touch
+    last_sent : List[float]
+        The last time an actuate command was sent to either puck. The first
+        index is for the blue puck and the second is for the yellow puck
+
     Methods
     -------
-    __init__(error_report, operating_system)
+    __init__(error_report)
         Setup threads and variables for communicating with the pucks
     '''
     ##---- initialization ----------------------------------------------------##
-    def __init__(self, error_report=None, operating_system="Windows"):
+    def __init__(self, error_report=None):
         '''
         Setup threads and variables for communicating with the pucks
 
@@ -67,15 +102,20 @@ class HIDPuckDongle(object):
         variables that store communication data. Performs the relevant steps to
         set up the dongle as a hardware input device.
         '''
+        # set the hardware ids of the dongle
         self.VENDOR_ID = 0x04d8 # do not change this
         self.PRODUCT_ID = 0x2742 # do not change this
+
         self.print_debug = False
+
         # NOTE: Do not configure the dongle as a joystick hardware input device
         # (hid). pygame is used to wait in specific threads and will take
         # control of it automatically.
         self.dongle = hid.device()
+
         self.is_open = False
 
+        # if the error report path is set, make a directory to save it in
         if error_report is not None:
             self.error_report_path = error_report
             if not os.path.exists(self.error_report_path):
@@ -83,29 +123,25 @@ class HIDPuckDongle(object):
         else:
             self.error_report_path = None
 
-        # packet definitions specifies the structure of the packet.
+        # set default values of received data attributes
         self.receiving_data = False
         self.puck_0_packet = PuckPacket()
         self.puck_1_packet = PuckPacket()
         self.rx_hardware_state = 0
         self.rx_channel = 0
-        self.block0_pipe = 0
+        self.block_0_pipe = 0
         self.block1_pipe = 1
 
-        self.iThread = threading.Thread(target=self.inputChecker)
-        self.lock = threading.Lock()
+        # setup the input checking thread
+        self.input_thread = threading.Thread(target=self.inputChecker)
         self.input = None
-        self.input_count = 0
-        self.callback = lambda input: sys.stdout.write(str(input) + "\n")
-        self.empty_data_count = 0
-        self.plug_state = False
 
+        # setup the queues of output data and the log of touches to the puck
         self.usb_out_queue = queue.Queue(maxsize=10)
         self.touch_queue = queue.Queue(maxsize=10)
 
-        self.last_sent = [0,0]
-
-        self.my_os = operating_system
+        # instantiate the last time each puck was touched to 0
+        self.last_sent = [0.0, 0.0]
 
     ##---- open device -------------------------------------------------------##
     def open(self):
@@ -124,10 +160,9 @@ class HIDPuckDongle(object):
         if self.print_debug: print("product: %s" % self.dongle.get_product_string())
 
         self.is_open = True
-        self.iThread.start()
+        self.input_thread.start()
 
         self.plug_state = True
-        self.empty_data_count = 0
         self.receiving_data = False
         self.check_connection()
         self.wait_for_data()
@@ -156,10 +191,6 @@ class HIDPuckDongle(object):
             pygame.time.wait(1)  # wait until we are getting data
             if self.receiving_data:
                 break
-
-    ##---- set input change callback -----------------------------------------##
-    def setCallback(self, callback):
-        self.callback = callback
 
     ##---- input checker -----------------------------------------------------##
     ## checks whether the input value has changed.
@@ -259,7 +290,7 @@ class HIDPuckDongle(object):
         self.rx_hardware_state = rxdata >> 13
         self.rx_channel = (rxdata & 0b0001111111000000) >> 6
         self.block1_pipe = (rxdata & 0b111000) >> 3
-        self.block0_pipe = (rxdata & 0b111)
+        self.block_0_pipe = (rxdata & 0b111)
 
     ##---- send a command to the pucks ---------------------------------------##
     def sendCommand(self, puck_number, cmd, msb, lsb):
@@ -272,6 +303,7 @@ class HIDPuckDongle(object):
                 if self.print_debug: print("queued 0x%x , 0x%x to puck %s" % (cmd, msb << 8 | lsb, puck_number))
 
     def note_sending(self, value):
+        # if the error report path is set
         if self.error_report_path:
             with open(os.path.join(self.error_report_path, "usb_sending.txt"), 'w') as f:
                 f.write("%s"%value)
@@ -326,9 +358,9 @@ class HIDPuckDongle(object):
             except:
                 pass
         self.is_open = False
-        if self.iThread.is_alive():
-            self.iThread.join()
-        self.iThread = threading.Thread(target=self.inputChecker)
+        if self.input_thread.is_alive():
+            self.input_thread.join()
+        self.input_thread = threading.Thread(target=self.inputChecker)
 
     ##---- is connected ------------------------------------------------------##
     def is_opened(self):
