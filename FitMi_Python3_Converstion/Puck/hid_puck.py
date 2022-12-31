@@ -92,8 +92,9 @@ class HIDPuckDongle(object):
     -------
     __init__(error_report)
         Setup threads and variables for communicating with the pucks
+    open
+        Open the connection to the dongle
     '''
-    ##---- initialization ----------------------------------------------------##
     def __init__(self, error_report=None):
         '''
         Setup threads and variables for communicating with the pucks
@@ -143,31 +144,43 @@ class HIDPuckDongle(object):
         # instantiate the last time each puck was touched to 0
         self.last_sent = [0.0, 0.0]
 
-    ##---- open device -------------------------------------------------------##
     def open(self):
+        '''
+        Open the connection to the dongle
+
+        Starts the dongle connection or reconnects to the dongle if it was already connected to. Then it puts the pucks in "game mode" and starts monitoring for inputs.
+        '''
+        # if the dongle is not found in the index of hardware input devices,
+        # end the method
         if not self.is_plugged():
             return
 
-        ## if we are open, close first then re-open.
-        if self.print_debug: print("dongle open?")
+        # if the dongle connection is already open, close the connection
+        if self.print_debug:
+            print("dongle open?")
         try:
             self.dongle.close()
         except:
             pass
 
+        # connect to the dongle
         self.dongle.open(self.VENDOR_ID, self.PRODUCT_ID)
-        if self.print_debug: print("manufacturer: %s" % self.dongle.get_manufacturer_string())
-        if self.print_debug: print("product: %s" % self.dongle.get_product_string())
+        if self.print_debug:
+            print("manufacturer: %s" % self.dongle.get_manufacturer_string())
+        if self.print_debug:
+            print("product: %s" % self.dongle.get_product_string())
 
+        # set the open indicator to True and monitor for inputs
         self.is_open = True
         self.input_thread.start()
 
+        # set the plugged in state to True and check if the RX radio is working
+        # and getting data
         self.plug_state = True
         self.receiving_data = False
         self.check_connection()
         self.wait_for_data()
 
-        #pygame.time.wait(10) # give thread time to start
         self.sendCommand(0,GAMEON, 0x00, 0x01) # puts puck 0 into game mode
         self.sendCommand(1,GAMEON, 0x00, 0x01) # puts puck 1 into game mode
 
