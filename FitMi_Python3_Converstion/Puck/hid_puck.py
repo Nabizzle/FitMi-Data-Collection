@@ -4,7 +4,8 @@ import threading
 import sys
 import struct
 import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide" # suppresses pygame welcome message
+# suppresses pygame welcome message
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from Puck.puck_packet import PuckPacket
 import queue
@@ -92,8 +93,10 @@ class HIDPuckDongle(object):
     -------
     __init__(error_report)
         Setup threads and variables for communicating with the pucks
-    open
+    open()
         Open the connection to the dongle
+    check_connection()
+        Check if the pucks are sending data or if the radio should reset
     '''
     def __init__(self, error_report=None):
         '''
@@ -148,7 +151,9 @@ class HIDPuckDongle(object):
         '''
         Open the connection to the dongle
 
-        Starts the dongle connection or reconnects to the dongle if it was already connected to. Then it puts the pucks in "game mode" and starts monitoring for inputs.
+        Starts the dongle connection or reconnects to the dongle if it was
+        already connected to. Then it puts the pucks in "game mode" and starts
+        monitoring for inputs.
         '''
         # if the dongle is not found in the index of hardware input devices,
         # end the method
@@ -184,19 +189,24 @@ class HIDPuckDongle(object):
         self.sendCommand(0,GAMEON, 0x00, 0x01) # puts puck 0 into game mode
         self.sendCommand(1,GAMEON, 0x00, 0x01) # puts puck 1 into game mode
 
-
-    ##---- check if we are getting data from either puck. if not, reset the
-    ## RX radio and wait for it to startup
     def check_connection(self):
-        radio_working = False
+        '''
+        Check if the pucks are sending data or if the radio should reset
+        
+        Check either puck is streaming data. If not, reset the
+        RX radio and wait for it to startup
+        '''
+        # Check if either puck has sent data at least 1 out of 200 times
+        # ends the method of data is already being sent
         for i in range(0, 200):
             self.checkForNewPuckData()
             if self.puck_0_packet.connected or self.puck_1_packet.connected:
-                radio_working = True
-                break
+                return
             pygame.time.wait(1)
-        self.sendCommand(0,DNGLRST, 0x00, 0x00)
-        pygame.time.wait(600)  # wait until we are getting data
+        
+        # If data is not coming from the pucks, reset the radio
+        self.sendCommand(0, DNGLRST, 0x00, 0x00)
+        pygame.time.wait(600) # wait 600ms for data to come in
 
     ##---- wait till receiving data ------------------------------------------##
     def wait_for_data(self):
