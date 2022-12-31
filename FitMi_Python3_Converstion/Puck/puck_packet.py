@@ -3,6 +3,7 @@ import numpy as np
 from Puck.quaternion import q_rotate_vector
 import math
 
+
 class PuckPacket(object):
     '''
     Class containing all of the data from the puck as well as calculated data
@@ -94,7 +95,8 @@ class PuckPacket(object):
 
         self.packet_def = self.create_packet_definition()
 
-    def create_packet_definition(self):
+
+    def create_packet_definition(self) -> str:
         '''
         Defines the incoming format of the data message
 
@@ -103,7 +105,7 @@ class PuckPacket(object):
 
         Returns
         -------
-        string
+        str
             The assembled data message format
         '''
         accelerometer = "hhh" # three shorts
@@ -116,7 +118,7 @@ class PuckPacket(object):
         return "<" + accelerometer + gyroscope + magnetometer + quaternion +\
             load_cell + battery + status
 
-    def parse(self, raw_data):
+    def parse(self, raw_data: bytearray):
         '''
         Separates the incoming data into the right data variables
 
@@ -126,7 +128,7 @@ class PuckPacket(object):
 
         Parameters
         ----------
-        raw_data : byte array
+        raw_data : bytearray
             The incoming data message from the puck
         '''
         # Read the data based on the packet format
@@ -165,7 +167,7 @@ class PuckPacket(object):
         except:
             pass
 
-    def parse_status(self, status):
+    def parse_status(self, status: int):
         '''
         Parses final char of the data packet, the status byte
 
@@ -209,7 +211,7 @@ class PuckPacket(object):
             np.arctan2(2.0 * (q1 * q2 + q0 * q3),
             q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)*180.0/np.pi
 
-    def getAngle(self, v):
+    def getAngle(self, v: np.ndarray) -> float:
         '''
         Rotates vector with puck's quaternion and finds angle with the xy plane
 
@@ -239,7 +241,7 @@ class PuckPacket(object):
         else:
             return v_angle
             
-    def getXAngle(self):
+    def getXAngle(self) -> float:
         '''
         Finds angle between the rotated x unit vector and the global xy plane
 
@@ -252,7 +254,7 @@ class PuckPacket(object):
         x_axis = np.array([0.0,0.0,1.0])
         return self.getAngle(x_axis)
             
-    def getYAngle(self):
+    def getYAngle(self) -> float:
         '''
         Finds angle between the rotated y unit vector and the global xy plane
 
@@ -264,7 +266,7 @@ class PuckPacket(object):
         y_axis = np.array([0.0,0.0,1.0])
         return self.getAngle(y_axis)
 
-    def getZAngle(self):
+    def getZAngle(self) -> float:
         '''
         Finds angle between the rotated z unit vector and the global xy plane
 
@@ -277,7 +279,7 @@ class PuckPacket(object):
         z_axis = np.array([0.0,0.0,1.0])
         return self.getAngle(z_axis)
 
-    def __str__(self):
+    def __str__(self) -> str:
         '''
         Printed string of data variables when the class is printed
 
@@ -286,7 +288,7 @@ class PuckPacket(object):
 
         Returns
         -------
-        output_string : string
+        output_string : str
             The extracted data with labels
         '''
         output_string = (self.accelerometer, self.gyroscope, self.magnetometer,
