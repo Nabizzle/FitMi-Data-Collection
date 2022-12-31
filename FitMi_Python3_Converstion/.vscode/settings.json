@@ -25,6 +25,7 @@
         "mplot",
         "MPUENBL",
         "MPULSE",
+        "ndarray",
         "nonblocking",
         "pygame",
         "pyplot",

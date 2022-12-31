@@ -17,7 +17,8 @@ q_rotate_vector(q, v)
 '''
 import numpy as np
 
-def q_normalize(q):
+
+def q_normalize(q: np.ndarray) -> np.ndarray:
     '''
     Normalizes a quaternion by its magnitude
 
@@ -33,7 +34,8 @@ def q_normalize(q):
     '''
     return q / np.linalg.norm(q)
 
-def q_multiply(q1, q2):
+
+def q_multiply(q1: np.ndarray, q2: np.ndarray) -> np.ndarray:
     '''
     Multiply two quaternions by each other
 
@@ -61,7 +63,8 @@ def q_multiply(q1, q2):
 
     return np.array([w, x, y, z])
 
-def q_conjugate(q):
+
+def q_conjugate(q: np.ndarray) -> np.ndarray:
     '''
     Get the conjugate of a quaternion
 
@@ -78,7 +81,8 @@ def q_conjugate(q):
     w, x, y, z = q
     return np.array([w, -x, -y, -z])
 
-def q_rotate_vector(q, v):
+
+def q_rotate_vector(q: np.ndarray, v: np.ndarray) -> np.ndarray:
     '''
     Use a quaternion to rotate a vector
 
@@ -103,6 +107,7 @@ def q_rotate_vector(q, v):
     # multiplying it by the conjugate of the quaternion. Return only the vector
     # part of the new quaternion
     return q_multiply(q_multiply(q, q_v), q_conjugate(q))[1:]
+
 
 if __name__ == "__main__":
     '''
