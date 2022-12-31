@@ -137,8 +137,8 @@ class PuckLogger(object):
 
         # Start communication to each puck
         self.puck.open()
-        self.puck.sendCommand(0,SENDVEL, 0x00, 0x01)
-        self.puck.sendCommand(1,SENDVEL, 0x00, 0x01)
+        self.puck.send_command(0, SENDVEL, 0x00, 0x01)
+        self.puck.send_command(1, SENDVEL, 0x00, 0x01)
 
         print("recording data")
         # Start the thread looking for the recording to stop early
@@ -304,8 +304,8 @@ class PuckLogger(object):
         Closes communication with the pucks and saves the log file data
         '''
         # disconnects from the pucks and closes the connection to the dongle
-        self.puck.sendCommand(0,SENDVEL, 0x00, 0x00)
-        self.puck.sendCommand(1,SENDVEL, 0x00, 0x00)
+        self.puck.send_command(0, SENDVEL, 0x00, 0x00)
+        self.puck.send_command(1, SENDVEL, 0x00, 0x00)
         self.puck.close()
 
         # save the log file

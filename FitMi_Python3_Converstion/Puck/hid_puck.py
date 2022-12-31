@@ -201,8 +201,8 @@ class HIDPuckDongle(object):
         self.check_connection()
         self.wait_for_data()
 
-        self.sendCommand(0,GAMEON, 0x00, 0x01) # puts puck 0 into game mode
-        self.sendCommand(1,GAMEON, 0x00, 0x01) # puts puck 1 into game mode
+        self.send_command(0,GAMEON, 0x00, 0x01) # puts puck 0 into game mode
+        self.send_command(1,GAMEON, 0x00, 0x01) # puts puck 1 into game mode
 
     def check_connection(self):
         '''
@@ -220,7 +220,7 @@ class HIDPuckDongle(object):
             pygame.time.wait(1)
         
         # If data is not coming from the pucks, reset the radio
-        self.sendCommand(0, DNGLRST, 0x00, 0x00)
+        self.send_command(0, DNGLRST, 0x00, 0x00)
         pygame.time.wait(600) # wait 600ms for data to come in
 
     def wait_for_data(self):
@@ -405,15 +405,28 @@ class HIDPuckDongle(object):
         self.block_1_pipe = (rx_data & 0b111000) >> 3
         self.block_0_pipe = (rx_data & 0b111)
 
-    ##---- send a command to the pucks ---------------------------------------##
-    def sendCommand(self, puck_number, cmd, msb, lsb):
-        command = (0b11100000 & (puck_number << 5)) | cmd
+    def send_command(self, puck_number, command, message, last_byte):
+        '''
+        Formats a command to one of the pucks
+
+        Parameters
+        ----------
+        puck_number : int
+            id of the puck. 0 = blue, 1 = yellow
+        command : int
+            id of what kind of action to take
+        message : int
+            the action to send
+        last_byte : int
+            modifier for the action
+        '''
+        command = (0b11100000 & (puck_number << 5)) | command
         if self.is_plugged():
             pass
-            ## put our message in the usb out queue
+            ## put the message in the usb out queue
             if not self.usb_out_queue.full():
-                self.usb_out_queue.put([0x00, command, msb, lsb])
-                if self.print_debug: print("queued 0x%x , 0x%x to puck %s" % (cmd, msb << 8 | lsb, puck_number))
+                self.usb_out_queue.put([0x00, command, message, last_byte])
+                if self.print_debug: print("queued 0x%x , 0x%x to puck %s" % (command, message << 8 | last_byte, puck_number))
 
     def note_sending(self, value):
         # if the error report path is set
@@ -433,30 +446,30 @@ class HIDPuckDongle(object):
         amp = min(amp, 100)
         try:
             cmd = COMMANDS.get(actuator).get(action_type)
-            self.sendCommand(puck_number, cmd, duration_byte, amp)
+            self.send_command(puck_number, cmd, duration_byte, amp)
         except Exception as e:
             if self.print_debug: print("in hid_puck, actuate - " + str(e))
 
     ##---- set touch buzz ----------------------------------------------------##
     def setTouchBuzz(self, puck_number, value):
-        self.sendCommand(puck_number, TOUCHBUZ, 0, value)
+        self.send_command(puck_number, TOUCHBUZ, 0, value)
 
     ##---- change RX frequency -----------------------------------------------##
     def changeRXFreq(self, new_frequency ):
-        self.sendCommand(0, RXCHANGEFREQ, 0, new_frequency)
+        self.send_command(0, RXCHANGEFREQ, 0, new_frequency)
 
     ##---- tell the receiver which pipes to send over the usb connection -----##
     def setUSBPipes(self, pack0_pipe=0, pack1_pipe=1):
         pack0_pipe = min(pack0_pipe, 5)
         pack1_pipe = min(pack1_pipe, 5)
-        self.sendCommand(0, SETUSBPIPES, pack0_pipe, pack1_pipe)
+        self.send_command(0, SETUSBPIPES, pack0_pipe, pack1_pipe)
 
     ##---- spy on a particular channel for a limited amount of time ---------##
     def startSpy(self, spy_channel=12, duration=100):
         # note that spy_channel is  the channel (0, 127)
         if duration > 255:
             duration = 255
-        self.sendCommand(0, CHANSPY, spy_channel, duration)
+        self.send_command(0, CHANSPY, spy_channel, duration)
 
     ##---- thread start ------------------------------------------------------##
     def stop(self):

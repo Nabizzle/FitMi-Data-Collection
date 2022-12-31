@@ -176,8 +176,8 @@ class PuckPlotter(object):
         '''
         # Send command to communicate with both pucks
         self.puck.open()
-        self.puck.sendCommand(0,SENDVEL, 0x00, 0x01)
-        self.puck.sendCommand(1,SENDVEL, 0x00, 0x01)
+        self.puck.send_command(0, SENDVEL, 0x00, 0x01)
+        self.puck.send_command(1, SENDVEL, 0x00, 0x01)
 
         # sample both pucks and pause by the sample rate
         for i in range(self.max_samples):
@@ -190,8 +190,8 @@ class PuckPlotter(object):
         '''
         Stops recording from the pucks and close the dongle connection
         '''
-        self.puck.sendCommand(0,SENDVEL, 0x00, 0x00)
-        self.puck.sendCommand(1,SENDVEL, 0x00, 0x00)
+        self.puck.send_command(0, SENDVEL, 0x00, 0x00)
+        self.puck.send_command(1, SENDVEL, 0x00, 0x00)
         self.puck.close()
 
     def run(self, puck_0_data=None, puck_1_data=None):

@@ -80,7 +80,7 @@ class OrientationScope(object):
         '''
         # Creates the connection to the selected puck
         self.puck.open()
-        self.puck.sendCommand(self.puck_number,SENDVEL, 0x00, 0x01)
+        self.puck.send_command(self.puck_number, SENDVEL, 0x00, 0x01)
 
         tick_up = 0 # counter to indicate when a second has passed
         print("recording data")
