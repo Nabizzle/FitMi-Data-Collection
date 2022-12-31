@@ -1,5 +1,6 @@
 import struct
 
+
 class ScanPacket(object):
     '''
     Helper functions for analyzing the scan data packet
@@ -46,6 +47,7 @@ class ScanPacket(object):
         self.status = -1
         self.packet_def = self.create_packet_definition()
 
+
     def create_packet_definition(self) -> str:
         '''
         Creates the string for parsing the scan data stream
@@ -62,6 +64,7 @@ class ScanPacket(object):
         battery  = "B" # one char
         status   = "B" # one char
         return "<"+pipe_channel+found_count+scan_time+battery+status
+
 
     def parse(self, raw_data: bytearray):
         '''
@@ -81,6 +84,7 @@ class ScanPacket(object):
         self.scan_channel = data[12]
         self.battery = data[13]
         self.status = data[14]
+
 
     def __str__(self) -> str:
         '''
