@@ -1,3 +1,8 @@
+from matplotlib import pyplot as plt
+from typing import List
+from Puck.puck_packet import PuckPacket
+
+
 class AniPlot(object):
     '''
     Creates a subplot to display a buffer to data
@@ -27,7 +32,7 @@ class AniPlot(object):
     set_ylabel
         Sets the y axis label of the subplot
     '''
-    def __init__(self, fig, split, buffer_min=0, buffer_max=200, ymin=-180,
+    def __init__(self, fig: plt.figure, split: List[int], buffer_min: int = 0, buffer_max: int = 200, ymin: int = -180,
         ymax=180, second_puck=False):
         '''
         Create the base data subplot
@@ -89,7 +94,8 @@ class AniPlot(object):
             self.puck_2_plot = self.ax.plot(self.x_points, self.puck_1_data,
             '-', color="g")[0]
 
-    def set_xlabel(self, axis_name):
+
+    def set_xlabel(self, axis_name: str):
         '''
         Sets the x axis label of the subplot
 
@@ -102,7 +108,8 @@ class AniPlot(object):
         self.ax.set_xlabel(axis_name, fontsize = 12)
         self.fig.canvas.draw()
 
-    def set_ylabel(self, axis_name):
+
+    def set_ylabel(self, axis_name: str):
         '''
         Sets the y axis label of the subplot
 
@@ -115,7 +122,8 @@ class AniPlot(object):
         self.ax.set_ylabel(axis_name, fontsize = 12)
         self.fig.canvas.draw()
 
-    def update(self, puck_0_data, puck_1_data=None):
+
+    def update(self, puck_0_data: PuckPacket, puck_1_data: PuckPacket = None):
         '''
         Add the new data to the end of the buffer of data
 
@@ -140,7 +148,8 @@ class AniPlot(object):
             self.puck_1_data.pop(0)
             self.puck_1_data.append(puck_1_data)
 
-    def draw(self, fig):
+
+    def draw(self, fig: plt.figure):
         '''
         Adds the data to the subplot
 
