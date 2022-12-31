@@ -8,6 +8,8 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from Puck.puck_packet import PuckPacket
 import queue
+from typing import Dict
+
 
 # Command definitions
 RBLINK       = 0x01 # Blink the red light
@@ -37,6 +39,7 @@ COMMANDS = {"red": {"blink": RBLINK, "pulse": RPULSE},
             "green": {"blink": GBLINK, "pulse": GPULSE},
             "blue": {"blink": BBLINK, "pulse": BPULSE},
             "motor": {"blink": MBLINK, "pulse": MPULSE}}
+
 
 class HIDPuckDongle(object):
     '''
@@ -133,7 +136,7 @@ class HIDPuckDongle(object):
     get_device_info()
         Finds the hardware input device for the dongle
     '''
-    def __init__(self, error_report=None):
+    def __init__(self, error_report: str = None):
         '''
         Setup threads and variables for communicating with the pucks
 
@@ -143,8 +146,14 @@ class HIDPuckDongle(object):
 
         Parameters
         ----------
-        error_report : file path, optional
+        error_report : str, optional
             path to the error log text file
+
+        Notes
+        -----
+        Do not configure the dongle as a joystick hardware input device (hid).
+        pygame is used to wait in specific threads and will take control of it
+        automatically.
         '''
         # set the hardware ids of the dongle
         self.VENDOR_ID = 0x04d8 # do not change this
@@ -152,9 +161,6 @@ class HIDPuckDongle(object):
 
         self.print_debug = False
 
-        # NOTE: Do not configure the dongle as a joystick hardware input device
-        # (hid). pygame is used to wait in specific threads and will take
-        # control of it automatically.
         self.dongle = hid.device()
 
         self.is_open = False
@@ -186,6 +192,7 @@ class HIDPuckDongle(object):
 
         # instantiate the last time each puck was touched to 0
         self.last_sent = [0.0, 0.0]
+
 
     def open(self):
         '''
@@ -229,6 +236,7 @@ class HIDPuckDongle(object):
         self.send_command(0,GAMEON, 0x00, 0x01) # puts puck 0 into game mode
         self.send_command(1,GAMEON, 0x00, 0x01) # puts puck 1 into game mode
 
+
     def check_connection(self):
         '''
         Check if the pucks are sending data or if the radio should reset
@@ -248,6 +256,7 @@ class HIDPuckDongle(object):
         self.send_command(0, DNGLRST, 0x00, 0x00)
         pygame.time.wait(600) # wait 600ms for data to come in
 
+
     def wait_for_data(self):
         '''
         Check if data has been received by the input_checking thread
@@ -260,6 +269,7 @@ class HIDPuckDongle(object):
             pygame.time.wait(1)  # wait until we are getting data
             if self.receiving_data:
                 return
+
 
     def input_checker(self):
         '''
@@ -320,7 +330,9 @@ class HIDPuckDongle(object):
         # close the connection to the dongle
         self.dongle.close()
 
-    def check_for_touch(self, input, touch_history, puck_number = 0):
+
+    def check_for_touch(self, input: bytearray, touch_history: Dict[str, bool],
+        puck_number: int = 0):
         '''
         Parse the status byte of the input data to see if there was a touch
 
@@ -330,7 +342,7 @@ class HIDPuckDongle(object):
 
         Parameters
         ----------
-        input : byte array
+        input : bytearray
             The data stream from both pucks
         touch_history : dict
             A dictionary containing if either puck was being touched the last
@@ -381,6 +393,7 @@ class HIDPuckDongle(object):
             # sets the touch history of the yellow puck to the current value
             touch_history["puck_1"] = touch
 
+
     def checkForNewPuckData(self):
         '''
         Directs the incoming data the correct parsing functions
@@ -413,13 +426,14 @@ class HIDPuckDongle(object):
             finally:
                 pass
 
-    def parse_rx_data(self, rx_data):
+
+    def parse_rx_data(self, rx_data: bytearray):
         '''
         Extract out the RX radio data from the input stream
 
         Parameters
         ----------
-        rx_data : byte array
+        rx_data : bytearray
             The radio data part of the input byte array
         '''
         # get the rx_data as an unsigned short
@@ -430,7 +444,9 @@ class HIDPuckDongle(object):
         self.block_1_pipe = (rx_data & 0b111000) >> 3
         self.block_0_pipe = (rx_data & 0b111)
 
-    def send_command(self, puck_number, command, message, last_byte):
+
+    def send_command(self, puck_number: int, command: int, message: int,
+        last_byte: int):
         '''
         Formats a command to one of the pucks
 
@@ -455,18 +471,25 @@ class HIDPuckDongle(object):
                     print("queued 0x%x , 0x%x to puck %s" % (command,
                         message << 8 | last_byte, puck_number))
 
-    def note_sending(self, value):
+
+    def note_sending(self, output_message: str):
         '''
         Sends a message to the error log
+
+        Parameters
+        ----------
+        output_message : str
+            Message to log into the error report
         '''
         # if the error report path is set, log a message to the error log
         if self.error_report_path:
             with open(os.path.join(self.error_report_path,
                 "usb_sending.txt"), 'w') as output_stream:
-                output_stream.write("%s"%value)
+                output_stream.write("%s"%output_message)
 
-    def actuate(self, puck_number, duration, amplitude, action_type="blink",
-    actuator="motor"):
+
+    def actuate(self, puck_number: int, duration: int, amplitude: int,
+    action_type: str = "blink", actuator: str = "motor"):
         '''
         Sends a command to "blink" or pulse one of the lights or the motor
 
@@ -505,7 +528,8 @@ class HIDPuckDongle(object):
         except Exception as e:
             if self.print_debug: print("in hid_puck, actuate - " + str(e))
 
-    def set_touch_buzz(self, puck_number, value):
+
+    def set_touch_buzz(self, puck_number: int, value: int):
         '''
         Turns the vibration when touched feature on or off
 
@@ -518,7 +542,8 @@ class HIDPuckDongle(object):
         '''
         self.send_command(puck_number, TOUCHBUZ, 0, value)
 
-    def change_rx_freq(self, new_frequency ):
+
+    def change_rx_freq(self, new_frequency: int):
         '''
         Changes the frequency of the RX radio
 
@@ -529,7 +554,8 @@ class HIDPuckDongle(object):
         '''
         self.send_command(0, RXCHANGEFREQ, 0, new_frequency)
 
-    def set_usb_pipes(self, packet_0_pipe=0, packet_1_pipe=1):
+
+    def set_usb_pipes(self, packet_0_pipe: int = 0, packet_1_pipe: int = 1):
         '''
         Tell the dongle which pipes to send over the usb connection
 
@@ -544,7 +570,8 @@ class HIDPuckDongle(object):
         packet_1_pipe = min(packet_1_pipe, 5)
         self.send_command(0, SETUSBPIPES, packet_0_pipe, packet_1_pipe)
 
-    def start_spy(self, channel = 12, duration = 100):
+
+    def start_spy(self, channel: int = 12, duration: int = 100):
         '''
         Spy on a particular channel for a specific amount of time
 
@@ -560,11 +587,13 @@ class HIDPuckDongle(object):
             duration = 255
         self.send_command(0, CHANSPY, channel, duration)
 
+
     def stop(self):
         '''
         Set the is_open value to False
         '''
         self.is_open = False
+
 
     def close(self):
         '''
@@ -584,7 +613,8 @@ class HIDPuckDongle(object):
             self.input_thread.join()
         self.input_thread = threading.Thread(target=self.input_checker)
 
-    def is_opened(self):
+
+    def is_opened(self) -> bool:
         '''
         Returns the is_open variable
 
@@ -595,7 +625,8 @@ class HIDPuckDongle(object):
         '''
         return self.is_open
 
-    def is_plugged(self):
+
+    def is_plugged(self) -> bool:
         '''
         Checks if the dongle is in the list of hardware input devices
 
@@ -611,7 +642,8 @@ class HIDPuckDongle(object):
         
         return False
 
-    def is_plugged_fast(self):
+
+    def is_plugged_fast(self) -> bool:
         '''
         Simplified is_plugged method to check if the dongle is receiving data
 
@@ -622,7 +654,8 @@ class HIDPuckDongle(object):
         '''
         return self.receiving_data
 
-    def get_device_info(self):
+
+    def get_device_info(self) -> hid.device:
         '''
         Finds the hardware input device for the dongle
 
@@ -636,6 +669,7 @@ class HIDPuckDongle(object):
             if device['product_id'] == self.PRODUCT_ID and \
                device['vendor_id'] == self.VENDOR_ID:
                return device
+
 
 if __name__ == "__main__":
     '''
