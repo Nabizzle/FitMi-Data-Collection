@@ -39,12 +39,37 @@ COMMANDS = {"red": {"blink": RBLINK, "pulse": RPULSE},
             "motor": {"blink": MBLINK, "pulse": MPULSE}}
 
 class HIDPuckDongle(object):
+    '''
+    Defines how to communicate to and from the pucks
+
+    Attributes
+    ----------
+    VENDOR_ID : int
+        The vendor id of the dongle in the hardware input device list. Make
+        sure this number does not change or else the dongle will not be
+        connected to.
+    PRODUCT_ID : int
+        The product id of the dongle in the hardware input device list. Make
+        sure this number does not change or else the dongle will not be
+        connected to.
+    release : int
+    Methods
+    -------
+    __init__(error_report, operating_system)
+        Setup threads and variables for communicating with the pucks
+    '''
     ##---- initialization ----------------------------------------------------##
     def __init__(self, error_report=None, operating_system="Windows"):
+        '''
+        Setup threads and variables for communicating with the pucks
+
+        Setup the threads for communicating with the pucks and the data
+        variables that store communication data. Performs the relevant steps to
+        set up the dongle as a hardware input device.
+        '''
         self.VENDOR_ID = 0x04d8 # do not change this
         self.PRODUCT_ID = 0x2742 # do not change this
-        self.release = 0
-        self.verbosity = 0
+        self.print_debug = False
         # NOTE: Do not configure the dongle as a joystick hardware input device
         # (hid). pygame is used to wait in specific threads and will take
         # control of it automatically.
@@ -88,15 +113,15 @@ class HIDPuckDongle(object):
             return
 
         ## if we are open, close first then re-open.
-        if self.verbosity > 0: print("dongle open?")
+        if self.print_debug: print("dongle open?")
         try:
             self.dongle.close()
         except:
             pass
 
         self.dongle.open(self.VENDOR_ID, self.PRODUCT_ID)
-        if self.verbosity > 0: print("manufacturer: %s" % self.dongle.get_manufacturer_string())
-        if self.verbosity > 0: print("product: %s" % self.dongle.get_product_string())
+        if self.print_debug: print("manufacturer: %s" % self.dongle.get_manufacturer_string())
+        if self.print_debug: print("product: %s" % self.dongle.get_product_string())
 
         self.is_open = True
         self.iThread.start()
@@ -163,7 +188,7 @@ class HIDPuckDongle(object):
                     
             except Exception as e:
                 self.receiving_data = False
-                if self.verbosity > 1: print(e)
+                if self.print_debug: print(e)
             finally:
                 time.sleep(0.00001)
                 
@@ -224,7 +249,7 @@ class HIDPuckDongle(object):
 
 
             except Exception as e:
-                if self.verbosity > 0: print(e)
+                if self.print_debug: print(e)
             finally:
                 pass
 
@@ -244,8 +269,7 @@ class HIDPuckDongle(object):
             ## put our message in the usb out queue
             if not self.usb_out_queue.full():
                 self.usb_out_queue.put([0x00, command, msb, lsb])
-                if self.verbosity > 0: print("queued 0x%x , 0x%x to puck %s" % (cmd, msb << 8 | lsb, puck_number))
-
+                if self.print_debug: print("queued 0x%x , 0x%x to puck %s" % (cmd, msb << 8 | lsb, puck_number))
 
     def note_sending(self, value):
         if self.error_report_path:
@@ -266,7 +290,7 @@ class HIDPuckDongle(object):
             cmd = COMMANDS.get(actuator).get(action_type)
             self.sendCommand(puck_number, cmd, duration_byte, amp)
         except Exception as e:
-            if self.verbosity > 0: print("in hid_puck, actuate - " + str(e))
+            if self.print_debug: print("in hid_puck, actuate - " + str(e))
 
     ##---- set touch buzz ----------------------------------------------------##
     def setTouchBuzz(self, puck_number, value):
