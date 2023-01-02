@@ -170,22 +170,22 @@ class RecordingApp(ctk.CTk):
         # Create the start recording button
         start_button = ctk.CTkButton(self, text = "Start Recording",
             command = self.start_button_callback)
-        start_button.grid(row = 5, column = 0, padx = 10,
+        start_button.grid(row = 5, column = 0, padx = 5,
             pady = 5)
 
         # Create the stop recording button
         stop_button = ctk.CTkButton(self, text = "Stop Recording",
             command = self.stop_button_callback)
-        stop_button.grid(row = 6, column = 0, padx = 10,
+        stop_button.grid(row = 6, column = 0, padx = 5,
             pady = 5)
 
         self.file_name_textbox = ctk.CTkTextbox(self, height = 10)
-        self.file_name_textbox.grid(row = 5, column = 1, padx = 10, pady = 10)
+        self.file_name_textbox.grid(row = 5, column = 1, padx = 10, pady = 5)
         self.file_name_textbox.insert("0.0", "Data File Name")
 
         self.recording_time_textbox = ctk.CTkTextbox(self, height = 10)
         self.recording_time_textbox.grid(row = 6, column = 1, padx = 10,
-            pady = 10)
+            pady = 5)
         self.recording_time_textbox.insert("0.0", "Recording Time in Minutes")
 
         self.after(int(1000/self.puck_logger.samples_per_second),
