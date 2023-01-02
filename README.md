@@ -102,6 +102,11 @@ Quaternions can also be converted to Rotation Matrices by following a specific f
 Plots the x, y, and z directions of the accelerometer, gyroscope, and linear velocity; the roll, pitch, and yaw angles; and the load cell values of both pucks in a set
 of subplots.
 
+### recording_gui.py
+
+Logs puck data like the [log_puck_data.py](#log_puck_datapy) script, but it is more intuitive to use.
+![Python3 Data Logging App](https://github.com/CaseFNI/FitMi-Data-Collection/blob/main/Media/Data%20Logging%20App.png)
+
 ### ani_plot.py
 
 Creates the details of the subplots needed by the [puck_plot.py](#puck_plotpy) script. This script handles the updating and modification of the subplots as well as
