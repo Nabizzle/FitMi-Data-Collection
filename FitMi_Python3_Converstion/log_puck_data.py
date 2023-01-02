@@ -76,7 +76,7 @@ class PuckLogger(object):
     stop()
         Closes communication with the pucks and saves the log file data
     '''
-    def __init__(self):
+    def __init__(self, using_app = False):
         '''
         Initializes the variables needed to record into a log file
 
@@ -84,6 +84,11 @@ class PuckLogger(object):
         needed to communicate and log all of the pucks' data into variables,
         and sets up the thread looking to see if the user wants to stop
         recording early.
+
+        Parameters
+        ----------
+        using_app : bool
+            boolean for if an app is used instead of the script
         '''
         self.data_folder = os.path.join(os.getcwd(), "data")
         self.file_name = "temp"
@@ -107,8 +112,9 @@ class PuckLogger(object):
         self.puck_1_load_cell = None
         self.puck_1_quaternion = None
 
-        self.check_stop_thread = threading.Thread(target=self.check_stop)
-        self.check_stop_thread.daemon = True
+        if not using_app:
+            self.check_stop_thread = threading.Thread(target=self.check_stop)
+            self.check_stop_thread.daemon = True
 
 
     def check_stop(self):
