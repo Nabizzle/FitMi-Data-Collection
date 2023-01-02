@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from log_puck_data import PuckLogger
-from Puck.hid_puck import *
+from Puck.hid_puck import SENDVEL
 import numpy as np
 import shelve
 from scipy import io
