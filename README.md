@@ -46,6 +46,7 @@ to change the puck number in the script. 0 is the blue puck and 1 is the yellow 
 - [numpy version: 1.23.4](https://pypi.org/project/numpy/)
 - [pygame 2.1.2](https://pypi.org/project/pygame/)
 - [scipy version: 1.9.3](https://pypi.org/project/scipy/)
+- [customtkinter version: 5.0.3](https://pypi.org/project/customtkinter/0.3/)
 
 ## Testing electronics
 
