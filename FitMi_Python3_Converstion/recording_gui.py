@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import tkinter as tk
 from log_puck_data import PuckLogger
 from Puck.hid_puck import SENDVEL
 import numpy as np
@@ -50,10 +51,10 @@ class RecordingApp(ctk.CTk):
         CTKFrame for getting the blue puck's load cell data
     yellow_puck_quaternion_frame :  PuckFileName object
         CTKFrame for getting the blue puck's quaternion data
-    file_name_textbox : CTkTextbox
-        Text box to enter the overall file name
-    recording_time_textbox : CTkTextbox
-        Text box to enter recording time in minutes\
+    file_name_textbox : CTkEntry
+        One line text box to enter the overall file name
+    recording_time_textbox : CTkEntry
+        One line text box to enter the recording time in minutes
     file_name : str
         String extracted from the file_name_textbox
 
@@ -99,7 +100,7 @@ class RecordingApp(ctk.CTk):
 
         # configure window
         self.title("FitMi Puck Data Logging App")
-        self.geometry(f"{500}x{580}")
+        self.geometry(f"{410}x{550}")
 
         # configure grid layout (5x2)
         self.grid_columnconfigure((0, 1), weight=0)
@@ -179,14 +180,14 @@ class RecordingApp(ctk.CTk):
         stop_button.grid(row = 6, column = 0, padx = 5,
             pady = 5)
 
-        self.file_name_textbox = ctk.CTkTextbox(self, height = 10)
+        self.file_name_textbox = ctk.CTkEntry(self, width = 165, height = 10,
+            placeholder_text = "Data File Name")
         self.file_name_textbox.grid(row = 5, column = 1, padx = 10, pady = 5)
-        self.file_name_textbox.insert("0.0", "Data File Name")
 
-        self.recording_time_textbox = ctk.CTkTextbox(self, height = 10)
+        self.recording_time_textbox = ctk.CTkEntry(self, width = 165, height = 10,
+            placeholder_text = "Recording Time in Minutes")
         self.recording_time_textbox.grid(row = 6, column = 1, padx = 10,
             pady = 5)
-        self.recording_time_textbox.insert("0.0", "Recording Time in Minutes")
 
         self.after(int(1000/self.puck_logger.samples_per_second),
             self.get_data)
@@ -198,14 +199,19 @@ class RecordingApp(ctk.CTk):
         '''
         # get text from line 0 character 0 till the end before the new line
         # character
-        self.file_name = self.file_name_textbox.get("0.0", "end-1c")
+        self.file_name = self.file_name_textbox.get()
+        if not self.file_name:
+            tk.messagebox.showwarning(title = "Missing File Name!",
+                message = "You need a data file name!")
+            return
+
         if(self.set_recording_length()):
             # Start communication to each puck
             self.puck_logger.puck.open()
             self.puck_logger.puck.send_command(0, SENDVEL, 0x00, 0x01)
             self.puck_logger.puck.send_command(1, SENDVEL, 0x00, 0x01)
 
-            print("recording data")
+            print("Recording Data")
             self.puck_logger.samples_taken = 0
             self.keep_running = True
 
@@ -228,7 +234,7 @@ class RecordingApp(ctk.CTk):
         '''
         Tells the app to stop recording and disconnects for the pucks
         '''
-        print("Stop Tried")
+        print("Recording Stopped")
         self.keep_running = False
         # disconnects from the pucks and closes the connection to the dongle
         self.puck_logger.puck.send_command(0, SENDVEL, 0x00, 0x00)
@@ -341,18 +347,20 @@ class RecordingApp(ctk.CTk):
         '''
         # get text from line 0 character 0 till the end before the new line
         # character
-        recording_length_string=self.recording_time_textbox.get("0.0", "end-1c")
+        recording_length_string=self.recording_time_textbox.get()
 
         # Ask the user for a recording length until they enter a number
         try:
             recording_length_minutes =\
                     float(recording_length_string)
         except:
-            print("you need to input a number")
+            tk.messagebox.showwarning(title = "Incorrect time format.",
+                message = "You need to input a number!")
             return False
 
         if (recording_length_minutes>60) or (recording_length_minutes<0):
-            print("please enter a number between 0 and 60")
+            tk.messagebox.showwarning(title = "Recording time out of range",
+                message = "Please enter a number above 0 and below 60.")
             return False
 
         max_samples_needed =\
@@ -391,8 +399,8 @@ class PuckFileName(ctk.CTkFrame):
         The name of the sensor used for the title of this frame
     title : CTKLabel
         The label of the frame
-    file_name_textbox : CTkTextbox
-        Text box to enter the data's name
+    file_name_textbox : CTkEntry
+        One line text box to enter the data's name
     file_name : str
         The default name in the file_name_textbox
 
@@ -406,16 +414,16 @@ class PuckFileName(ctk.CTkFrame):
         super().__init__(*args, **kwargs)
         # setup the label of the frame
         self.puck_sensor_name = puck_sensor_name
-        self.title = ctk.CTkLabel(self, text = self.puck_sensor_name)
+        self.title = ctk.CTkLabel(self, text = self.puck_sensor_name,
+            width = 165)
         self.title.grid(row = 0, column = 0)
 
         # setup the file name entry
-        self.file_name_textbox = ctk.CTkTextbox(self, height = 10)
-        self.file_name_textbox.grid(row=1, column=0, padx = 10, pady = 10)
-
-        # insert file name at line 0 character 0
         self.file_name = puck_file_name
-        self.file_name_textbox.insert("0.0", self.file_name)
+        self.file_name_textbox = ctk.CTkEntry(self, height = 10,
+            placeholder_text = self.file_name, width = 165)
+        self.file_name_textbox.insert(0, self.file_name)
+        self.file_name_textbox.grid(row=1, column=0, padx = 10, pady = 10)
 
 
     def get_text(self):
@@ -424,7 +432,7 @@ class PuckFileName(ctk.CTkFrame):
         '''
         # get text from line 0 character 0 till the end before the new line
         # character
-        return self.file_name_textbox.get("0.0", "end-1c")
+        return self.file_name_textbox.get()
 
 
 if __name__ == "__main__":
