@@ -184,8 +184,8 @@ class RecordingApp(ctk.CTk):
             placeholder_text = "Data File Name")
         self.file_name_textbox.grid(row = 5, column = 1, padx = 10, pady = 5)
 
-        self.recording_time_textbox = ctk.CTkEntry(self, width = 165, height = 10,
-            placeholder_text = "Recording Time in Minutes")
+        self.recording_time_textbox = ctk.CTkEntry(self, width = 165,
+        height = 10, placeholder_text = "Recording Time in Minutes")
         self.recording_time_textbox.grid(row = 6, column = 1, padx = 10,
             pady = 5)
 
