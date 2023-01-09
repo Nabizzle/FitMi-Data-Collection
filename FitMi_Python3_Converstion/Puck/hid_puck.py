@@ -2,13 +2,13 @@ import hid
 import time
 import threading
 import struct
-import os
-import pygame
 from Puck.puck_packet import PuckPacket
 import queue
 from typing import Dict
+import os
 # suppresses pygame welcome message
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
 
 
 # Command definitions
