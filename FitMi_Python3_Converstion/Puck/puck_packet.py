@@ -23,7 +23,7 @@ class PuckPacket(object):
     velocity : numpy array
         The x, y, and z linear velocity values of this puck
     quaternion : numpy array
-        The w, x, y, and z quaternion values of this 
+        The w, x, y, and z quaternion values of this
     roll_pitch_yaw : numpy array
         The calculated roll, pitch, and yaw angles of this puck
     load cell : int
@@ -69,20 +69,20 @@ class PuckPacket(object):
     __str__()
         Printed string of data variables when the class is printed
     '''
-    def __init__(self):
+    def __init__(self) -> None:
         '''
         Initializes all data storage variables to default values
 
         Sets all data variables to 0 and sets up the definition of the data
         packet.
         '''
-        self.accelerometer = np.array([0,0,0])
-        self.gyroscope = np.array([0,0,0])
+        self.accelerometer = np.array([0, 0, 0])
+        self.gyroscope = np.array([0, 0, 0])
         self.magnetometer = np.array([0.0, 0.0, 0.0])
         # only updates if activated when puck connected to.
-        self.velocity = np.array([0,0,0])
+        self.velocity = np.array([0, 0, 0])
         self.quaternion = np.array([0.0, 0.0, 0.0, 0.0])
-        self.roll_pitch_yaw = np.array([0,0,0])
+        self.roll_pitch_yaw = np.array([0, 0, 0])
         self.load_cell = 0
         self.battery = 0
         self.charging = 0
@@ -94,7 +94,6 @@ class PuckPacket(object):
         self.res_v5 = 0
 
         self.packet_def = self.create_packet_definition()
-
 
     def create_packet_definition(self) -> str:
         '''
@@ -108,17 +107,17 @@ class PuckPacket(object):
         str
             The assembled data message format
         '''
-        accelerometer = "hhh" # three shorts
-        gyroscope  = "hhh" # three shorts
-        magnetometer = "hhh" # three shorts
-        quaternion   = "hhhh" # four shorts
-        load_cell = "h" # one short
-        battery  = "B" # one char
-        status   = "B" # one char
+        accelerometer = "hhh"  # three shorts
+        gyroscope = "hhh"  # three shorts
+        magnetometer = "hhh"  # three shorts
+        quaternion = "hhhh"  # four shorts
+        load_cell = "h"  # one short
+        battery = "B"  # one char
+        status = "B"  # one char
         return "<" + accelerometer + gyroscope + magnetometer + quaternion +\
             load_cell + battery + status
 
-    def parse(self, raw_data: bytearray):
+    def parse(self, raw_data: bytearray) -> None:
         '''
         Separates the incoming data into the right data variables
 
@@ -158,16 +157,16 @@ class PuckPacket(object):
         else:
             self.magnetometer[0:3] = vel_or_mag
             self.magnetometer /= 100.0
-        
+
         # calculate the roll, pitch, and yaw values. Needs to be in a try catch
         # because the yellow puck does not do this correctly
         try:
             # gets the roll, pitch and yaw angles from quaternion
             self.roll_pitch_yaw[0:3] = self.getRollPitchYaw()
-        except:
+        finally:
             pass
 
-    def parse_status(self, status: int):
+    def parse_status(self, status: int) -> None:
         '''
         Parses final char of the data packet, the status byte
 
@@ -188,7 +187,7 @@ class PuckPacket(object):
         self.state = (status & 0b01110000) >> 4
         self.res_v5 = (status & 0b10000000) >> 7
 
-    def getRollPitchYaw(self):
+    def getRollPitchYaw(self) -> None:
         '''
         Gets the roll, pitch, and yaw angles from quaternion constants
         '''
@@ -202,14 +201,14 @@ class PuckPacket(object):
             -np.arcsin(2.0 * (q1 * q3 - q0 * q2))*180.0/np.pi
 
         # pitch
-        self.roll_pitch_yaw[1]  =\
+        self.roll_pitch_yaw[1] =\
             np.arctan2(2.0 * (q0 * q1 + q2 * q3),
-            q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)*180.0/np.pi
+                       q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3) * 180.0 / np.pi
 
         # yaw
         self.roll_pitch_yaw[2] =\
             np.arctan2(2.0 * (q1 * q2 + q0 * q3),
-            q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)*180.0/np.pi
+                       q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3) * 180.0 / np.pi
 
     def getAngle(self, v: np.ndarray) -> float:
         '''
@@ -233,14 +232,14 @@ class PuckPacket(object):
         # Find the angle between the rotated vector and the xy plane
         v_angle =\
             np.arccos(np.linalg.norm(v_rotated[0:2]))*180.0/np.pi *\
-                np.sign(v_rotated[2])
+            np.sign(v_rotated[2])
 
         # Return the angle if it exists
         if math.isnan(v_angle):
             return None
         else:
             return v_angle
-            
+
     def getXAngle(self) -> float:
         '''
         Finds angle between the rotated x unit vector and the global xy plane
@@ -251,9 +250,9 @@ class PuckPacket(object):
             The angle between the rotated x axis and the xy plane. Above the
             plane is positive and below is negative.
         '''
-        x_axis = np.array([0.0,0.0,1.0])
+        x_axis = np.array([0.0, 0.0, 1.0])
         return self.getAngle(x_axis)
-            
+
     def getYAngle(self) -> float:
         '''
         Finds angle between the rotated y unit vector and the global xy plane
@@ -261,9 +260,10 @@ class PuckPacket(object):
         Returns
         -------
         float
-            The angle between the rotated y axis and the xy plane. Above the plane is positive and below is negative.
+            The angle between the rotated y axis and the xy plane. Above the
+            plane is positive and below is negative.
         '''
-        y_axis = np.array([0.0,0.0,1.0])
+        y_axis = np.array([0.0, 0.0, 1.0])
         return self.getAngle(y_axis)
 
     def getZAngle(self) -> float:
@@ -276,7 +276,7 @@ class PuckPacket(object):
             The angle between the rotated z axis and the xy plane. Above the
             plane is positive and below is negative.
         '''
-        z_axis = np.array([0.0,0.0,1.0])
+        z_axis = np.array([0.0, 0.0, 1.0])
         return self.getAngle(z_axis)
 
     def __str__(self) -> str:
@@ -292,9 +292,9 @@ class PuckPacket(object):
             The extracted data with labels
         '''
         output_string = (self.accelerometer, self.gyroscope, self.magnetometer,
-            self.quaternion, self.load_cell,
-            self.battery, self.charging, self.connected,
-            self.touch, self.imu_ok)
+                         self.quaternion, self.load_cell, self.battery,
+                         self.charging, self.connected, self.touch,
+                         self.imu_ok)
         return "accelerometer: %s, gyroscope: %s, magnetometer: %s,\
             velocity: %s, quaternion: %s, load cell: %s, battery: %s,\
             charging: %s, connected: %s, touch: %s, imu ok: %s" % output_string
