@@ -24,38 +24,38 @@ class RecordingApp(ctk.CTk):
 
     Attributes
     ----------
-    keep_running : bool
+    keep_running: bool
         Boolean for checking if data logging should continue
-    puck_logger : PuckLogger object
+    puck_logger: PuckLogger object
         An instance of the PuckLogger object which handles the recording of the
         data
-    title : str
+    title: str
         Name of the app
-    blue_puck_acceleration_frame :  PuckFileName object
+    blue_puck_acceleration_frame:  PuckFileName object
         CTKFrame for getting the blue puck's accelerometer data
-    blue_puck_gyroscope_frame :  PuckFileName object
+    blue_puck_gyroscope_frame:  PuckFileName object
         CTKFrame for getting the blue puck's gyroscope data
-    blue_puck_velocity_frame :  PuckFileName object
+    blue_puck_velocity_frame:  PuckFileName object
         CTKFrame for getting the blue puck's velocity data
-    blue_puck_load_cell_frame :  PuckFileName object
+    blue_puck_load_cell_frame:  PuckFileName object
         CTKFrame for getting the blue puck's load cell data
-    blue_puck_quaternion_frame :  PuckFileName object
+    blue_puck_quaternion_frame:  PuckFileName object
         CTKFrame for getting the blue puck's quaternion data
-    yellow_puck_acceleration_frame :  PuckFileName object
+    yellow_puck_acceleration_frame:  PuckFileName object
         CTKFrame for getting the blue puck's accelerometer data
-    yellow_puck_gyroscope_frame :  PuckFileName object
+    yellow_puck_gyroscope_frame:  PuckFileName object
         CTKFrame for getting the blue puck's gyroscope data
-    yellow_puck_velocity_frame :  PuckFileName object
+    yellow_puck_velocity_frame:  PuckFileName object
         CTKFrame for getting the blue puck's velocity data
-    yellow_puck_load_cell_frame :  PuckFileName object
+    yellow_puck_load_cell_frame:  PuckFileName object
         CTKFrame for getting the blue puck's load cell data
-    yellow_puck_quaternion_frame :  PuckFileName object
+    yellow_puck_quaternion_frame:  PuckFileName object
         CTKFrame for getting the blue puck's quaternion data
-    file_name_textbox : CTkEntry
+    file_name_textbox: CTkEntry
         One line text box to enter the overall file name
-    recording_time_textbox : CTkEntry
+    recording_time_textbox: CTkEntry
         One line text box to enter the recording time in minutes
-    file_name : str
+    file_name: str
         String extracted from the file_name_textbox
 
     Methods
@@ -72,23 +72,22 @@ class RecordingApp(ctk.CTk):
         Writes the logged data to a python dictionary and .mat file
     set_recording_length()
         Finds the total recording time and initializes the pucks' data arrays
-    
 
     See Also
     --------
     log_puck_data.py
         The definition of the PuckLogger class
     '''
-    def __init__(self, puck_logger: PuckLogger):
+    def __init__(self, puck_logger: PuckLogger) -> None:
         '''
         Create the recording app
 
-        Creates name fields for the puck data types and fields for the data file
-        name and recording length.
+        Creates name fields for the puck data types and fields for the data
+        file name and recording length.
 
         Parameters
         ----------
-        puck_logger : PuckLogger object
+        puck_logger: PuckLogger object
             An instance of the PuckLogger object which handles the recording of
             the data
         '''
@@ -107,93 +106,92 @@ class RecordingApp(ctk.CTk):
         self.grid_rowconfigure((0, 1, 2, 3, 4), weight=0)
 
         # Create the blue puck data inputs
-        self.blue_puck_acceleration_frame = PuckFileName(self,
-            puck_sensor_name = "Blue Puck Accelerometer",
-            puck_file_name = "puck_0_acceleration")
-        self.blue_puck_acceleration_frame.grid(row = 0, column = 0, padx = 10,
-            pady = 10)
+        self.blue_puck_acceleration_frame =\
+            PuckFileName(self, puck_sensor_name="Blue Puck Accelerometer",
+                         puck_file_name="puck_0_acceleration")
+        self.blue_puck_acceleration_frame.grid(row=0, column=0, padx=10,
+                                               pady=10)
 
-        self.blue_puck_gyroscope_frame = PuckFileName(self,
-            puck_sensor_name = "Blue Puck Gyroscope",
-            puck_file_name = "puck_0_gyroscope")
-        self.blue_puck_gyroscope_frame.grid(row = 1, column = 0, padx = 10,
-            pady = 10)
+        self.blue_puck_gyroscope_frame =\
+            PuckFileName(self, puck_sensor_name="Blue Puck Gyroscope",
+                         puck_file_name="puck_0_gyroscope")
+        self.blue_puck_gyroscope_frame.grid(row=1, column=0, padx=10,
+                                            pady=10)
 
-        self.blue_puck_velocity_frame = PuckFileName(self,
-            puck_sensor_name = "Blue Puck Velocity",
-            puck_file_name = "puck_0_velocity")
-        self.blue_puck_velocity_frame.grid(row = 2, column = 0, padx = 10,
-            pady = 10)
+        self.blue_puck_velocity_frame =\
+            PuckFileName(self, puck_sensor_name="Blue Puck Velocity",
+                         puck_file_name="puck_0_velocity")
+        self.blue_puck_velocity_frame.grid(row=2, column=0, padx=10,
+                                           pady=10)
 
-        self.blue_puck_load_cell_frame = PuckFileName(self,
-            puck_sensor_name = "Blue Puck Load Cell",
-            puck_file_name = "puck_0_load_cell")
-        self.blue_puck_load_cell_frame.grid(row = 3, column = 0, padx = 10,
-            pady = 10)
+        self.blue_puck_load_cell_frame =\
+            PuckFileName(self, puck_sensor_name="Blue Puck Load Cell",
+                         puck_file_name="puck_0_load_cell")
+        self.blue_puck_load_cell_frame.grid(row=3, column=0, padx=10,
+                                            pady=10)
 
-        self.blue_puck_quaternion_frame = PuckFileName(self,
-            puck_sensor_name = "Blue Puck Quaternion",
-            puck_file_name = "puck_0_quaternion")
-        self.blue_puck_quaternion_frame.grid(row = 4, column = 0, padx = 10,
-            pady = 10)
+        self.blue_puck_quaternion_frame =\
+            PuckFileName(self, puck_sensor_name="Blue Puck Quaternion",
+                         puck_file_name="puck_0_quaternion")
+        self.blue_puck_quaternion_frame.grid(row=4, column=0, padx=10,
+                                             pady=10)
 
         # Create the yellow puck data inputs
-        self.yellow_puck_acceleration_frame = PuckFileName(self,
-            puck_sensor_name = "Yellow Puck Accelerometer",
-            puck_file_name = "puck_1_acceleration")
-        self.yellow_puck_acceleration_frame.grid(row = 0, column = 1, padx = 10,
-            pady = 10)
+        self.yellow_puck_acceleration_frame =\
+            PuckFileName(self, puck_sensor_name="Yellow Puck Accelerometer",
+                         puck_file_name="puck_1_acceleration")
+        self.yellow_puck_acceleration_frame.grid(row=0, column=1, padx=10,
+                                                 pady=10)
 
-        self.yellow_puck_gyroscope_frame = PuckFileName(self,
-            puck_sensor_name = "Yellow Puck Gyroscope",
-            puck_file_name = "puck_1_gyroscope")
-        self.yellow_puck_gyroscope_frame.grid(row = 1, column = 1, padx = 10,
-            pady = 10)
+        self.yellow_puck_gyroscope_frame =\
+            PuckFileName(self, puck_sensor_name="Yellow Puck Gyroscope",
+                         puck_file_name="puck_1_gyroscope")
+        self.yellow_puck_gyroscope_frame.grid(row=1, column=1, padx=10,
+                                              pady=10)
 
-        self.yellow_puck_velocity_frame = PuckFileName(self,
-            puck_sensor_name = "Yellow Puck Velocity",
-            puck_file_name = "puck_1_velocity")
-        self.yellow_puck_velocity_frame.grid(row = 2, column = 1, padx = 10,
-            pady = 10)
+        self.yellow_puck_velocity_frame =\
+            PuckFileName(self, puck_sensor_name="Yellow Puck Velocity",
+                         puck_file_name="puck_1_velocity")
+        self.yellow_puck_velocity_frame.grid(row=2, column=1, padx=10,
+                                             pady=10)
 
-        self.yellow_puck_load_cell_frame = PuckFileName(self,
-            puck_sensor_name = "Yellow Puck Load Cell",
-            puck_file_name = "puck_1_load_cell")
-        self.yellow_puck_load_cell_frame.grid(row = 3, column = 1, padx = 10,
-            pady = 10)
+        self.yellow_puck_load_cell_frame =\
+            PuckFileName(self, puck_sensor_name="Yellow Puck Load Cell",
+                         puck_file_name="puck_1_load_cell")
+        self.yellow_puck_load_cell_frame.grid(row=3, column=1, padx=10,
+                                              pady=10)
 
-        self.yellow_puck_quaternion_frame = PuckFileName(self,
-            puck_sensor_name = "Yellow Puck Quaternion",
-            puck_file_name = "puck_1_quaternion")
-        self.yellow_puck_quaternion_frame.grid(row = 4, column = 1, padx = 10,
-            pady = 10)
+        self.yellow_puck_quaternion_frame =\
+            PuckFileName(self, puck_sensor_name="Yellow Puck Quaternion",
+                         puck_file_name="puck_1_quaternion")
+        self.yellow_puck_quaternion_frame.grid(row=4, column=1, padx=10,
+                                               pady=10)
 
         # Create the start recording button
-        start_button = ctk.CTkButton(self, text = "Start Recording",
-            command = self.start_button_callback)
-        start_button.grid(row = 5, column = 0, padx = 5,
-            pady = 5)
+        start_button = ctk.CTkButton(self, text="Start Recording",
+                                     command=self.start_button_callback)
+        start_button.grid(row=5, column=0, padx=5,
+                          pady=5)
 
         # Create the stop recording button
-        stop_button = ctk.CTkButton(self, text = "Stop Recording",
-            command = self.stop_button_callback)
-        stop_button.grid(row = 6, column = 0, padx = 5,
-            pady = 5)
+        stop_button = ctk.CTkButton(self, text="Stop Recording",
+                                    command=self.stop_button_callback)
+        stop_button.grid(row=6, column=0, padx=5,
+                         pady=5)
 
-        self.file_name_textbox = ctk.CTkEntry(self, width = 165, height = 10,
-            placeholder_text = "Data File Name")
-        self.file_name_textbox.grid(row = 5, column = 1, padx = 10, pady = 5)
+        self.file_name_textbox = ctk.CTkEntry(self, width=165, height=10,
+                                              placeholder_text="File Name")
+        self.file_name_textbox.grid(row=5, column=1, padx=10, pady=5)
 
-        self.recording_time_textbox = ctk.CTkEntry(self, width = 165,
-        height = 10, placeholder_text = "Recording Time in Minutes")
-        self.recording_time_textbox.grid(row = 6, column = 1, padx = 10,
-            pady = 5)
+        self.recording_time_textbox =\
+            ctk.CTkEntry(self, width=165, height=10,
+                         placeholder_text="Recording Time in Minutes")
+        self.recording_time_textbox.grid(row=6, column=1, padx=10, pady=5)
 
-        self.after(int(1000/self.puck_logger.samples_per_second),
-            self.get_data)
+        self.after(int(1000 / self.puck_logger.samples_per_second),
+                   self.get_data)
 
-        
-    def start_button_callback(self):
+    def start_button_callback(self) -> None:
         '''
         Start recording data from the pucks
         '''
@@ -201,11 +199,11 @@ class RecordingApp(ctk.CTk):
         # character
         self.file_name = self.file_name_textbox.get()
         if not self.file_name:
-            tk.messagebox.showwarning(title = "Missing File Name!",
-                message = "You need a data file name!")
+            tk.messagebox.showwarning(title="Missing File Name!",
+                                      message="You need a data file name!")
             return
 
-        if(self.set_recording_length()):
+        if self.set_recording_length():
             # Start communication to each puck
             self.puck_logger.puck.open()
             self.puck_logger.puck.send_command(0, SENDVEL, 0x00, 0x01)
@@ -215,22 +213,20 @@ class RecordingApp(ctk.CTk):
             self.puck_logger.samples_taken = 0
             self.keep_running = True
 
-
-    def get_data(self):
+    def get_data(self) -> None:
         '''
         Record the data on each sample time step
         '''
         if self.keep_running and (self.puck_logger.samples_taken <
-            self.puck_logger.max_samples):
+                                  self.puck_logger.max_samples):
             self.puck_logger.puck.checkForNewPuckData()
             self.puck_logger.store_data(self.puck_logger.puck.puck_0_packet,
-                self.puck_logger.puck.puck_1_packet)
+                                        self.puck_logger.puck.puck_1_packet)
 
         self.after(int(1000/self.puck_logger.samples_per_second),
-            self.get_data)
+                   self.get_data)
 
-
-    def stop_button_callback(self):
+    def stop_button_callback(self) -> None:
         '''
         Tells the app to stop recording and disconnects for the pucks
         '''
@@ -244,8 +240,7 @@ class RecordingApp(ctk.CTk):
         # save the log file
         self.write_data()
 
-
-    def write_data(self):
+    def write_data(self) -> None:
         '''
         Writes the logged data to a python dictionary and .mat file
 
@@ -256,37 +251,37 @@ class RecordingApp(ctk.CTk):
         # crop away any unused space.
         if self.puck_logger.samples_taken < self.puck_logger.max_samples:
             self.puck_logger.puck_0_acceleration =\
-                self.puck_logger.puck_0_acceleration[0 :
-                    self.puck_logger.samples_taken,:]
+                self.puck_logger.puck_0_acceleration[0:
+                    self.puck_logger.samples_taken, :]
             self.puck_logger.puck_0_gyroscope =\
-                self.puck_logger.puck_0_gyroscope[0 :
+                self.puck_logger.puck_0_gyroscope[0:
                     self.puck_logger.samples_taken, :]
             self.puck_logger.puck_0_velocity =\
-                self.puck_logger.puck_0_velocity[0 :
+                self.puck_logger.puck_0_velocity[0:
                     self.puck_logger.samples_taken, :]
             self.puck_logger.puck_0_load_cell =\
-                self.puck_logger.puck_0_load_cell[0 :
+                self.puck_logger.puck_0_load_cell[0:
                     self.puck_logger.samples_taken, :]
             self.puck_logger.puck_0_quaternion =\
-                self.puck_logger.puck_0_quaternion[0 :
-                    self.puck_logger.samples_taken,:]
+                self.puck_logger.puck_0_quaternion[0:
+                    self.puck_logger.samples_taken, :]
 
             self.puck_logger.puck_1_acceleration =\
-                self.puck_logger.puck_1_acceleration[0 :
-                    self.puck_logger.samples_taken,:]
+                self.puck_logger.puck_1_acceleration[0:
+                    self.puck_logger.samples_taken, :]
             self.puck_logger.puck_1_gyroscope =\
-                self.puck_logger.puck_1_gyroscope[0 :
+                self.puck_logger.puck_1_gyroscope[0:
                     self.puck_logger.samples_taken, :]
             self.puck_logger.puck_1_velocity =\
-                self.puck_logger.puck_1_velocity[0 :
+                self.puck_logger.puck_1_velocity[0:
                     self.puck_logger.samples_taken, :]
             self.puck_logger.puck_1_load_cell =\
-                self.puck_logger.puck_1_load_cell[0 :
+                self.puck_logger.puck_1_load_cell[0:
                     self.puck_logger.samples_taken, :]
             self.puck_logger.puck_1_quaternion =\
-                self.puck_logger.puck_1_quaternion[0 :
-                    self.puck_logger.samples_taken,:]
-                
+                self.puck_logger.puck_1_quaternion[0:
+                    self.puck_logger.samples_taken, :]
+
         data_dictionary = {
             self.blue_puck_acceleration_frame.get_text():
                 self.puck_logger.puck_0_acceleration,
@@ -313,7 +308,7 @@ class RecordingApp(ctk.CTk):
 
         # creates the path to the log file self
         data_shelf_name = os.path.join(self.puck_logger.data_folder,
-            self.file_name+".shelve")
+                                       self.file_name+".shelve")
 
         # creates the data folder if it did not exist
         if not os.path.exists(self.puck_logger.data_folder):
@@ -327,9 +322,8 @@ class RecordingApp(ctk.CTk):
 
         # saves the data self into a .mat file
         mat_path = os.path.join(self.puck_logger.data_folder,
-            self.file_name+".mat")
+                                self.file_name+".mat")
         io.savemat(mat_path, data_dictionary, appendmat=False)
-
 
     def set_recording_length(self) -> bool:
         '''
@@ -347,36 +341,39 @@ class RecordingApp(ctk.CTk):
         '''
         # get text from line 0 character 0 till the end before the new line
         # character
-        recording_length_string=self.recording_time_textbox.get()
+        recording_length_string = self.recording_time_textbox.get()
 
         # Ask the user for a recording length until they enter a number
         try:
             recording_length_minutes =\
                     float(recording_length_string)
-        except:
-            tk.messagebox.showwarning(title = "Incorrect time format.",
-                message = "You need to input a number!")
+        except ValueError:
+            tk.messagebox.showwarning(title="Incorrect time format.",
+                                      message="You need to input a number!")
             return False
 
-        if (recording_length_minutes>60) or (recording_length_minutes<0):
-            tk.messagebox.showwarning(title = "Recording time out of range",
-                message = "Please enter a number above 0 and below 60.")
+        if (recording_length_minutes > 60) or (recording_length_minutes < 0):
+            tk.messagebox.showwarning(title="Recording time out of range",
+                                      message="Please enter a number above 0"
+                                      " and below 60.")
             return False
 
         max_samples_needed =\
-            int(recording_length_minutes *  60 *
+            int(recording_length_minutes * 60 *
                 self.puck_logger.samples_per_second)
         self.puck_logger.max_samples = max_samples_needed
 
         # initialize the data arrays of each puck to the total number of
         # samples needed
-        self.puck_logger.puck_0_acceleration = np.zeros([max_samples_needed, 3])
+        self.puck_logger.puck_0_acceleration =\
+            np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_0_gyroscope = np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_0_velocity = np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_0_load_cell = np.zeros([max_samples_needed, 1])
         self.puck_logger.puck_0_quaternion = np.zeros([max_samples_needed, 4])
 
-        self.puck_logger.puck_1_acceleration = np.zeros([max_samples_needed, 3])
+        self.puck_logger.puck_1_acceleration =\
+            np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_1_gyroscope = np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_1_velocity = np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_1_load_cell = np.zeros([max_samples_needed, 1])
@@ -395,13 +392,13 @@ class PuckFileName(ctk.CTkFrame):
 
     Attributes
     ----------
-    puck_sensor_name : str
+    puck_sensor_name: str
         The name of the sensor used for the title of this frame
-    title : CTKLabel
+    title: CTKLabel
         The label of the frame
-    file_name_textbox : CTkEntry
+    file_name_textbox: CTkEntry
         One line text box to enter the data's name
-    file_name : str
+    file_name: str
         The default name in the file_name_textbox
 
     Methods
@@ -410,7 +407,7 @@ class PuckFileName(ctk.CTkFrame):
         Extracts out the file names from the text box
     '''
     def __init__(self, *args, puck_sensor_name: str,
-        puck_file_name: str, **kwargs):
+                 puck_file_name: str, **kwargs) -> None:
         '''
         Creates the data entry box with a title
 
@@ -429,19 +426,18 @@ class PuckFileName(ctk.CTkFrame):
         super().__init__(*args, **kwargs)
         # setup the label of the frame
         self.puck_sensor_name = puck_sensor_name
-        self.title = ctk.CTkLabel(self, text = self.puck_sensor_name,
-            width = 165)
-        self.title.grid(row = 0, column = 0)
+        self.title = ctk.CTkLabel(self, text=self.puck_sensor_name, width=165)
+        self.title.grid(row=0, column=0)
 
         # setup the file name entry
         self.file_name = puck_file_name
-        self.file_name_textbox = ctk.CTkEntry(self, height = 10,
-            placeholder_text = self.file_name, width = 165)
+        self.file_name_textbox =\
+            ctk.CTkEntry(self, height=10, placeholder_text=self.file_name,
+                         width=165)
         self.file_name_textbox.insert(0, self.file_name)
-        self.file_name_textbox.grid(row=1, column=0, padx = 10, pady = 10)
+        self.file_name_textbox.grid(row=1, column=0, padx=10, pady=10)
 
-
-    def get_text(self):
+    def get_text(self) -> None:
         '''
         Extracts out the file names from the text box
         '''
@@ -451,8 +447,8 @@ class PuckFileName(ctk.CTkFrame):
 
 
 if __name__ == "__main__":
-    puck_logger_object = PuckLogger(using_app = True)
-    app = RecordingApp(puck_logger = puck_logger_object)
+    puck_logger_object = PuckLogger(using_app=True)
+    app = RecordingApp(puck_logger=puck_logger_object)
     try:
         app.mainloop()
     finally:
