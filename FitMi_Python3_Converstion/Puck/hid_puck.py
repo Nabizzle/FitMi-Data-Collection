@@ -211,7 +211,7 @@ class HIDPuckDongle(object):
             print("dongle open?")
         try:
             self.dongle.close()
-        finally:
+        except Exception:
             pass
 
         # connect to the dongle
@@ -308,12 +308,10 @@ class HIDPuckDongle(object):
                 if not self.usb_out_queue.empty():
                     # first byte is report id
                     self.dongle.write(self.usb_out_queue.get())
-
             except Exception as e:
                 self.receiving_data = False
                 if self.print_debug:
                     print(e)
-
             finally:
                 time.sleep(0.00001)  # wait in infinitesimal amount of time
 
@@ -592,7 +590,7 @@ class HIDPuckDongle(object):
             try:
                 self.set_touch_buzz(0, 1)
                 self.set_touch_buzz(1, 1)
-            finally:
+            except:
                 pass
 
         # sets the open flag to false and terminate the input thread

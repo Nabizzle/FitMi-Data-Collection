@@ -163,7 +163,7 @@ class PuckPacket(object):
         try:
             # gets the roll, pitch and yaw angles from quaternion
             self.roll_pitch_yaw[0:3] = self.getRollPitchYaw()
-        finally:
+        except Exception:
             pass
 
     def parse_status(self, status: int) -> None:

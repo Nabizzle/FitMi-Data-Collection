@@ -324,7 +324,7 @@ class PuckLogger(object):
         self.write_data()
         try:
             self.check_stop_thread.join(2)  # stop the thread after 2 seconds
-        finally:
+        except Exception:
             pass
 
 
