@@ -590,7 +590,7 @@ class HIDPuckDongle(object):
             try:
                 self.set_touch_buzz(0, 1)
                 self.set_touch_buzz(1, 1)
-            except:
+            except Exception:
                 pass
 
         # sets the open flag to false and terminate the input thread
