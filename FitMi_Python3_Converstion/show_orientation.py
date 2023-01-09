@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
-from Puck.quaternion import *
+import time
+import numpy as np
+from Puck.quaternion import q_rotate_vector
 from Puck.hid_puck import HIDPuckDongle
-from Puck.hid_puck import *
+from Puck.hid_puck import SENDVEL
 
 
 class OrientationScope(object):
@@ -39,7 +41,7 @@ class OrientationScope(object):
     update_plot()
         Takes the puck data and updates the 3D plot of orientation
     '''
-    def __init__(self, puck_number: int = 0):
+    def __init__(self, puck_number: int = 0) -> None:
         '''
         Creates the initial 3D plot of the puck axes
 
@@ -56,7 +58,7 @@ class OrientationScope(object):
 
         self.fig = plt.figure()
         self.fig.set_size_inches(6, 6, forward=True)
-        self.ax = self.fig.add_subplot(111, projection='3d') #projection='3d'
+        self.ax = self.fig.add_subplot(111, projection='3d')  # projection='3d'
         self.ax.set_xlim(-2, 2)
         self.ax.set_ylim(-2, 2)
         self.ax.set_zlim(-2, 2)
@@ -68,8 +70,7 @@ class OrientationScope(object):
         line_z = [0, 0, 0, 1]
         self.data_plot = self.ax.scatter(line_x, line_y, line_z, c="b")
 
-
-    def start_scope(self):
+    def start_scope(self) -> None:
         '''
         Starts communication with puck and updates plot with rotation
 
@@ -81,25 +82,23 @@ class OrientationScope(object):
         self.puck.open()
         self.puck.send_command(self.puck_number, SENDVEL, 0x00, 0x01)
 
-        tick_up = 0 # counter to indicate when a second has passed
+        tick_up = 0  # counter to indicate when a second has passed
         print("recording data")
         # records data at a time period based on the samples per second
         for i in range(self.max_samples):
             self.puck.checkForNewPuckData()
-            self.update_plot() # updates the plots based on the puck data
+            self.update_plot()  # updates the plots based on the puck data
 
-            time.sleep(1.0/self.samples_per_second)
-            tick_up+=1
+            time.sleep(1.0 / self.samples_per_second)
+            tick_up += 1
             # plot a dot when a second has passed
             if tick_up > self.samples_per_second:
-                tick_up=0
+                tick_up = 0
                 print(".")
 
         self.puck.stop()
 
-
-
-    def update_plot(self):
+    def update_plot(self) -> None:
         '''
         Takes the puck data and updates the 3D plot of orientation
 
@@ -113,13 +112,13 @@ class OrientationScope(object):
             puck_data = self.puck.puck_0_packet
 
         # make a vector of each axis and rotate it by the puck's quaternion
-        vx = np.array([1,0,0])
+        vx = np.array([1, 0, 0])
         vx = q_rotate_vector(puck_data.quaternion, vx)
 
-        vy = np.array([0,1,0])
+        vy = np.array([0, 1, 0])
         vy = q_rotate_vector(puck_data.quaternion, vy)
 
-        vz = np.array([0,0,1])
+        vz = np.array([0, 0, 1])
         vz = q_rotate_vector(puck_data.quaternion, vz)
 
         # draw a line to each rotated axis
@@ -131,7 +130,7 @@ class OrientationScope(object):
         if self.data_plot:
             self.ax.collections.remove(self.data_plot)
         self.data_plot = self.ax.scatter(line_x, line_y, line_z, c="b")
-        plt.pause(.00005) # pause infinitesimal amount of time to allow update.
+        plt.pause(.00005)  # pause small amount of time to allow update.
 
 
 if __name__ == "__main__":
