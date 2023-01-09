@@ -98,15 +98,15 @@ Quaternions can also be converted to Rotation Matrices by following a specific f
 
 ## Main Scripts
 
+### plot_puck_data_gui.py
+
+Shows the output of the two pucks in the same way that [puck_plot.py](#puck_plotpy) does, but as an app. The app allows you to start and stop recording as well as change the buffer size with a slider bar.
+![Python3 Data Plotting App](https://github.com/CaseFNI/FitMi-Data-Collection/blob/main/Media/Puck%20Data%20Plotting%20App.png)
+
 ### puck_plot.py
 
 Plots the x, y, and z directions of the accelerometer, gyroscope, and linear velocity; the roll, pitch, and yaw angles; and the load cell values of both pucks in a set
 of subplots.
-
-### recording_gui.py
-
-Logs puck data like the [log_puck_data.py](#log_puck_datapy) script, but it is more intuitive to use.
-![Python3 Data Logging App](https://github.com/CaseFNI/FitMi-Data-Collection/blob/main/Media/Data%20Logging%20App.png)
 
 ### ani_plot.py
 
@@ -116,6 +116,11 @@ labeling the plots.
 ### show_orientation.py
 
 Shows the x, y, and z axis of one of the pucks on a 3D plot. The sample rate and which puck is hard coded in the script.
+
+### recording_gui.py
+
+Logs puck data like the [log_puck_data.py](#log_puck_datapy) script, but it is more intuitive to use.
+![Python3 Data Logging App](https://github.com/CaseFNI/FitMi-Data-Collection/blob/main/Media/Data%20Logging%20App.png)
 
 ### log_puck_data.py
 
