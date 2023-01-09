@@ -438,4 +438,7 @@ class PuckFileName(ctk.CTkFrame):
 if __name__ == "__main__":
     puck_logger_object = PuckLogger(using_app = True)
     app = RecordingApp(puck_logger = puck_logger_object)
-    app.mainloop()
+    try:
+        app.mainloop()
+    finally:
+        app.stop_button_callback()
