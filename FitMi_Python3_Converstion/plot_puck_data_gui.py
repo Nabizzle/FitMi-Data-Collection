@@ -1,6 +1,5 @@
 import customtkinter as ctk
 import seaborn as sns
-from matplotlib.style import context
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -73,7 +72,7 @@ class PlottingApp(ctk.CTk):
     x_gyro_plot : DataSubplot object
         Plots the x coordinate of the gyroscope of one or both pucks
     y_gyro_plot : DataSubplot object
-        Plots the y coordinate of the gyroscope of one or both pucks      
+        Plots the y coordinate of the gyroscope of one or both pucks
     z_gyro_plot : DataSubplot object
         Plots the x coordinate of the gyroscope of one or both pucks
     x_acceleration_plot : DataSubplot object
@@ -127,8 +126,8 @@ class PlottingApp(ctk.CTk):
     PLOT_X = 500
     PLOT_Y = 150
 
-    BUFFER_MIN = 0 # minimum of x axis on plots
-    BUFFER_MAX = 200 # maximum of x axis of plots
+    BUFFER_MIN = 0  # minimum of x axis on plots
+    BUFFER_MAX = 200  # maximum of x axis of plots
 
     # y axis range for the roll, pitch yaw plots
     ANGLE_YMAX = 180
@@ -171,8 +170,8 @@ class PlottingApp(ctk.CTk):
                                      buffer_max=self.BUFFER_MAX,
                                      y_min=self.ANGLE_YMIN / 2,
                                      y_max=self.ANGLE_YMAX / 2)
-        self.roll_plot.grid(row = 0, column = 0, padx = self.PAD_X,
-                            pady = self.PAD_Y)
+        self.roll_plot.grid(row=0, column=0, padx=self.PAD_X,
+                            pady=self.PAD_Y)
         self.roll_plot.set_title("roll angle")
 
         self.pitch_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -181,8 +180,8 @@ class PlottingApp(ctk.CTk):
                                       buffer_max=self.BUFFER_MAX,
                                       y_min=self.ANGLE_YMIN,
                                       y_max=self.ANGLE_YMAX)
-        self.pitch_plot.grid(row = 0, column = 1, padx = self.PAD_X,
-                             pady = self.PAD_Y)
+        self.pitch_plot.grid(row=0, column=1, padx=self.PAD_X,
+                             pady=self.PAD_Y)
         self.pitch_plot.set_title("pitch angle")
 
         self.yaw_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -191,8 +190,8 @@ class PlottingApp(ctk.CTk):
                                     buffer_max=self.BUFFER_MAX,
                                     y_min=self.ANGLE_YMIN,
                                     y_max=self.ANGLE_YMAX)
-        self.yaw_plot.grid(row = 0, column = 2, padx = self.PAD_X,
-                           pady = self.PAD_Y)
+        self.yaw_plot.grid(row=0, column=2, padx=self.PAD_X,
+                           pady=self.PAD_Y)
         self.yaw_plot.set_title("yaw angle")
 
         self.x_gyro_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -201,8 +200,8 @@ class PlottingApp(ctk.CTk):
                                        buffer_max=self.BUFFER_MAX,
                                        y_min=self.GYRO_YMIN,
                                        y_max=self.GYRO_YMAX)
-        self.x_gyro_plot.grid(row = 1, column = 0, padx = self.PAD_X,
-                              pady = self.PAD_Y)
+        self.x_gyro_plot.grid(row=1, column=0, padx=self.PAD_X,
+                              pady=self.PAD_Y)
         self.x_gyro_plot.set_title("x gyroscope")
 
         self.y_gyro_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -211,8 +210,8 @@ class PlottingApp(ctk.CTk):
                                        buffer_max=self.BUFFER_MAX,
                                        y_min=self.GYRO_YMIN,
                                        y_max=self.GYRO_YMAX)
-        self.y_gyro_plot.grid(row = 1, column = 1, padx = self.PAD_X,
-                              pady = self.PAD_Y)
+        self.y_gyro_plot.grid(row=1, column=1, padx=self.PAD_X,
+                              pady=self.PAD_Y)
         self.y_gyro_plot.set_title("y gyroscope")
 
         self.z_gyro_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -221,8 +220,8 @@ class PlottingApp(ctk.CTk):
                                        buffer_max=self.BUFFER_MAX,
                                        y_min=self.GYRO_YMIN,
                                        y_max=self.GYRO_YMAX)
-        self.z_gyro_plot.grid(row = 1, column = 2, padx = self.PAD_X,
-                              pady = self.PAD_Y)
+        self.z_gyro_plot.grid(row=1, column=2, padx=self.PAD_X,
+                              pady=self.PAD_Y)
         self.z_gyro_plot.set_title("z gyroscope")
 
         self.x_acceleration_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -231,8 +230,8 @@ class PlottingApp(ctk.CTk):
                                                buffer_max=self.BUFFER_MAX,
                                                y_min=self.ACCELERATION_YMIN,
                                                y_max=self.ACCELERATION_YMAX)
-        self.x_acceleration_plot.grid(row = 2, column = 0, padx = self.PAD_X,
-                                      pady = self.PAD_Y)
+        self.x_acceleration_plot.grid(row=2, column=0, padx=self.PAD_X,
+                                      pady=self.PAD_Y)
         self.x_acceleration_plot.set_title("x acceleration")
 
         self.y_acceleration_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -241,8 +240,8 @@ class PlottingApp(ctk.CTk):
                                                buffer_max=self.BUFFER_MAX,
                                                y_min=self.ACCELERATION_YMIN,
                                                y_max=self.ACCELERATION_YMAX)
-        self.y_acceleration_plot.grid(row = 2, column = 1, padx = self.PAD_X,
-                                      pady = self.PAD_Y)
+        self.y_acceleration_plot.grid(row=2, column=1, padx=self.PAD_X,
+                                      pady=self.PAD_Y)
         self.y_acceleration_plot.set_title("y acceleration")
 
         self.z_acceleration_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -251,8 +250,8 @@ class PlottingApp(ctk.CTk):
                                                buffer_max=self.BUFFER_MAX,
                                                y_min=self.ACCELERATION_YMIN,
                                                y_max=self.ACCELERATION_YMAX)
-        self.z_acceleration_plot.grid(row = 2, column = 2, padx = self.PAD_X,
-                                      pady = self.PAD_Y)
+        self.z_acceleration_plot.grid(row=2, column=2, padx=self.PAD_X,
+                                      pady=self.PAD_Y)
         self.z_acceleration_plot.set_title("z acceleration")
 
         self.x_velocity_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -261,8 +260,8 @@ class PlottingApp(ctk.CTk):
                                            buffer_max=self.BUFFER_MAX,
                                            y_min=self.VELOCITY_YMIN,
                                            y_max=self.VELOCITY_YMAX)
-        self.x_velocity_plot.grid(row = 3, column = 0, padx = self.PAD_X,
-                                  pady = self.PAD_Y)
+        self.x_velocity_plot.grid(row=3, column=0, padx=self.PAD_X,
+                                  pady=self.PAD_Y)
         self.x_velocity_plot.set_title("x velocity")
 
         self.y_velocity_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -271,8 +270,8 @@ class PlottingApp(ctk.CTk):
                                            buffer_max=self.BUFFER_MAX,
                                            y_min=self.VELOCITY_YMIN,
                                            y_max=self.VELOCITY_YMAX)
-        self.y_velocity_plot.grid(row = 3, column = 1, padx = self.PAD_X,
-                                  pady = self.PAD_Y)
+        self.y_velocity_plot.grid(row=3, column=1, padx=self.PAD_X,
+                                  pady=self.PAD_Y)
         self.y_velocity_plot.set_title("y velocity")
 
         self.z_velocity_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -281,8 +280,8 @@ class PlottingApp(ctk.CTk):
                                            buffer_max=self.BUFFER_MAX,
                                            y_min=self.VELOCITY_YMIN,
                                            y_max=self.VELOCITY_YMAX)
-        self.z_velocity_plot.grid(row = 3, column = 2, padx = self.PAD_X,
-                                  pady = self.PAD_Y)
+        self.z_velocity_plot.grid(row=3, column=2, padx=self.PAD_X,
+                                  pady=self.PAD_Y)
         self.z_velocity_plot.set_title("z velocity")
 
         self.load_cell_plot = DataSubplot(self, fig_x=self.PLOT_X * 3 / 100,
@@ -291,31 +290,31 @@ class PlottingApp(ctk.CTk):
                                           buffer_max=self.BUFFER_MAX,
                                           y_min=self.LOAD_CELL_YMIN,
                                           y_max=self.LOAD_CELL_YMAX)
-        self.load_cell_plot.grid(row = 4, column = 0, columnspan = 3)
+        self.load_cell_plot.grid(row=4, column=0, columnspan=3)
         self.load_cell_plot.set_title("load cell")
 
         # Create the start recording button
-        self.start_button = ctk.CTkButton(self, text = "Start Recording",
-                                          command = self.start_button_callback,
+        self.start_button = ctk.CTkButton(self, text="Start Recording",
+                                          command=self.start_button_callback,
                                           width=500, height=100,
                                           font=("Ariel", 24))
-        self.start_button.grid(row = 5, column = 0, padx = self.PAD_X,
-                               pady = self.PAD_Y)
+        self.start_button.grid(row=5, column=0, padx=self.PAD_X,
+                               pady=self.PAD_Y)
 
         # Create the stop recording button
-        self.stop_button = ctk.CTkButton(self, text = "Stop Recording",
-                                         command = self.stop_button_callback,
+        self.stop_button = ctk.CTkButton(self, text="Stop Recording",
+                                         command=self.stop_button_callback,
                                          width=500, height=100,
                                          font=("Ariel", 24))
-        self.stop_button.grid(row = 5, column = 1, padx = self.PAD_X,
-                              pady = self.PAD_Y)
+        self.stop_button.grid(row=5, column=1, padx=self.PAD_X,
+                              pady=self.PAD_Y)
 
         # Create scrollbar for buffer size
         self.buffer_slider = ctk.CTkSlider(self, orientation="horizontal",
                                            width=500, from_=20, to=500,
                                            command=self.buffer_slider_callback)
-        self.buffer_slider.grid(row = 5, column = 2, padx = self.PAD_X,
-                                pady = self.PAD_Y)
+        self.buffer_slider.grid(row=5, column=2, padx=self.PAD_X,
+                                pady=self.PAD_Y)
         self.buffer_slider.set(200)
 
         # Connect to the dongle for puck communication
@@ -389,7 +388,7 @@ class PlottingApp(ctk.CTk):
         self.after(int(1000/self.SAMPLES_PER_SECOND), self.get_data)
 
     def run(self, puck_0_data: PuckPacket = None,
-        puck_1_data: PuckPacket = None) -> None:
+            puck_1_data: PuckPacket = None) -> None:
         '''
         Updates each data plot based on the polled data
 
@@ -451,34 +450,35 @@ class PlottingApp(ctk.CTk):
             Contains all of the polled data from puck 1, the yellow one
         '''
         self.roll_plot.update(puck_0_data.roll_pitch_yaw[0],
-            puck_1_data.roll_pitch_yaw[0])
+                              puck_1_data.roll_pitch_yaw[0])
         self.pitch_plot.update(puck_0_data.roll_pitch_yaw[1],
-            puck_1_data.roll_pitch_yaw[1])
+                               puck_1_data.roll_pitch_yaw[1])
         self.yaw_plot.update(puck_0_data.roll_pitch_yaw[2],
-            puck_1_data.roll_pitch_yaw[2])
+                             puck_1_data.roll_pitch_yaw[2])
 
         self.x_gyro_plot.update(puck_0_data.gyroscope[0],
-            puck_1_data.gyroscope[0])
+                                puck_1_data.gyroscope[0])
         self.y_gyro_plot.update(puck_0_data.gyroscope[1],
-            puck_1_data.gyroscope[1])
+                                puck_1_data.gyroscope[1])
         self.z_gyro_plot.update(puck_0_data.gyroscope[2],
-            puck_1_data.gyroscope[2])
+                                puck_1_data.gyroscope[2])
 
         self.x_acceleration_plot.update(puck_0_data.accelerometer[0],
-            puck_1_data.accelerometer[0])
+                                        puck_1_data.accelerometer[0])
         self.y_acceleration_plot.update(puck_0_data.accelerometer[1],
-            puck_1_data.accelerometer[1])
+                                        puck_1_data.accelerometer[1])
         self.z_acceleration_plot.update(puck_0_data.accelerometer[2],
-            puck_1_data.accelerometer[2])
+                                        puck_1_data.accelerometer[2])
 
         self.x_velocity_plot.update(puck_0_data.velocity[0],
-            puck_1_data.velocity[0])
+                                    puck_1_data.velocity[0])
         self.y_velocity_plot.update(puck_0_data.velocity[1],
-            puck_1_data.velocity[1])
+                                    puck_1_data.velocity[1])
         self.z_velocity_plot.update(puck_0_data.velocity[2],
-            puck_1_data.velocity[2])
-        
-        self.load_cell_plot.update(puck_0_data.load_cell, puck_1_data.load_cell)
+                                    puck_1_data.velocity[2])
+
+        self.load_cell_plot.update(puck_0_data.load_cell,
+                                   puck_1_data.load_cell)
 
 
 class DataSubplot(ctk.CTkFrame):
@@ -557,7 +557,7 @@ class DataSubplot(ctk.CTkFrame):
         self.data_plot.set_xlim(buffer_min, buffer_max)
         self.data_plot.set_ylim(y_min, y_max)
 
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self)  
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self)
         self.canvas.get_tk_widget().pack()
         self.canvas.draw()
 
@@ -642,7 +642,7 @@ class DataSubplot(ctk.CTkFrame):
 
         # if you want to track two pucks, adds data to the end of the yellow
         # puck buffer and removes the first point
-        if (not puck_1_data is None) and (not self.puck_1_data is None):
+        if (puck_1_data is not None) and (self.puck_1_data is not None):
             self.puck_1_data.pop(0)
             self.puck_1_data.append(puck_1_data)
 
