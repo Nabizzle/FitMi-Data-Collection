@@ -32,8 +32,9 @@ class AniPlot(object):
     set_ylabel
         Sets the y axis label of the subplot
     '''
-    def __init__(self, fig: plt.figure, split: List[int], buffer_min: int = 0, buffer_max: int = 200, ymin: int = -180,
-        ymax=180, second_puck=False):
+    def __init__(self, fig: plt.figure, split: List[int], buffer_min: int = 0,
+                 buffer_max: int = 200, ymin: int = -180, ymax: int = 180,
+                 second_puck:bool = False):
         '''
         Create the base data subplot
 
@@ -68,7 +69,7 @@ class AniPlot(object):
         fig.canvas.draw()
 
         # copy the subplot region
-        self.bg = fig.canvas.copy_from_bbox(self.ax.bbox)
+        self.bg = self.fig.canvas.copy_from_bbox(self.ax.bbox)
 
         # create the base line for the blue puck and set the puck puck's line
         # to None

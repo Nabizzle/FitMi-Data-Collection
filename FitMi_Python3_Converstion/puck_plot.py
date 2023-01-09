@@ -136,13 +136,13 @@ class PuckPlotter(object):
         # accelerations
         self.x_acceleration_plot = AniPlot(self.fig, [5, 3, 7], buffer_min,
              buffer_max, acceleration_ymin, acceleration_ymax, second_puck=True)
-        self.x_acceleration_plot.set_ylabel("x rotational acceleration")
+        self.x_acceleration_plot.set_ylabel("x acceleration")
         self.y_acceleration_plot = AniPlot(self.fig, [5, 3, 8], buffer_min,
             buffer_max, acceleration_ymin, acceleration_ymax, second_puck=True)
-        self.y_acceleration_plot.set_ylabel("y rotational acceleration")
+        self.y_acceleration_plot.set_ylabel("y acceleration")
         self.z_acceleration_plot = AniPlot(self.fig, [5, 3, 9], buffer_min,
             buffer_max, acceleration_ymin, acceleration_ymax, second_puck=True)
-        self.z_acceleration_plot.set_ylabel("z rotational acceleration")
+        self.z_acceleration_plot.set_ylabel("z acceleration")
 
         # create and label the velocity plots
         self.x_velocity_plot = AniPlot(self.fig, [5, 3, 10], buffer_min,
@@ -179,7 +179,7 @@ class PuckPlotter(object):
         self.puck.send_command(1, SENDVEL, 0x00, 0x01)
 
         # sample both pucks and pause by the sample rate
-        for i in range(self.max_samples):
+        for _ in range(self.max_samples):
             self.puck.checkForNewPuckData()
             # send queried data to the plots and update them
             self.run(self.puck.puck_0_packet, self.puck.puck_1_packet)
