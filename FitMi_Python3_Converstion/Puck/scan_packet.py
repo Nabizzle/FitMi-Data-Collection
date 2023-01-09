@@ -24,7 +24,7 @@ class ScanPacket(object):
     packet_def : string
         A string used to parse the data stream for the pipe channels, found
         channels, scanning time, battery percentage, and status
-    
+
     Methods
     -------
     __init__()
@@ -36,7 +36,7 @@ class ScanPacket(object):
     __str__()
         Prints the pipe channels, the number of channels, and the scan channel
     '''
-    def __init__(self):
+    def __init__(self) -> None:
         '''
         Initializes the packet of received scan data to default values
         '''
@@ -46,7 +46,6 @@ class ScanPacket(object):
         self.battery = -1
         self.status = -1
         self.packet_def = self.create_packet_definition()
-
 
     def create_packet_definition(self) -> str:
         '''
@@ -58,15 +57,14 @@ class ScanPacket(object):
             The combined format string for parsing the incoming byte data in
             the scan packet
         '''
-        pipe_channel = "hhhhhh" # six shorts
-        found_count  = "hhhhhh" # six shorts
-        scan_time = "h" # one short
-        battery  = "B" # one char
-        status   = "B" # one char
+        pipe_channel = "hhhhhh"  # six shorts
+        found_count = "hhhhhh"  # six shorts
+        scan_time = "h"  # one short
+        battery = "B"  # one char
+        status = "B"  # one char
         return "<"+pipe_channel+found_count+scan_time+battery+status
 
-
-    def parse(self, raw_data: bytearray):
+    def parse(self, raw_data: bytearray) -> None:
         '''
         Uses the packet definition to parse the scan data.
 
@@ -84,7 +82,6 @@ class ScanPacket(object):
         self.scan_channel = data[12]
         self.battery = data[13]
         self.status = data[14]
-
 
     def __str__(self) -> str:
         '''
