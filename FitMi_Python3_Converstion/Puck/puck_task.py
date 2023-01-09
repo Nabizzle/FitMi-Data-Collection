@@ -29,9 +29,9 @@ class PuckTask(object):
     checkStateBTrigger
         Checks if the puck has moved to a positive angle past the target range.
     '''
-    degrees_of_freedom = {'roll' : 0, 'pitch': 1, 'yaw': 2}
+    degrees_of_freedom = {'roll': 0, 'pitch': 1, 'yaw': 2}
 
-    def __init__(self, dof_key: str = 'pitch'):
+    def __init__(self, dof_key: str = 'pitch') -> None:
         '''
         Initializes the dof, state, angle_reference, and target values
 
@@ -46,11 +46,10 @@ class PuckTask(object):
         # gets the index for the roll_pitch_yaw data variable
         self.dof = self.degrees_of_freedom[dof_key]
 
-        #sets the other attributes to their default states
+        # sets the other attributes to their default states
         self.state = False
         self.angle_reference = 0
         self.target = 15
-
 
     def checkStateATrigger(self, puck: HIDPuckDongle) -> bool:
         '''
