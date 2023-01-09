@@ -2,7 +2,8 @@ import time
 from matplotlib import pyplot as plt
 from ani_plot import AniPlot
 from Puck.hid_puck import HIDPuckDongle
-from Puck.hid_puck import *
+from Puck.hid_puck import SENDVEL
+from Puck.puck_packet import PuckPacket
 
 
 class PuckPlotter(object):
@@ -32,7 +33,7 @@ class PuckPlotter(object):
     x_gyro_plot : AniPlot object
         Plots the x coordinate of the gyroscope of one or both pucks
     y_gyro_plot : AniPlot object
-        Plots the y coordinate of the gyroscope of one or both pucks      
+        Plots the y coordinate of the gyroscope of one or both pucks
     z_gyro_plot : AniPlot object
         Plots the x coordinate of the gyroscope of one or both pucks
     x_acceleration_plot : AniPlot object
@@ -68,19 +69,19 @@ class PuckPlotter(object):
     update_buffers(puck_0_data, puck_1_data)
         Uses polled data to update AniPlot subplots
     '''
-    def __init__(self):
+    def __init__(self) -> None:
         '''
         Creates subplots to show data from the FitMi pucks
 
         Formats the figure the data is plotted on. Allows the user to tweak
-        plotting ranges and labels.     
+        plotting ranges and labels.
         '''
         self.samples_per_second = 60
         self.max_run_time_seconds = 100
         self.max_samples = self.samples_per_second * self.max_run_time_seconds
 
-        buffer_min = 0 # minimum of x axis on plots
-        buffer_max = 200 # maximum of x axis of plots
+        buffer_min = 0  # minimum of x axis on plots
+        buffer_max = 200  # maximum of x axis of plots
 
         # y axis range for the roll, pitch yaw plots
         angle_ymax = 180
@@ -105,60 +106,68 @@ class PuckPlotter(object):
         # create a figure and set its size and the size of the subplots so the
         # labels don't overlap
         self.fig = plt.figure()
-        self.fig.suptitle("FitMi Puck Data", fontsize = 20)
-        self.fig.set_size_inches(20, 10, forward = True)
+        self.fig.suptitle("FitMi Puck Data", fontsize=20)
+        self.fig.set_size_inches(20, 10, forward=True)
         plt.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9,
-            wspace=0.4, hspace=0.4)
+                            wspace=0.4, hspace=0.4)
 
         # create and label the angular rotation plots
         self.roll_plot = AniPlot(self.fig, [5, 3, 1], buffer_min, buffer_max,
-            angle_ymin / 2, angle_ymax / 2, second_puck=True)
+                                 angle_ymin / 2, angle_ymax / 2,
+                                 second_puck=True)
         self.roll_plot.set_ylabel("roll angle")
         self.pitch_plot = AniPlot(self.fig, [5, 3, 2], buffer_min, buffer_max,
-            angle_ymin, angle_ymax, second_puck=True)
+                                  angle_ymin, angle_ymax, second_puck=True)
         self.pitch_plot.set_ylabel("pitch angle")
         self.yaw_plot = AniPlot(self.fig, [5, 3, 3], buffer_min, buffer_max,
-            angle_ymin, angle_ymax, second_puck=True)
+                                angle_ymin, angle_ymax, second_puck=True)
         self.yaw_plot.set_ylabel("yaw angle")
 
         # create and label the gyroscope plots
         self.x_gyro_plot = AniPlot(self.fig, [5, 3, 4], buffer_min, buffer_max,
-            gyro_ymin, gyro_ymax, second_puck=True)
+                                   gyro_ymin, gyro_ymax, second_puck=True)
         self.x_gyro_plot.set_ylabel("x gyroscope")
         self.y_gyro_plot = AniPlot(self.fig, [5, 3, 5], buffer_min, buffer_max,
-            gyro_ymin, gyro_ymax, second_puck=True)
+                                   gyro_ymin, gyro_ymax, second_puck=True)
         self.y_gyro_plot.set_ylabel("y gyroscope")
         self.z_gyro_plot = AniPlot(self.fig, [5, 3, 6], buffer_min, buffer_max,
-            gyro_ymin, gyro_ymax, second_puck=True)
+                                   gyro_ymin, gyro_ymax, second_puck=True)
         self.z_gyro_plot.set_ylabel("z gyroscope")
 
         # create and label the accelerometer plots. NOTE: These are angular
         # accelerations
         self.x_acceleration_plot = AniPlot(self.fig, [5, 3, 7], buffer_min,
-             buffer_max, acceleration_ymin, acceleration_ymax, second_puck=True)
+                                           buffer_max, acceleration_ymin,
+                                           acceleration_ymax, second_puck=True)
         self.x_acceleration_plot.set_ylabel("x acceleration")
         self.y_acceleration_plot = AniPlot(self.fig, [5, 3, 8], buffer_min,
-            buffer_max, acceleration_ymin, acceleration_ymax, second_puck=True)
+                                           buffer_max, acceleration_ymin,
+                                           acceleration_ymax, second_puck=True)
         self.y_acceleration_plot.set_ylabel("y acceleration")
         self.z_acceleration_plot = AniPlot(self.fig, [5, 3, 9], buffer_min,
-            buffer_max, acceleration_ymin, acceleration_ymax, second_puck=True)
+                                           buffer_max, acceleration_ymin,
+                                           acceleration_ymax, second_puck=True)
         self.z_acceleration_plot.set_ylabel("z acceleration")
 
         # create and label the velocity plots
         self.x_velocity_plot = AniPlot(self.fig, [5, 3, 10], buffer_min,
-            buffer_max, velocity_ymin, velocity_ymax, second_puck=True)
+                                       buffer_max, velocity_ymin,
+                                       velocity_ymax, second_puck=True)
         self.x_velocity_plot.set_ylabel("x velocity")
         self.y_velocity_plot = AniPlot(self.fig, [5, 3, 11], buffer_min,
-            buffer_max, velocity_ymin, velocity_ymax, second_puck=True)
+                                       buffer_max, velocity_ymin,
+                                       velocity_ymax, second_puck=True)
         self.y_velocity_plot.set_ylabel("y velocity")
         self.z_velocity_plot = AniPlot(self.fig, [5, 3, 12], buffer_min,
-            buffer_max, velocity_ymin, velocity_ymax, second_puck=True)
+                                       buffer_max, velocity_ymin,
+                                       velocity_ymax, second_puck=True)
         self.z_velocity_plot.set_ylabel("z velocity")
 
         # create and label the load cell plot
         self.load_cell_plot = AniPlot(self.fig, [5, 1, 5], buffer_min,
-            buffer_max, ymin=load_cell_ymin, ymax=load_cell_ymax,
-            second_puck=True)
+                                      buffer_max, ymin=load_cell_ymin,
+                                      ymax=load_cell_ymax,
+                                      second_puck=True)
         self.load_cell_plot.set_ylabel("load cell")
 
         # aligns all of the created y axis labels and refresh the plot
@@ -168,8 +177,7 @@ class PuckPlotter(object):
         # Connect to the dongle for puck communication
         self.puck = HIDPuckDongle()
 
-
-    def start(self):
+    def start(self) -> None:
         '''
         Starts recording from the pucks and polls based on sample rate
         '''
@@ -185,8 +193,7 @@ class PuckPlotter(object):
             self.run(self.puck.puck_0_packet, self.puck.puck_1_packet)
             time.sleep(1.0/self.samples_per_second)
 
-
-    def stop(self):
+    def stop(self) -> None:
         '''
         Stops recording from the pucks and close the dongle connection
         '''
@@ -194,9 +201,8 @@ class PuckPlotter(object):
         self.puck.send_command(1, SENDVEL, 0x00, 0x00)
         self.puck.close()
 
-
     def run(self, puck_0_data: PuckPacket = None,
-        puck_1_data: PuckPacket = None):
+            puck_1_data: PuckPacket = None) -> None:
         '''
         Updates each data plot based on the polled data
 
@@ -241,8 +247,8 @@ class PuckPlotter(object):
         else:
             self.load_cell_plot.puck_2_plot.set_color("g")
 
-
-    def update_buffers(self, puck_0_data: PuckPacket, puck_1_data: PuckPacket):
+    def update_buffers(self, puck_0_data: PuckPacket,
+                       puck_1_data: PuckPacket) -> None:
         '''
         Uses polled data to update the AniPlot subplots
 
@@ -258,34 +264,35 @@ class PuckPlotter(object):
             Contains all of the polled data from puck 1, the yellow one
         '''
         self.roll_plot.update(puck_0_data.roll_pitch_yaw[0],
-            puck_1_data.roll_pitch_yaw[0])
+                              puck_1_data.roll_pitch_yaw[0])
         self.pitch_plot.update(puck_0_data.roll_pitch_yaw[1],
-            puck_1_data.roll_pitch_yaw[1])
+                               puck_1_data.roll_pitch_yaw[1])
         self.yaw_plot.update(puck_0_data.roll_pitch_yaw[2],
-            puck_1_data.roll_pitch_yaw[2])
+                             puck_1_data.roll_pitch_yaw[2])
 
         self.x_gyro_plot.update(puck_0_data.gyroscope[0],
-            puck_1_data.gyroscope[0])
+                                puck_1_data.gyroscope[0])
         self.y_gyro_plot.update(puck_0_data.gyroscope[1],
-            puck_1_data.gyroscope[1])
+                                puck_1_data.gyroscope[1])
         self.z_gyro_plot.update(puck_0_data.gyroscope[2],
-            puck_1_data.gyroscope[2])
+                                puck_1_data.gyroscope[2])
 
         self.x_acceleration_plot.update(puck_0_data.accelerometer[0],
-            puck_1_data.accelerometer[0])
+                                        puck_1_data.accelerometer[0])
         self.y_acceleration_plot.update(puck_0_data.accelerometer[1],
-            puck_1_data.accelerometer[1])
+                                        puck_1_data.accelerometer[1])
         self.z_acceleration_plot.update(puck_0_data.accelerometer[2],
-            puck_1_data.accelerometer[2])
+                                        puck_1_data.accelerometer[2])
 
         self.x_velocity_plot.update(puck_0_data.velocity[0],
-            puck_1_data.velocity[0])
+                                    puck_1_data.velocity[0])
         self.y_velocity_plot.update(puck_0_data.velocity[1],
-            puck_1_data.velocity[1])
+                                    puck_1_data.velocity[1])
         self.z_velocity_plot.update(puck_0_data.velocity[2],
-            puck_1_data.velocity[2])
-        
-        self.load_cell_plot.update(puck_0_data.load_cell, puck_1_data.load_cell)
+                                    puck_1_data.velocity[2])
+
+        self.load_cell_plot.update(puck_0_data.load_cell,
+                                   puck_1_data.load_cell)
 
 
 if __name__ == '__main__':
