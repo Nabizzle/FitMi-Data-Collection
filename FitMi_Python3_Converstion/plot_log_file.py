@@ -54,6 +54,6 @@ for key in data_shelf.keys():
     ax.set_title(key)
     fig.show()
 
-data_shelf.close() # close the data file
+data_shelf.close()  # close the data file
 
-input("press enter to close all") # wait for user to end the script
+input("press enter to close all")  # wait for user to end the script
