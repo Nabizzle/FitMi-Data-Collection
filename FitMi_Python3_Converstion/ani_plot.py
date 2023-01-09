@@ -38,7 +38,7 @@ class AniPlot(object):
     '''
     def __init__(self, fig: plt.figure, split: List[int], buffer_min: int = 0,
                  buffer_max: int = 200, ymin: int = -180, ymax: int = 180,
-                 second_puck:bool = False):
+                 second_puck: bool = False):
         '''
         Create the base data subplot
 
@@ -62,11 +62,12 @@ class AniPlot(object):
         second_puck : bool, default = False
             Indicates if you want to plot the second puck's data (True = yes)
         '''
-        self.fig = fig # moves the data figure a class attribute
+        self.fig = fig  # moves the data figure a class attribute
         # create the subplot based on input parameters for the plot number and
         # the axis limits
         self.ax = fig.add_subplot(split[0], split[1], split[2],
-            xlim = (buffer_min, buffer_max), ylim = (ymin, ymax))
+                                  xlim=(buffer_min, buffer_max),
+                                  ylim=(ymin, ymax))
 
         # display the figure and update it
         fig.show(False)
@@ -90,15 +91,14 @@ class AniPlot(object):
 
         # plot the base line of the blue puck in blue
         self.puck_1_plot = self.ax.plot(self.x_points, self.puck_0_data, '-',
-            color="b")[0]
+                                        color="b")[0]
         self.puck_2_plot = None
 
         # if there is a need to plot a second puck, plot the yellow puck in
         # green
         if second_puck:
             self.puck_2_plot = self.ax.plot(self.x_points, self.puck_1_data,
-            '-', color="g")[0]
-
+                                            '-', color="g")[0]
 
     def set_xlabel(self, axis_name: str):
         '''
@@ -110,9 +110,8 @@ class AniPlot(object):
             The label for the x axis
         '''
         # set the x axis label with a font size of 12 and redraw the figure
-        self.ax.set_xlabel(axis_name, fontsize = 12)
+        self.ax.set_xlabel(axis_name, fontsize=12)
         self.fig.canvas.draw()
-
 
     def set_ylabel(self, axis_name: str):
         '''
@@ -124,9 +123,8 @@ class AniPlot(object):
             The label for the y axis
         '''
         # set the y axis label with a font size of 12 and redraw the figure
-        self.ax.set_ylabel(axis_name, fontsize = 12)
+        self.ax.set_ylabel(axis_name, fontsize=12)
         self.fig.canvas.draw()
-
 
     def update(self, puck_0_data: PuckPacket, puck_1_data: PuckPacket = None):
         '''
@@ -149,10 +147,9 @@ class AniPlot(object):
 
         # if you want to track two pucks, adds data to the end of the yellow
         # puck buffer and removes the first point
-        if (not puck_1_data is None) and (not self.puck_1_data is None):
+        if (puck_1_data is not None) and (self.puck_1_data is not None):
             self.puck_1_data.pop(0)
             self.puck_1_data.append(puck_1_data)
-
 
     def draw(self, fig: plt.figure):
         '''
