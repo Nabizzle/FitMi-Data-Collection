@@ -3,7 +3,9 @@ import shelve
 import numpy as np
 from scipy import io
 import threading
-from Puck.hid_puck import *
+import time
+from Puck.hid_puck import HIDPuckDongle, SENDVEL
+from Puck.puck_packet import PuckPacket
 
 
 class PuckLogger(object):
@@ -17,44 +19,44 @@ class PuckLogger(object):
 
     Attributes
     ----------
-    data_folder : str
+    data_folder:str
         The path to the data folder. It has to be named data and he a subfolder
         in the current working directory
-    file_name : string
+    file_name:string
         The name of the log file
-    samples_per_second : int
+    samples_per_second:int
         The number os samples added to the data variables per second
-    keep_running : bool
+    keep_running:bool
         Indicates if the recording should end early
-    puck : HIDPuckDongle object
+    puck:HIDPuckDongle object
         Communication class with the FitMi dongle
-    samples_taken : int
+    samples_taken:int
         Keeps a running total of the number of samples
-    max_samples : int
+    max_samples:int
         The total number of samples desired
-    puck_0_acceleration : List[int]
+    puck_0_acceleration:List[int]
         Data variable for the blue puck's accelerometer values
-    puck_0_gyroscope : List[int]
+    puck_0_gyroscope:List[int]
         Data variable for the blue puck's gyroscope values
-    puck_0_velocity : List[int]
+    puck_0_velocity:List[int]
         Data variable for the blue puck's velocity values
-    puck_0_load_cell : List[int]
+    puck_0_load_cell:List[int]
         Data variable for the blue puck's load cell value
-    puck_0_quaternion : List[int]
+    puck_0_quaternion:List[int]
         Data variable for the blue puck's quaternion values
-    puck_1_acceleration : List[int]
+    puck_1_acceleration:List[int]
         Data variable for the yellow puck's accelerometer values
-    puck_1_gyroscope : List[int]
+    puck_1_gyroscope:List[int]
         Data variable for the yellow puck's gyroscope values
-    puck_1_velocity : List[int]
+    puck_1_velocity:List[int]
         Data variable for the yellow puck's velocity values
-    puck_1_load_cell : List[int]
+    puck_1_load_cell:List[int]
         Data variable for the yellow puck's load cell value
-    puck_1_quaternion : List[int]
+    puck_1_quaternion:List[int]
         Data variable for the yellow puck's quaternion values
-    check_stop_thread : threading.Thread thread
+    check_stop_thread:threading.Thread thread
         Thread to check of the user has pressed enter to stop data collection
-    check_stop_thread.daemon : bool
+    check_stop_thread.daemon:bool
         Sets if the thread stops with the main function (True) or not
 
     Methods
@@ -64,7 +66,7 @@ class PuckLogger(object):
     check_stop()
         Asks the user to press enter to stop recording.
     run()
-        Sets up the length of recording and stores the data on each sample step.
+        Setup the length of recording and stores the data on each sample step.
     set_filename()
         Ask the user for the log file's name
     set_recording_length()
@@ -76,7 +78,7 @@ class PuckLogger(object):
     stop()
         Closes communication with the pucks and saves the log file data
     '''
-    def __init__(self, using_app = False):
+    def __init__(self, using_app=False) -> None:
         '''
         Initializes the variables needed to record into a log file
 
@@ -87,7 +89,7 @@ class PuckLogger(object):
 
         Parameters
         ----------
-        using_app : bool
+        using_app:bool
             boolean for if an app is used instead of the script
         '''
         self.data_folder = os.path.join(os.getcwd(), "data")
@@ -116,8 +118,7 @@ class PuckLogger(object):
             self.check_stop_thread = threading.Thread(target=self.check_stop)
             self.check_stop_thread.daemon = True
 
-
-    def check_stop(self):
+    def check_stop(self) -> None:
         '''
         Asks the user to press enter to stop recording.
 
@@ -130,10 +131,9 @@ class PuckLogger(object):
             _ = input("press enter to stop logging.")
             self.keep_running = False
 
-
-    def run(self):
+    def run(self) -> None:
         '''
-        Sets up the length of recording and stores the data on each sample step.
+        Setup the length of recording and stores the data on each sample step.
 
         Sets up the recording location and connection to the pucks. Then
         records data according to the sample rate and trims off the end of the
@@ -163,36 +163,34 @@ class PuckLogger(object):
         # crop away any unused space.
         if self.samples_taken < self.max_samples:
             self.puck_0_acceleration =\
-                self.puck_0_acceleration[0 : self.samples_taken, :]
+                self.puck_0_acceleration[0:self.samples_taken, :]
             self.puck_0_gyroscope =\
-                self.puck_0_gyroscope[0 : self.samples_taken, :]
+                self.puck_0_gyroscope[0:self.samples_taken, :]
             self.puck_0_velocity =\
-                self.puck_0_velocity[0 : self.samples_taken, :]
+                self.puck_0_velocity[0:self.samples_taken, :]
             self.puck_0_load_cell =\
-                self.puck_0_load_cell[0 : self.samples_taken, :]
+                self.puck_0_load_cell[0:self.samples_taken, :]
             self.puck_0_quaternion =\
-                self.puck_0_quaternion[0 : self.samples_taken, :]
+                self.puck_0_quaternion[0:self.samples_taken, :]
 
             self.puck_1_acceleration =\
-                self.puck_1_acceleration[0 : self.samples_taken, :]
+                self.puck_1_acceleration[0:self.samples_taken, :]
             self.puck_1_gyroscope =\
-                self.puck_1_gyroscope[0 : self.samples_taken, :]
+                self.puck_1_gyroscope[0:self.samples_taken, :]
             self.puck_1_velocity =\
-                self.puck_1_velocity[0 : self.samples_taken, :]
+                self.puck_1_velocity[0:self.samples_taken, :]
             self.puck_1_load_cell =\
-                self.puck_1_load_cell[0 : self.samples_taken, :]
+                self.puck_1_load_cell[0:self.samples_taken, :]
             self.puck_1_quaternion =\
-                self.puck_1_quaternion[0 : self.samples_taken, :]
+                self.puck_1_quaternion[0:self.samples_taken, :]
 
-
-    def set_filename(self):
+    def set_filename(self) -> None:
         '''
         Ask the user for the log file's name
         '''
         self.file_name = input("enter a name for the datafile: ")
 
-
-    def set_recording_length(self):
+    def set_recording_length(self) -> None:
         '''
         Finds the total recording time and initializes the pucks' data arrays
 
@@ -211,17 +209,18 @@ class PuckLogger(object):
             try:
                 recording_length_minutes =\
                      float(input(recording_length_message))
-            except:
+            except ValueError:
                 print("you need to input a number")
-            
-            if (recording_length_minutes>60) or (recording_length_minutes<0):
+
+            if (recording_length_minutes > 60) or\
+               (recording_length_minutes < 0):
                 print("please enter a number between 0 and 60")
                 correct_input_format = False
             else:
                 correct_input_format = True
 
         max_samples_needed =\
-            int(recording_length_minutes*  60 * self.samples_per_second)
+            int(recording_length_minutes * 60 * self.samples_per_second)
         self.max_samples = max_samples_needed
 
         # initialize the data arrays of each puck to the total number of
@@ -238,8 +237,8 @@ class PuckLogger(object):
         self.puck_1_load_cell = np.zeros([max_samples_needed, 1])
         self.puck_1_quaternion = np.zeros([max_samples_needed, 4])
 
-
-    def store_data(self, puck_0_packet: PuckPacket, puck_1_packet: PuckPacket):
+    def store_data(self, puck_0_packet: PuckPacket,
+                   puck_1_packet: PuckPacket) -> None:
         '''
         Extracts each data type from the pucks total data.
 
@@ -249,9 +248,9 @@ class PuckLogger(object):
 
         Parameters
         ----------
-        puck_0_packet : PuckPacket object
+        puck_0_packet:PuckPacket object
             Contains the polled data from the blue puck
-        puck_1_packet : PuckPacket object
+        puck_1_packet:PuckPacket object
             Contains the polled data from the yellow puck
         '''
         self.puck_0_acceleration[self.samples_taken, :] =\
@@ -259,19 +258,20 @@ class PuckLogger(object):
         self.puck_0_gyroscope[self.samples_taken, :] = puck_0_packet.gyroscope
         self.puck_0_velocity[self.samples_taken, :] = puck_0_packet.velocity
         self.puck_0_load_cell[self.samples_taken, :] = puck_0_packet.load_cell
-        self.puck_0_quaternion[self.samples_taken, :] = puck_0_packet.quaternion
+        self.puck_0_quaternion[self.samples_taken, :] =\
+            puck_0_packet.quaternion
 
         self.puck_1_acceleration[self.samples_taken, :] =\
             puck_1_packet.accelerometer
         self.puck_1_gyroscope[self.samples_taken, :] = puck_1_packet.gyroscope
         self.puck_1_velocity[self.samples_taken, :] = puck_1_packet.velocity
         self.puck_1_load_cell[self.samples_taken, :] = puck_1_packet.load_cell
-        self.puck_1_quaternion[self.samples_taken, :] = puck_1_packet.quaternion
+        self.puck_1_quaternion[self.samples_taken, :] =\
+            puck_1_packet.quaternion
 
-        self.samples_taken += 1 # increment the sample number
+        self.samples_taken += 1  # increment the sample number
 
-
-    def write_data(self):
+    def write_data(self) -> None:
         '''
         Writes the logged data to a python dictionary and .mat file
 
@@ -295,7 +295,7 @@ class PuckLogger(object):
 
         # creates the path to the log file self
         data_shelf_name = os.path.join(self.data_folder,
-            self.file_name+".shelve")
+                                       self.file_name+".shelve")
 
         # creates the data folder if it did not exist
         if not os.path.exists(self.data_folder):
@@ -311,8 +311,7 @@ class PuckLogger(object):
         mat_path = os.path.join(self.data_folder, self.file_name+".mat")
         io.savemat(mat_path, data_dictionary, appendmat=False)
 
-
-    def stop(self):
+    def stop(self) -> None:
         '''
         Closes communication with the pucks and saves the log file data
         '''
@@ -324,8 +323,8 @@ class PuckLogger(object):
         # save the log file
         self.write_data()
         try:
-            self.check_stop_thread.join(2) # stop the thread after 2 seconds
-        except:
+            self.check_stop_thread.join(2)  # stop the thread after 2 seconds
+        finally:
             pass
 
 
