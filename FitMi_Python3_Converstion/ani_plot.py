@@ -31,6 +31,10 @@ class AniPlot(object):
         Sets the x axis label of the subplot
     set_ylabel
         Sets the y axis label of the subplot
+    update(puck_0_data, puck_1_data):
+        Add the new data to the end of the buffer of data
+    draw(fig):
+        Adds the data to the subplot
     '''
     def __init__(self, fig: plt.figure, split: List[int], buffer_min: int = 0,
                  buffer_max: int = 200, ymin: int = -180, ymax: int = 180,

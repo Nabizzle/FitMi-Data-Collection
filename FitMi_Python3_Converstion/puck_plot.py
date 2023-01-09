@@ -244,7 +244,7 @@ class PuckPlotter(object):
 
     def update_buffers(self, puck_0_data: PuckPacket, puck_1_data: PuckPacket):
         '''
-        Uses polled data to update AniPlot subplots
+        Uses polled data to update the AniPlot subplots
 
         Takes an input of data from the pucks and parses the data to update
         individual plots. This method also buzzes the puck if the user moves it

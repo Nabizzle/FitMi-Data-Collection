@@ -16,9 +16,110 @@ ctk.set_default_color_theme("dark-blue")
 
 
 class PlottingApp(ctk.CTk):
+    '''
+    App for showing the output of the FitMi Pucks.
+
+    Displays the blue and yellow pucks' data for roll, pitch, yaw, gyroscope
+    angles, acceleration, velocity, and the force on the load cell. At the
+    bottom of the app is a button to start and stop the recording of data and
+    a slider to change the displayed buffer size of data.
+
+    Attributes
+    ----------
+    SAMPLES_PER_SECOND: int
+        The number of times the pucks are queried per second
+    PAD_X: int
+        Padding left and right of the GUI elements
+    PAD_Y: int
+        Padding above and below GUI elements
+    PLOT_X: int
+        The width of the smaller figures in pixels
+    PLOT_Y: int
+        The height of the smaller figures in pixels
+    BUFFER_MIN: int
+        The initialization of the start of the buffer
+    BUFFER_MAX: int
+        The initialization of the end time of the buffer
+    ANGLE_YMAX: int
+        The upper bound of the angle plots
+    ANGLE_YMIN: int
+        The lower bound of the angle plots
+    GYRO_YMAX: int
+        The upper bound of the gyroscope plots
+    GYRO_YMIN: int
+        The lower bound of the gyroscope plots
+    ACCELERATION_YMAX: int
+        The upper bound of the accelerometer plots
+    ACCELERATION_YMIN: int
+        The lower bound of the accelerometer plots
+    VELOCITY_YMAX: int
+        The upper bound of the velocity plots
+    VELOCITY_YMIN: int
+        The lower bound of the velocity plots
+    LOAD_CELL_YMAX: int
+        The upper bound of the load cell plot
+    LOAD_CELL_YMIN: int
+        The upper bound of the load cell plot
+    self.title: str
+        Title of the app
+    keep_running : bool
+        Boolean for checking if data logging should continue
+    roll_plot : DataSubplot object
+        Plots the roll of one or both pucks
+    pitch_plot : DataSubplot object
+        Plots the pitch of one or both pucks
+    yaw_plot : DataSubplot object
+        Plots the yaw of one or both pucks
+    x_gyro_plot : DataSubplot object
+        Plots the x coordinate of the gyroscope of one or both pucks
+    y_gyro_plot : DataSubplot object
+        Plots the y coordinate of the gyroscope of one or both pucks      
+    z_gyro_plot : DataSubplot object
+        Plots the x coordinate of the gyroscope of one or both pucks
+    x_acceleration_plot : DataSubplot object
+        Plots the x rotational acceleration of the accelerometer of one or both
+        pucks
+    y_acceleration_plot : DataSubplot object
+        Plots the y rotational acceleration of the accelerometer of one or both
+        pucks
+    z_acceleration_plot : DataSubplot object
+        Plots the z rotational acceleration of the accelerometer of one or both
+        pucks
+    x_velocity_plot : DataSubplot object
+        Plots the x linear velocity of one or both pucks
+    y_velocity_plot : DataSubplot object
+        Plots the y linear velocity of one or both pucks
+    z_velocity_plot : DataSubplot object
+        Plots the z linear velocity of one or both pucks
+    load_cell_plot : DataSubplot object
+        Plots the force on the load cell of one or both pucks
+    start_button: CTKButton
+        Connects to pucks and starts polling data
+    stop_button: CTKButton
+        Stops polling data from pucks and disconnects from them
+    buffer_slider: CTKSlider
+        Slider to decrease and increase the displayed buffer of data
+    puck : HIDPuckDongle object
+        Connects to the dongle for communicating to and from the pucks
+
+    Methods
+    -------
+    __init__()
+        Setup all plots and widgets on the main GUI
+    start_button_callback()
+        Creates connection to pucks and changes running flag to on
+    stop_button_callback()
+        Turns the running flag off and disconnects from pucks
+    buffer_slider_callback(slider_value)
+        Updates the DataSubplot objects with a new buffer size to display
+    get_data()
+        Poll the pucks for new data on each sample time step
+    run(puck_0_data, puck_1_data)
+        Updates each data plot based on the polled data
+    update_buffers(puck_0_data, puck_1_data)
+        Uses polled data to update the DataSubplot objects
+    '''
     SAMPLES_PER_SECOND = 60
-    MAX_RUN_TIME_SECONDS = 100
-    MAX_SAMPLES = SAMPLES_PER_SECOND * MAX_RUN_TIME_SECONDS
 
     PAD_X = 5
     PAD_Y = 5
@@ -49,7 +150,13 @@ class PlottingApp(ctk.CTk):
     LOAD_CELL_YMAX = 1100
     LOAD_CELL_YMIN = 0
 
-    def __init__(self):
+    def __init__(self) -> None:
+        '''
+        Setup all plots and widgets on the main GUI
+
+        Sets up the plots in each DataSubplot instance and creates the start
+        and stop buttons and the buffer slider
+        '''
         super().__init__()
         self.title("Puck Data Output")
         self.geometry(f"{self.PLOT_X * 3 + 6 * self.PAD_X}x"
@@ -206,7 +313,7 @@ class PlottingApp(ctk.CTk):
         # Create scrollbar for buffer size
         self.buffer_slider = ctk.CTkSlider(self, orientation="horizontal",
                                            width=500, from_=20, to=500,
-                                           command=self.slider_callback)
+                                           command=self.buffer_slider_callback)
         self.buffer_slider.grid(row = 5, column = 2, padx = self.PAD_X,
                                 pady = self.PAD_Y)
         self.buffer_slider.set(200)
@@ -216,9 +323,9 @@ class PlottingApp(ctk.CTk):
 
         self.after(int(1000/self.SAMPLES_PER_SECOND), self.get_data)
 
-    def start_button_callback(self):
+    def start_button_callback(self) -> None:
         '''
-        Starts recording from the pucks and polls based on sample rate
+        Creates connection to pucks and changes running flag to on
         '''
         self.samples_taken = 0
         # Send command to communicate with both pucks
@@ -229,9 +336,9 @@ class PlottingApp(ctk.CTk):
         # sample both pucks and pause by the sample rate
         self.keep_running = True
 
-    def stop_button_callback(self):
+    def stop_button_callback(self) -> None:
         '''
-        Tells the app to stop recording and disconnects for the pucks
+        Turns the running flag off and disconnects from pucks
         '''
         print("Recording Stopped")
         self.keep_running = False
@@ -239,7 +346,17 @@ class PlottingApp(ctk.CTk):
         self.puck.send_command(1, SENDVEL, 0x00, 0x00)
         self.puck.close()
 
-    def slider_callback(self, slider_value):
+    def buffer_slider_callback(self, slider_value) -> None:
+        '''
+        Updates the DataSubplot objects with a new buffer size to display
+
+        Changes each subplot x axis limit a new, identical value
+
+        Parameters
+        ----------
+        slider_value: float
+            The new value on the slider after it has been moved
+        '''
         slider_value = int(slider_value)
         self.roll_plot.set_xlim(slider_value)
         self.pitch_plot.set_xlim(slider_value)
@@ -259,11 +376,11 @@ class PlottingApp(ctk.CTk):
 
         self.load_cell_plot.set_xlim(slider_value)
 
-    def get_data(self):
+    def get_data(self) -> None:
         '''
-        Record the data on each sample time step
+        Poll the pucks for new data on each sample time step
         '''
-        if self.keep_running and (self.samples_taken < self.MAX_SAMPLES):
+        if self.keep_running:
             self.puck.checkForNewPuckData()
             # send queried data to the plots and update them
             self.samples_taken += 1
@@ -272,13 +389,13 @@ class PlottingApp(ctk.CTk):
         self.after(int(1000/self.SAMPLES_PER_SECOND), self.get_data)
 
     def run(self, puck_0_data: PuckPacket = None,
-        puck_1_data: PuckPacket = None):
+        puck_1_data: PuckPacket = None) -> None:
         '''
         Updates each data plot based on the polled data
 
-        Sends the polled data to each of the AniPlot objects to update them and
-        then redraws the plots. This also checks if you are touching the pucks
-        to change the color of the load cell plots.
+        Sends the polled data to each of the DataSubplot objects to update them
+        and then redraws the plots. This also checks if you are touching the
+        pucks to change the color of the load cell plots.
 
         Parameters
         ----------
@@ -317,9 +434,10 @@ class PlottingApp(ctk.CTk):
         else:
             self.load_cell_plot.puck_2_plot.set_color("g")
 
-    def update_buffers(self, puck_0_data: PuckPacket, puck_1_data: PuckPacket):
+    def update_buffers(self, puck_0_data: PuckPacket,
+                       puck_1_data: PuckPacket) -> None:
         '''
-        Uses polled data to update AniPlot subplots
+        Uses polled data to update the DataSubplot subplots
 
         Takes an input of data from the pucks and parses the data to update
         individual plots. This method also buzzes the puck if the user moves it
@@ -364,9 +482,73 @@ class PlottingApp(ctk.CTk):
 
 
 class DataSubplot(ctk.CTkFrame):
+    '''
+    Creates each data plot for a puck sensor in a frame for the app
+
+    Sets up the plot and updates the figure as new data comes in or attributes
+    are changed.
+
+    Attributes
+    ----------
+    fig: matplotlib.figure.Figure
+        The overall figure for the data plot
+    data_plot: subplot
+        The axis the data is plotted on
+    canvas: matplotlib.backends.backend_tkagg.FigureCanvasTkAgg
+        tkinter object to display figure in the app
+    bg : plot region
+        Copy of the plot region
+    puck_0_data : List[int]
+        List of 0's the length of the buffer for the blue puck's data
+    puck_1_data : List[int]
+        List of 0's the length of the buffer for the yellow puck's data
+
+    Methods
+    -------
+    __init__(*args, fig_x, fig_y, buffer_min, buffer_max, y_min, y_max,
+             second_puc, **kwargs)
+        Create the base data plot with a dark theme
+    set_title(title)
+        Change the title of the figure
+    set_xlim(upper)
+        Change the buffer size on the plot
+    update(self, puck_0_data, puck_1_data):
+        Add the new data to the end of the buffer of data
+    draw():
+        Adds the data to the subplot
+    '''
     def __init__(self, *args, fig_x: float = 5.0, fig_y: float = 2.0,
                  buffer_min: int = 0, buffer_max: int = 200, y_min: int,
-                 y_max: int, second_puck: bool = True, **kwargs):
+                 y_max: int, second_puck: bool = True, **kwargs) -> None:
+        '''
+        Create the base data plot with a dark theme
+
+        Create the base data plot given values for its size, and axis limits.
+        The plot is a dark theme to match with the rest of the app and the plot
+        is initialized to show a line at 0 for the full buffer of data.
+
+        Parameters
+        ----------
+        *args
+            Any non keyword arguments for the super CTKFrame class
+        fig_x: float, default = 5.0
+            The width of the figure in hundreds of pixels
+        fig_y: float, default = 2.0
+            The height of the figure in hundreds of pixels
+        buffer_min: int, default = 0
+            The lower end of the x axis of the plot
+        buffer_max: int, default = 200
+            The upper end of the x axis of the plot
+        y_min: int
+            The bottom of the y axis of the plot
+        y_max: int
+            The top of the y axis of the plot
+        second_puck: bool, default = True
+            True if both pucks are being plotted
+        **kwargs
+            Any other keyword arguments not specified for the super CTKFrame
+            class
+        '''
         super().__init__(*args, **kwargs)
         sns.set_theme(context='poster', font_scale=0.5)
         plt.style.use('dark_background')
@@ -408,11 +590,29 @@ class DataSubplot(ctk.CTkFrame):
                                                    self.puck_1_data,
                                                    '-', color="g")[0]
 
-    def set_title(self, axis_name: str):
-        self.data_plot.set_title(axis_name)
+    def set_title(self, title: str) -> None:
+        '''
+        Change the title of the figure
+
+        Parameters
+        ----------
+        title: str
+            The name of the figure
+        '''
+        self.data_plot.set_title(title)
         self.canvas.draw()
 
-    def set_xlim(self, upper: int):
+    def set_xlim(self, upper: int) -> None:
+        '''
+        Change the buffer size on the plot
+
+        This changes the x limit of the plot from 0 to the value passed in
+
+        Parameters
+        ----------
+        upper: int
+            The upper limit of the x axis
+        '''
         self.data_plot.set_xlim(0, upper)
         self.puck_0_data = [0]*(upper)
         self.puck_1_data = [0]*(upper)
@@ -420,7 +620,8 @@ class DataSubplot(ctk.CTkFrame):
         self.draw()
         self.canvas.draw()
 
-    def update(self, puck_0_data: PuckPacket, puck_1_data: PuckPacket = None):
+    def update(self, puck_0_data: PuckPacket,
+               puck_1_data: PuckPacket = None) -> None:
         '''
         Add the new data to the end of the buffer of data
 
@@ -445,9 +646,9 @@ class DataSubplot(ctk.CTkFrame):
             self.puck_1_data.pop(0)
             self.puck_1_data.append(puck_1_data)
 
-    def draw(self):
+    def draw(self) -> None:
         '''
-        Adds the data to the subplot
+        Adds the data to the plot
 
         Adds the data from the data buffers to the plot and redraws it for the
         animation.

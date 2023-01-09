@@ -411,6 +411,21 @@ class PuckFileName(ctk.CTkFrame):
     '''
     def __init__(self, *args, puck_sensor_name: str,
         puck_file_name: str, **kwargs):
+        '''
+        Creates the data entry box with a title
+
+        Parameters
+        ----------
+        *args
+            Any non keyword arguments for the super CTKFrame class
+        puck_sensor_name: str
+            The name of the sensor
+        puck_file_name: str
+            The name of the data file
+        **kwargs
+            Any other keyword arguments not specified for the super CTKFrame
+            class
+        '''
         super().__init__(*args, **kwargs)
         # setup the label of the frame
         self.puck_sensor_name = puck_sensor_name
