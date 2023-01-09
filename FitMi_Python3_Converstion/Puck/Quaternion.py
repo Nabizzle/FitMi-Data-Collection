@@ -101,7 +101,7 @@ def q_rotate_vector(q: np.ndarray, v: np.ndarray) -> np.ndarray:
         The rotated vector
 
     '''
-    q_v = np.insert(v, 0,0) # make the vector into a pure quaternion
+    q_v = np.insert(v, 0, 0)  # make the vector into a pure quaternion
 
     # rotate the vector by left multiplying it by the quaternion and right
     # multiplying it by the conjugate of the quaternion. Return only the vector
@@ -113,6 +113,6 @@ if __name__ == "__main__":
     '''
     Demonstrate quaternion rotation by rotating a unit vector along the z axis
     '''
-    q1 = q_normalize(np.array([np.pi/4.0, 0, 1, 0] ))
-    v1 = np.array([0,0,1])
+    q1 = q_normalize(np.array([np.pi/4.0, 0, 1, 0]))
+    v1 = np.array([0, 0, 1])
     print(q_rotate_vector(q1, v1))
