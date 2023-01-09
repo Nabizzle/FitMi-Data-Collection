@@ -1,5 +1,7 @@
 import customtkinter as ctk
-import time
+import seaborn as sns
+from matplotlib.style import context
+import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from Puck.puck_packet import PuckPacket
@@ -20,6 +22,9 @@ class PlottingApp(ctk.CTk):
 
     PAD_X = 5
     PAD_Y = 5
+
+    PLOT_X = 500
+    PLOT_Y = 150
 
     BUFFER_MIN = 0 # minimum of x axis on plots
     BUFFER_MAX = 200 # maximum of x axis of plots
@@ -47,12 +52,15 @@ class PlottingApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Puck Data Output")
-        self.geometry(f"{1500 + 6 * self.PAD_X}x{1100 + 10 * self.PAD_Y}")
+        self.geometry(f"{self.PLOT_X * 3 + 6 * self.PAD_X}x"
+                      f"{self.PLOT_Y * 5 + 100 + 10 * self.PAD_Y}")
         self.grid_columnconfigure((0, 1, 2), weight=0)
         self.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=0)
         self.keep_running = False
 
-        self.roll_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.roll_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                     fig_y=self.PLOT_Y / 100,
+                                     buffer_min=self.BUFFER_MIN,
                                      buffer_max=self.BUFFER_MAX,
                                      y_min=self.ANGLE_YMIN / 2,
                                      y_max=self.ANGLE_YMAX / 2)
@@ -60,7 +68,9 @@ class PlottingApp(ctk.CTk):
                             pady = self.PAD_Y)
         self.roll_plot.set_title("roll angle")
 
-        self.pitch_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.pitch_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                      fig_y=self.PLOT_Y / 100,
+                                      buffer_min=self.BUFFER_MIN,
                                       buffer_max=self.BUFFER_MAX,
                                       y_min=self.ANGLE_YMIN,
                                       y_max=self.ANGLE_YMAX)
@@ -68,7 +78,9 @@ class PlottingApp(ctk.CTk):
                              pady = self.PAD_Y)
         self.pitch_plot.set_title("pitch angle")
 
-        self.yaw_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.yaw_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                    fig_y=self.PLOT_Y / 100,
+                                    buffer_min=self.BUFFER_MIN,
                                     buffer_max=self.BUFFER_MAX,
                                     y_min=self.ANGLE_YMIN,
                                     y_max=self.ANGLE_YMAX)
@@ -76,7 +88,9 @@ class PlottingApp(ctk.CTk):
                            pady = self.PAD_Y)
         self.yaw_plot.set_title("yaw angle")
 
-        self.x_gyro_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.x_gyro_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                       fig_y=self.PLOT_Y / 100,
+                                       buffer_min=self.BUFFER_MIN,
                                        buffer_max=self.BUFFER_MAX,
                                        y_min=self.GYRO_YMIN,
                                        y_max=self.GYRO_YMAX)
@@ -84,7 +98,9 @@ class PlottingApp(ctk.CTk):
                               pady = self.PAD_Y)
         self.x_gyro_plot.set_title("x gyroscope")
 
-        self.y_gyro_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.y_gyro_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                       fig_y=self.PLOT_Y / 100,
+                                       buffer_min=self.BUFFER_MIN,
                                        buffer_max=self.BUFFER_MAX,
                                        y_min=self.GYRO_YMIN,
                                        y_max=self.GYRO_YMAX)
@@ -92,7 +108,9 @@ class PlottingApp(ctk.CTk):
                               pady = self.PAD_Y)
         self.y_gyro_plot.set_title("y gyroscope")
 
-        self.z_gyro_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.z_gyro_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                       fig_y=self.PLOT_Y / 100,
+                                       buffer_min=self.BUFFER_MIN,
                                        buffer_max=self.BUFFER_MAX,
                                        y_min=self.GYRO_YMIN,
                                        y_max=self.GYRO_YMAX)
@@ -100,7 +118,9 @@ class PlottingApp(ctk.CTk):
                               pady = self.PAD_Y)
         self.z_gyro_plot.set_title("z gyroscope")
 
-        self.x_acceleration_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.x_acceleration_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                               fig_y=self.PLOT_Y / 100,
+                                               buffer_min=self.BUFFER_MIN,
                                                buffer_max=self.BUFFER_MAX,
                                                y_min=self.ACCELERATION_YMIN,
                                                y_max=self.ACCELERATION_YMAX)
@@ -108,7 +128,9 @@ class PlottingApp(ctk.CTk):
                                       pady = self.PAD_Y)
         self.x_acceleration_plot.set_title("x acceleration")
 
-        self.y_acceleration_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.y_acceleration_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                               fig_y=self.PLOT_Y / 100,
+                                               buffer_min=self.BUFFER_MIN,
                                                buffer_max=self.BUFFER_MAX,
                                                y_min=self.ACCELERATION_YMIN,
                                                y_max=self.ACCELERATION_YMAX)
@@ -116,7 +138,9 @@ class PlottingApp(ctk.CTk):
                                       pady = self.PAD_Y)
         self.y_acceleration_plot.set_title("y acceleration")
 
-        self.z_acceleration_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.z_acceleration_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                               fig_y=self.PLOT_Y / 100,
+                                               buffer_min=self.BUFFER_MIN,
                                                buffer_max=self.BUFFER_MAX,
                                                y_min=self.ACCELERATION_YMIN,
                                                y_max=self.ACCELERATION_YMAX)
@@ -124,7 +148,9 @@ class PlottingApp(ctk.CTk):
                                       pady = self.PAD_Y)
         self.z_acceleration_plot.set_title("z acceleration")
 
-        self.x_velocity_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.x_velocity_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                           fig_y=self.PLOT_Y / 100,
+                                           buffer_min=self.BUFFER_MIN,
                                            buffer_max=self.BUFFER_MAX,
                                            y_min=self.VELOCITY_YMIN,
                                            y_max=self.VELOCITY_YMAX)
@@ -132,7 +158,9 @@ class PlottingApp(ctk.CTk):
                                   pady = self.PAD_Y)
         self.x_velocity_plot.set_title("x velocity")
 
-        self.y_velocity_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.y_velocity_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                           fig_y=self.PLOT_Y / 100,
+                                           buffer_min=self.BUFFER_MIN,
                                            buffer_max=self.BUFFER_MAX,
                                            y_min=self.VELOCITY_YMIN,
                                            y_max=self.VELOCITY_YMAX)
@@ -140,7 +168,9 @@ class PlottingApp(ctk.CTk):
                                   pady = self.PAD_Y)
         self.y_velocity_plot.set_title("y velocity")
 
-        self.z_velocity_plot = DataSubplot(self, buffer_min=self.BUFFER_MIN,
+        self.z_velocity_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
+                                           fig_y=self.PLOT_Y / 100,
+                                           buffer_min=self.BUFFER_MIN,
                                            buffer_max=self.BUFFER_MAX,
                                            y_min=self.VELOCITY_YMIN,
                                            y_max=self.VELOCITY_YMAX)
@@ -148,7 +178,8 @@ class PlottingApp(ctk.CTk):
                                   pady = self.PAD_Y)
         self.z_velocity_plot.set_title("z velocity")
 
-        self.load_cell_plot = DataSubplot(self, fig_x=15.0,
+        self.load_cell_plot = DataSubplot(self, fig_x=self.PLOT_X * 3 / 100,
+                                          fig_y=self.PLOT_Y / 100,
                                           buffer_min=self.BUFFER_MIN,
                                           buffer_max=self.BUFFER_MAX,
                                           y_min=self.LOAD_CELL_YMIN,
@@ -337,6 +368,8 @@ class DataSubplot(ctk.CTkFrame):
                  buffer_min: int = 0, buffer_max: int = 200, y_min: int,
                  y_max: int, second_puck: bool = True, **kwargs):
         super().__init__(*args, **kwargs)
+        sns.set_theme(context='poster', font_scale=0.5)
+        plt.style.use('dark_background')
         self.fig = Figure(figsize=(fig_x, fig_y))
         self.data_plot = self.fig.add_subplot(111)
         self.data_plot.set_xlim(buffer_min, buffer_max)

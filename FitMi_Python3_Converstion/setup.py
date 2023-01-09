@@ -7,5 +7,8 @@ setup(
     long_description='Library of FitMi Helper Classes. These classes help connect to the pucks, parse incoming data, and analyze the data for the main scripts.',
     author='Nabeel Chowdhury',
     author_email='nabeel.chowdhury@case.edu',
-    install_requires=['Cython==0.29.32', 'hidapi==0.12.0.post2', 'matplotlib==3.6.2', 'numpy==1.23.4', 'pygame==2.1.2', 'scipy==1.9.3', 'customtkinter==5.0.3'],
+    install_requires=['Cython==0.29.32', 'hidapi==0.12.0.post2',
+                      'matplotlib==3.6.2', 'numpy==1.23.4', 'pygame==2.1.2',
+                      'scipy==1.9.3', 'customtkinter==5.0.3',
+                      'seaborn==0.12.2'],
 )

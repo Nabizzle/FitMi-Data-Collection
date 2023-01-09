@@ -41,6 +41,7 @@
         "rxdata",
         "savemat",
         "scipy",
+        "seaborn",
         "SENDVEL",
         "SETUSBPIPES",
         "suptitle",
