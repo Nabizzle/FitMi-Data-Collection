@@ -1,12 +1,12 @@
 # FitMi-Data-Collection
 Code For using the Flint Rehab FitMi pucks for grasp research. The code available is written in Python (2.7 and 3.10), C# (Windows and Xamarin Framework for Android).
 The Python 2.7 version was written originally by the Flint Rehab company and the Python 3 version was written by [Nabeel](#authors) by converting the 2.7 code.
-[David Pruitt](#author) from UTDallis wrote both C# libraries and graciously sent it to our group for use.
+[David Pruitt](#author) from UTDallas wrote both C# libraries and graciously sent it to our group for use.
 
 **This Read Me focuses on the usage of the Python 3 code.**
 
-The FitMi pucks consist of a dongle and a blue and yellow puck. The blue puck is considered the first puck in the code and the yellow is the second. The pucks output
-accelerometer, gyroscope, velocity, load cell, and quaternion data. The quaternion data is also converted to the roll, pitch, and yaw angles of the puck in the code.
+The FitMi pucks consist of a dongle and a blue and yellow puck. The blue puck is considered the first puck in the code and the yellow is the second. The pucks output angular
+acceleration, gyroscope angles, linear acceleration, load cell, and quaternion data. The quaternion data is also converted to the roll, pitch, and yaw angles of the puck in the code.
 
 > **Warning**
 >
@@ -18,7 +18,7 @@ The FitMi pucks consist of a blue and yellow puck with a usb dongle for communic
 ![FitMi Puck Station](https://github.com/CaseFNI/FitMi-Data-Collection/blob/main/Media/FitMi%20Pucks.png)
 
 The pucks are usually used if a program called Rehab Studio, but we were provided code from [David Pruitt](#authors) from his work with the pucks that allows us direct
-access to each pucks rotational accelerometer, gyroscope, linear velocity measurement, quaternion measurement, and load cell.
+access to each pucks rotational accelerometer, gyroscope, linear acceleration measurement, quaternion measurement, and load cell.
 
 > **Note**
 > The load cell does not have units with its output to my knowledge
@@ -28,12 +28,12 @@ they connected to the dongle. If this does not happen put the dongle back into t
 station is also connected to the charger. When this happens, the pucks and dongle should flash their lights together.
 
 > **Note**
-> The pucks must be removed first from the station before the dongle is pluged in because they do not connect to the dongle if they are also charging. If the charger
+> The pucks must be removed first from the station before the dongle is plugged in because they do not connect to the dongle if they are also charging. If the charger
 is not plugged in, you can connect to them in the station.
 
 ### Debugging the Puck Output
 
-If you want to visualize the putput of the pucks, you can use two different functions. The [puck_plot.py](#puck_plotpy) script shows the output of the all sensors
+If you want to visualize the output of the pucks, you can use two different functions. The [puck_plot.py](#puck_plotpy) script shows the output of the all sensors
 of the pucks in a series of subplots. The [show_orientation.py](#show_orientationpy) script shows one of the puck's rotations on a 3D figure. To pick the puck you need
 to change the puck number in the script. 0 is the blue puck and 1 is the yellow puck.
 
@@ -71,7 +71,7 @@ $p' = qpq^{-1}$
 Where $p$ is a point converted to a **pure quaternion**: $p = 0 + p_x i + p_y j + p_z k$ and $q^{-1}$ is the conjugate of $q$ where $q^{-1} = \cos{\left(\frac{\theta}{2} \right)} - \sin{\left(\frac{\theta}{2} \right)}(xi+yj+zk)$
 > **Note**
 > - The angle is $\frac{\theta}{2}$ because the first quaternion rotates the point half way and the second rotates it the other way.
-> - Multiplication of quaternions is not communitive. Left multiplying is a rotation following the right hand rule. Right multiplying is the left hand rule.
+> - Multiplication of quaternions is not commutative. Left multiplying is a rotation following the right hand rule. Right multiplying is the left hand rule.
 > > **Note**
 > > - The angle in the conjugate is negative, but has been made positive here as per a cosine identity
 
@@ -106,7 +106,7 @@ Shows the output of the two pucks in the same way that [puck_plot.py](#puck_plot
 
 ### puck_plot.py
 
-Plots the x, y, and z directions of the accelerometer, gyroscope, and linear velocity; the roll, pitch, and yaw angles; and the load cell values of both pucks in a set
+Plots the x, y, and z directions of the rotational accelerometer, gyroscope, and linear acceleration; the roll, pitch, and yaw angles; and the load cell values of both pucks in a set
 of subplots.
 
 ### ani_plot.py
@@ -125,7 +125,7 @@ Logs puck data like the [log_puck_data.py](#log_puck_datapy) script, but it is m
 
 ### log_puck_data.py
 
-Recorded the accelerometer, gyroscope, velocity, load cell, and quaternion values of both pucks into a python dictionary, saved as a python shelf, and as a .mat file
+Records the angular accelerometer, gyroscope, linear acceleration, load cell, and quaternion values of both pucks into a python dictionary, saved as a python shelf, and as a .mat file
 accessible through Matlab. The sampling rate and max time of the data logging can be set and data logging can end early be pressing enter in the console where the
 script was called.
 
@@ -133,12 +133,12 @@ script was called.
 
 ### hid_puck
 
-Defines a class for handling communication to and from the dongle to the computer and the pucks. It recieves a 62 byte array of information and parses that information
+Defines a class for handling communication to and from the dongle to the computer and the pucks. It receives a 62 byte array of information and parses that information
 into the RX radio values, and the data packets for the pucks handled in the [PuckPacket](#puck_packetpy) class.
 
 ### puck_packet.py
 
-Defines a class for parsing the data packets from each puck into acceleration, gyroscope, velocity, quaternion, and load cell variables. This class also uses the
+Defines a class for parsing the data packets from each puck into angular acceleration, gyroscope, linear acceleration, quaternion, and load cell variables. This class also uses the
 quaternions to find the roll, pitch, and yaw angles of the pucks.
 
 ### quaternion.py
