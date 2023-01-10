@@ -102,7 +102,7 @@ Quaternions can also be converted to Rotation Matrices by following a specific f
 ### plot_puck_data_gui.py
 
 Shows the output of the two pucks in the same way that [puck_plot.py](#puck_plotpy) does, but as an app. The app allows you to start and stop recording as well as change the buffer size with a slider bar. The colors of the lines match with the colors of the pucks. When the pucks are squeezed, the blue puck will show a red line in the load cell plot and the yellow puck will show a magenta line.
-![Python3 Data Plotting App](https://github.com/CaseFNI/FitMi-Data-Collection/blob/main/Media/Puck%20Data%20Plotting%20App.png)
+![Python3 Data Plotting App](https://github.com/CaseFNI/FitMi-Data-Collection/blob/main/Media/Puck%20Data%20Plotting%20App.gif)
 
 ### puck_plot.py
 
