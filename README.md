@@ -88,7 +88,7 @@ Quaternions can also be converted to Rotation Matrices by following a specific f
 
 - [**FlintRehab**](https://www.flintrehab.com/) - Creator of the original Python 2.7 version of the code
 - [**David Pruitt**](https://www.researchgate.net/profile/David-Pruitt) - Creator of the C# versions of the code and the person who shared the code with me.
-- **Nabeel Chowdhury** - Converted the Python 2.7 code to Python 3.10 and cleaned and documented the code.
+- [**Nabeel Chowdhury**](https://www.nabeelchowdhury.com/) - Converted the Python 2.7 code to Python 3.10, elimiated bugs in the old code, and documented the Python 3 code.
 
 ## Acknowledgements
 
