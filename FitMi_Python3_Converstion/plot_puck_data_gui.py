@@ -437,7 +437,7 @@ class PlottingApp(ctk.CTk):
         if puck_1_data.touch and self.load_cell_plot.puck_2_plot:
             self.load_cell_plot.puck_2_plot.set_color("m")
         else:
-            self.load_cell_plot.puck_2_plot.set_color("g")
+            self.load_cell_plot.puck_2_plot.set_color("y")
 
     def update_buffers(self, puck_0_data: PuckPacket,
                        puck_1_data: PuckPacket) -> None:
@@ -600,7 +600,7 @@ class DataSubplot(ctk.CTkFrame):
         if second_puck:
             self.puck_2_plot = self.data_plot.plot(self.x_points,
                                                    self.puck_1_data,
-                                                   '-', color="g")[0]
+                                                   '-', color="y")[0]
 
     def set_title(self, title: str) -> None:
         '''
