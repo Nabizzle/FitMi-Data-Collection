@@ -99,7 +99,7 @@ class RecordingApp(ctk.CTk):
 
         # configure window
         self.title("FitMi Puck Data Logging App")
-        self.geometry(f"{410}x{550}")
+        self.geometry(f"{500}x{550}")
 
         # configure grid layout (5x2)
         self.grid_columnconfigure((0, 1), weight=0)
@@ -434,14 +434,14 @@ class PuckFileName(ctk.CTkFrame):
         super().__init__(*args, **kwargs)
         # setup the label of the frame
         self.puck_sensor_name = puck_sensor_name
-        self.title = ctk.CTkLabel(self, text=self.puck_sensor_name, width=165)
+        self.title = ctk.CTkLabel(self, text=self.puck_sensor_name, width=210)
         self.title.grid(row=0, column=0)
 
         # setup the file name entry
         self.file_name = puck_file_name
         self.file_name_textbox =\
             ctk.CTkEntry(self, height=10, placeholder_text=self.file_name,
-                         width=165)
+                         width=210)
         self.file_name_textbox.insert(0, self.file_name)
         self.file_name_textbox.grid(row=1, column=0, padx=10, pady=10)
 
