@@ -45,12 +45,12 @@ class PuckPlotter(object):
     z_acceleration_plot : AniPlot object
         Plots the z rotational acceleration of the accelerometer of one or both
         pucks
-    x_velocity_plot : AniPlot object
-        Plots the x linear velocity of one or both pucks
-    y_velocity_plot : AniPlot object
-        Plots the y linear velocity of one or both pucks
-    z_velocity_plot : AniPlot object
-        Plots the z linear velocity of one or both pucks
+    x_linear_acceleration_plot : AniPlot object
+        Plots the x linear linear acceleration of one or both pucks
+    y_linear_acceleration_plot : AniPlot object
+        Plots the y linear linear acceleration of one or both pucks
+    z_linear_acceleration_plot : AniPlot object
+        Plots the z linear linear acceleration of one or both pucks
     load_cell_plot : AniPlot object
         Plots the force on the load cell of one or both pucks
     puck : HIDPuckDongle object
@@ -95,9 +95,9 @@ class PuckPlotter(object):
         acceleration_ymax = 1000
         acceleration_ymin = -acceleration_ymax
 
-        # y axis range of the linear velocity plots
-        velocity_ymax = 500
-        velocity_ymin = -velocity_ymax
+        # y axis range of the linear acceleration plots
+        linear_acceleration_ymax = 500
+        linear_acceleration_ymin = -linear_acceleration_ymax
 
         # y axis range of the load cell plot
         load_cell_ymax = 1100
@@ -149,19 +149,22 @@ class PuckPlotter(object):
                                            acceleration_ymax, second_puck=True)
         self.z_acceleration_plot.set_ylabel("z acceleration")
 
-        # create and label the velocity plots
-        self.x_velocity_plot = AniPlot(self.fig, [5, 3, 10], buffer_min,
-                                       buffer_max, velocity_ymin,
-                                       velocity_ymax, second_puck=True)
-        self.x_velocity_plot.set_ylabel("x velocity")
-        self.y_velocity_plot = AniPlot(self.fig, [5, 3, 11], buffer_min,
-                                       buffer_max, velocity_ymin,
-                                       velocity_ymax, second_puck=True)
-        self.y_velocity_plot.set_ylabel("y velocity")
-        self.z_velocity_plot = AniPlot(self.fig, [5, 3, 12], buffer_min,
-                                       buffer_max, velocity_ymin,
-                                       velocity_ymax, second_puck=True)
-        self.z_velocity_plot.set_ylabel("z velocity")
+        # create and label the linear acceleration plots
+        self.x_linear_acceleration_plot =\
+            AniPlot(self.fig, [5, 3, 10], buffer_min, buffer_max,
+                    linear_acceleration_ymin, linear_acceleration_ymax,
+                    second_puck=True)
+        self.x_linear_acceleration_plot.set_ylabel("x linear acceleration")
+        self.y_linear_acceleration_plot =\
+            AniPlot(self.fig, [5, 3, 11], buffer_min, buffer_max,
+                    linear_acceleration_ymin, linear_acceleration_ymax,
+                    second_puck=True)
+        self.y_linear_acceleration_plot.set_ylabel("y linear acceleration")
+        self.z_linear_acceleration_plot =\
+            AniPlot(self.fig, [5, 3, 12], buffer_min, buffer_max,
+                    linear_acceleration_ymin, linear_acceleration_ymax,
+                    second_puck=True)
+        self.z_linear_acceleration_plot.set_ylabel("z linear acceleration")
 
         # create and label the load cell plot
         self.load_cell_plot = AniPlot(self.fig, [5, 1, 5], buffer_min,
@@ -231,9 +234,9 @@ class PuckPlotter(object):
         self.y_acceleration_plot.draw(self.fig)
         self.z_acceleration_plot.draw(self.fig)
 
-        self.x_velocity_plot.draw(self.fig)
-        self.y_velocity_plot.draw(self.fig)
-        self.z_velocity_plot.draw(self.fig)
+        self.x_linear_acceleration_plot.draw(self.fig)
+        self.y_linear_acceleration_plot.draw(self.fig)
+        self.z_linear_acceleration_plot.draw(self.fig)
 
         self.load_cell_plot.draw(self.fig)
 
@@ -284,12 +287,15 @@ class PuckPlotter(object):
         self.z_acceleration_plot.update(puck_0_data.accelerometer[2],
                                         puck_1_data.accelerometer[2])
 
-        self.x_velocity_plot.update(puck_0_data.velocity[0],
-                                    puck_1_data.velocity[0])
-        self.y_velocity_plot.update(puck_0_data.velocity[1],
-                                    puck_1_data.velocity[1])
-        self.z_velocity_plot.update(puck_0_data.velocity[2],
-                                    puck_1_data.velocity[2])
+        self.x_linear_acceleration_plot.\
+            update(puck_0_data.linear_acceleration[0],
+                   puck_1_data.linear_acceleration[0])
+        self.y_linear_acceleration_plot.\
+            update(puck_0_data.linear_acceleration[1],
+                   puck_1_data.linear_acceleration[1])
+        self.z_linear_acceleration_plot.\
+            update(puck_0_data.linear_acceleration[2],
+                   puck_1_data.linear_acceleration[2])
 
         self.load_cell_plot.update(puck_0_data.load_cell,
                                    puck_1_data.load_cell)

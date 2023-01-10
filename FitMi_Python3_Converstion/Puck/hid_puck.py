@@ -27,7 +27,8 @@ MAGCALX = 0x0C  # Send magnetometer calibration data back to puck
 MAGCALY = 0x0D  # Send magnetometer calibration data back to puck
 MAGCALZ = 0x0E  # Send magnetometer calibration data back to puck
 DNGLRST = 0x0F  # Reset the dongle
-SENDVEL = 0x10  # Send velocity (data==1) or send magnetometer (data==0)
+SENDVEL = 0x10  # Send acceleration (data==1) or send magnetometer (data==0)
+# NOTE: Flint rehab labeled the linear acceleration as velocity
 TOUCHBUZ = 0x11  # Turn touch buzz on and off (1 and 0)
 CHANGEFREQ = 0x12  # Change the frequency of the RX radio
 RXCHANGEFREQ = 0x13  # Change the frequency of sending data with the dongle

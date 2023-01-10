@@ -19,9 +19,9 @@ class PlottingApp(ctk.CTk):
     App for showing the output of the FitMi Pucks.
 
     Displays the blue and yellow pucks' data for roll, pitch, yaw, gyroscope
-    angles, acceleration, velocity, and the force on the load cell. At the
-    bottom of the app is a button to start and stop the recording of data and
-    a slider to change the displayed buffer size of data.
+    angles, acceleration, linear acceleration, and the force on the load cell.
+    At the bottom of the app is a button to start and stop the recording of
+    data and a slider to change the displayed buffer size of data.
 
     Attributes
     ----------
@@ -51,10 +51,10 @@ class PlottingApp(ctk.CTk):
         The upper bound of the accelerometer plots
     ACCELERATION_YMIN: int
         The lower bound of the accelerometer plots
-    VELOCITY_YMAX: int
-        The upper bound of the velocity plots
-    VELOCITY_YMIN: int
-        The lower bound of the velocity plots
+    LINEAR_ACCELERATION_YMAX: int
+        The upper bound of the linear acceleration plots
+    LINEAR_ACCELERATION_YMIN: int
+        The lower bound of the linear acceleration plots
     LOAD_CELL_YMAX: int
         The upper bound of the load cell plot
     LOAD_CELL_YMIN: int
@@ -84,12 +84,12 @@ class PlottingApp(ctk.CTk):
     z_acceleration_plot : DataSubplot object
         Plots the z rotational acceleration of the accelerometer of one or both
         pucks
-    x_velocity_plot : DataSubplot object
-        Plots the x linear velocity of one or both pucks
-    y_velocity_plot : DataSubplot object
-        Plots the y linear velocity of one or both pucks
-    z_velocity_plot : DataSubplot object
-        Plots the z linear velocity of one or both pucks
+    x_linear_acceleration_plot : DataSubplot object
+        Plots the x linear linear acceleration of one or both pucks
+    y_linear_acceleration_plot : DataSubplot object
+        Plots the y linear linear acceleration of one or both pucks
+    z_linear_acceleration_plot : DataSubplot object
+        Plots the z linear linear acceleration of one or both pucks
     load_cell_plot : DataSubplot object
         Plots the force on the load cell of one or both pucks
     start_button: CTKButton
@@ -141,9 +141,9 @@ class PlottingApp(ctk.CTk):
     ACCELERATION_YMAX = 1000
     ACCELERATION_YMIN = -ACCELERATION_YMAX
 
-    # y axis range of the linear velocity plots
-    VELOCITY_YMAX = 500
-    VELOCITY_YMIN = -VELOCITY_YMAX
+    # y axis range of the linear acceleration plots
+    LINEAR_ACCELERATION_YMAX = 500
+    LINEAR_ACCELERATION_YMIN = -LINEAR_ACCELERATION_YMAX
 
     # y axis range of the load cell plot
     LOAD_CELL_YMAX = 1100
@@ -254,35 +254,38 @@ class PlottingApp(ctk.CTk):
                                       pady=self.PAD_Y)
         self.z_acceleration_plot.set_title("z acceleration")
 
-        self.x_velocity_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
-                                           fig_y=self.PLOT_Y / 100,
-                                           buffer_min=self.BUFFER_MIN,
-                                           buffer_max=self.BUFFER_MAX,
-                                           y_min=self.VELOCITY_YMIN,
-                                           y_max=self.VELOCITY_YMAX)
-        self.x_velocity_plot.grid(row=3, column=0, padx=self.PAD_X,
-                                  pady=self.PAD_Y)
-        self.x_velocity_plot.set_title("x velocity")
+        self.x_linear_acceleration_plot =\
+            DataSubplot(self, fig_x=self.PLOT_X / 100,
+                        fig_y=self.PLOT_Y / 100,
+                        buffer_min=self.BUFFER_MIN,
+                        buffer_max=self.BUFFER_MAX,
+                        y_min=self.LINEAR_ACCELERATION_YMIN,
+                        y_max=self.LINEAR_ACCELERATION_YMAX)
+        self.x_linear_acceleration_plot.grid(row=3, column=0, padx=self.PAD_X,
+                                             pady=self.PAD_Y)
+        self.x_linear_acceleration_plot.set_title("x linear acceleration")
 
-        self.y_velocity_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
-                                           fig_y=self.PLOT_Y / 100,
-                                           buffer_min=self.BUFFER_MIN,
-                                           buffer_max=self.BUFFER_MAX,
-                                           y_min=self.VELOCITY_YMIN,
-                                           y_max=self.VELOCITY_YMAX)
-        self.y_velocity_plot.grid(row=3, column=1, padx=self.PAD_X,
-                                  pady=self.PAD_Y)
-        self.y_velocity_plot.set_title("y velocity")
+        self.y_linear_acceleration_plot =\
+            DataSubplot(self, fig_x=self.PLOT_X / 100,
+                        fig_y=self.PLOT_Y / 100,
+                        buffer_min=self.BUFFER_MIN,
+                        buffer_max=self.BUFFER_MAX,
+                        y_min=self.LINEAR_ACCELERATION_YMIN,
+                        y_max=self.LINEAR_ACCELERATION_YMAX)
+        self.y_linear_acceleration_plot.grid(row=3, column=1, padx=self.PAD_X,
+                                             pady=self.PAD_Y)
+        self.y_linear_acceleration_plot.set_title("y linear acceleration")
 
-        self.z_velocity_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
-                                           fig_y=self.PLOT_Y / 100,
-                                           buffer_min=self.BUFFER_MIN,
-                                           buffer_max=self.BUFFER_MAX,
-                                           y_min=self.VELOCITY_YMIN,
-                                           y_max=self.VELOCITY_YMAX)
-        self.z_velocity_plot.grid(row=3, column=2, padx=self.PAD_X,
-                                  pady=self.PAD_Y)
-        self.z_velocity_plot.set_title("z velocity")
+        self.z_linear_acceleration_plot =\
+            DataSubplot(self, fig_x=self.PLOT_X / 100,
+                        fig_y=self.PLOT_Y / 100,
+                        buffer_min=self.BUFFER_MIN,
+                        buffer_max=self.BUFFER_MAX,
+                        y_min=self.LINEAR_ACCELERATION_YMIN,
+                        y_max=self.LINEAR_ACCELERATION_YMAX)
+        self.z_linear_acceleration_plot.grid(row=3, column=2, padx=self.PAD_X,
+                                             pady=self.PAD_Y)
+        self.z_linear_acceleration_plot.set_title("z linear acceleration")
 
         self.load_cell_plot = DataSubplot(self, fig_x=self.PLOT_X * 3 / 100,
                                           fig_y=self.PLOT_Y / 100,
@@ -369,9 +372,9 @@ class PlottingApp(ctk.CTk):
         self.y_acceleration_plot.set_xlim(slider_value)
         self.z_acceleration_plot.set_xlim(slider_value)
 
-        self.x_velocity_plot.set_xlim(slider_value)
-        self.y_velocity_plot.set_xlim(slider_value)
-        self.z_velocity_plot.set_xlim(slider_value)
+        self.x_linear_acceleration_plot.set_xlim(slider_value)
+        self.y_linear_acceleration_plot.set_xlim(slider_value)
+        self.z_linear_acceleration_plot.set_xlim(slider_value)
 
         self.load_cell_plot.set_xlim(slider_value)
 
@@ -417,9 +420,9 @@ class PlottingApp(ctk.CTk):
         self.y_acceleration_plot.draw()
         self.z_acceleration_plot.draw()
 
-        self.x_velocity_plot.draw()
-        self.y_velocity_plot.draw()
-        self.z_velocity_plot.draw()
+        self.x_linear_acceleration_plot.draw()
+        self.y_linear_acceleration_plot.draw()
+        self.z_linear_acceleration_plot.draw()
 
         self.load_cell_plot.draw()
 
@@ -470,12 +473,15 @@ class PlottingApp(ctk.CTk):
         self.z_acceleration_plot.update(puck_0_data.accelerometer[2],
                                         puck_1_data.accelerometer[2])
 
-        self.x_velocity_plot.update(puck_0_data.velocity[0],
-                                    puck_1_data.velocity[0])
-        self.y_velocity_plot.update(puck_0_data.velocity[1],
-                                    puck_1_data.velocity[1])
-        self.z_velocity_plot.update(puck_0_data.velocity[2],
-                                    puck_1_data.velocity[2])
+        self.x_linear_acceleration_plot.\
+            update(puck_0_data.linear_acceleration[0],
+                   puck_1_data.linear_acceleration[0])
+        self.y_linear_acceleration_plot.\
+            update(puck_0_data.linear_acceleration[1],
+                   puck_1_data.linear_acceleration[1])
+        self.z_linear_acceleration_plot.\
+            update(puck_0_data.linear_acceleration[2],
+                   puck_1_data.linear_acceleration[2])
 
         self.load_cell_plot.update(puck_0_data.load_cell,
                                    puck_1_data.load_cell)

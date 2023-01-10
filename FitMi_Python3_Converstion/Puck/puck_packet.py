@@ -20,8 +20,8 @@ class PuckPacket(object):
         The x, y, and z gyroscope values of this puck
     magnetometer : numpy array
         The x, y, and z magnetometer values of this puck
-    velocity : numpy array
-        The x, y, and z linear velocity values of this puck
+    linear_acceleration : numpy array
+        The x, y, and z linear acceleration values of this puck
     quaternion : numpy array
         The w, x, y, and z quaternion values of this
     roll_pitch_yaw : numpy array
@@ -38,9 +38,9 @@ class PuckPacket(object):
         Status flag for if the puck is being touched or not (1 or 0)
     imu_ok : int
         Status flag for if the imu is functioning (1 or 0)
-    velocity_measured : int
-        Status flag for if the linear velocity or magnetometer of the puck was
-        polled for (1 or 0)
+    linear_acceleration_measured : int
+        Status flag for if the linear acceleration or magnetometer of the puck
+        was polled for (1 or 0)
     state : int
         Three bit integer for what state the puck is in
     res_v5 : int
@@ -80,7 +80,7 @@ class PuckPacket(object):
         self.gyroscope = np.array([0, 0, 0])
         self.magnetometer = np.array([0.0, 0.0, 0.0])
         # only updates if activated when puck connected to.
-        self.velocity = np.array([0, 0, 0])
+        self.linear_acceleration = np.array([0, 0, 0])
         self.quaternion = np.array([0.0, 0.0, 0.0, 0.0])
         self.roll_pitch_yaw = np.array([0, 0, 0])
         self.load_cell = 0
@@ -89,7 +89,7 @@ class PuckPacket(object):
         self.connected = 0
         self.touch = 0
         self.imu_ok = 0
-        self.velocity_measured = 0
+        self.linear_acceleration_measured = 0
         self.state = 0
         self.res_v5 = 0
 
@@ -136,8 +136,8 @@ class PuckPacket(object):
         # Save the data from the packet into the data variables
         self.gyroscope[0:3] = data[0:3]
         self.accelerometer[0:3] = data[3:6]
-        # This is either the velocity or magnetometer based on what the puck
-        # was asked for
+        # This is either the linear_acceleration or magnetometer based on what
+        # the puck was asked for
         vel_or_mag = data[6:9]
 
         self.quaternion[0:4] = data[9:13]
@@ -150,10 +150,10 @@ class PuckPacket(object):
         # takes the last char and separates it further
         self.parse_status(data[15])
 
-        # if velocity polling is enabled, update velocity. else update
-        # magnetometer
-        if (self.velocity_measured):
-            self.velocity[0:3] = vel_or_mag
+        # if linear_acceleration polling is enabled, update
+        # linear_acceleration. else update magnetometer
+        if (self.linear_acceleration_measured):
+            self.linear_acceleration[0:3] = vel_or_mag
         else:
             self.magnetometer[0:3] = vel_or_mag
             self.magnetometer /= 100.0
@@ -172,8 +172,8 @@ class PuckPacket(object):
 
         Separates the status char into the variables for if the puck is
         connected, if the imu is functioning, if the puck is touched, if the
-        velocity of the puck was asked for, the state of the puck and for
-        res_v5.
+        linear_acceleration of the puck was asked for, the state of the puck
+        and for res_v5.
 
         Parameters
         ----------
@@ -183,7 +183,7 @@ class PuckPacket(object):
         self.connected = (status & 0b00000001)
         self.imu_ok = (status & 0b00000010) >> 1
         self.touch = (status & 0b00000100) >> 2
-        self.velocity_measured = (status & 0b00001000) >> 3
+        self.linear_acceleration_measured = (status & 0b00001000) >> 3
         self.state = (status & 0b01110000) >> 4
         self.res_v5 = (status & 0b10000000) >> 7
 
@@ -296,5 +296,6 @@ class PuckPacket(object):
                          self.charging, self.connected, self.touch,
                          self.imu_ok)
         return "accelerometer: %s, gyroscope: %s, magnetometer: %s,\
-            velocity: %s, quaternion: %s, load cell: %s, battery: %s,\
-            charging: %s, connected: %s, touch: %s, imu ok: %s" % output_string
+            linear acceleration: %s, quaternion: %s, load cell: %s,\
+            battery: %s, charging: %s, connected: %s, touch: %s,\
+            imu ok: %s" % output_string

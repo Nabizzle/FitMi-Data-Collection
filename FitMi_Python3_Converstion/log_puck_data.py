@@ -12,10 +12,10 @@ class PuckLogger(object):
     '''
     Saves puck data as a dictionary and .mat file
 
-    Saves the base data from each puck, the acceleration, gyroscope, velocity,
-    load cell, and quaternion, as a python dictionary and then a .mat file.
-    This class when run also allows you to stop the recording early by pressing
-    enter in the console.
+    Saves the base data from each puck, the acceleration, gyroscope, linear
+    acceleration, load cell, and quaternion, as a python dictionary and then
+    a .mat file. This class when run also allows you to stop the recording
+    early by pressing enter in the console.
 
     Attributes
     ----------
@@ -38,8 +38,8 @@ class PuckLogger(object):
         Data variable for the blue puck's accelerometer values
     puck_0_gyroscope:List[int]
         Data variable for the blue puck's gyroscope values
-    puck_0_velocity:List[int]
-        Data variable for the blue puck's velocity values
+    puck_0_linear_acceleration:List[int]
+        Data variable for the blue puck's linear acceleration values
     puck_0_load_cell:List[int]
         Data variable for the blue puck's load cell value
     puck_0_quaternion:List[int]
@@ -48,8 +48,8 @@ class PuckLogger(object):
         Data variable for the yellow puck's accelerometer values
     puck_1_gyroscope:List[int]
         Data variable for the yellow puck's gyroscope values
-    puck_1_velocity:List[int]
-        Data variable for the yellow puck's velocity values
+    puck_1_linear_acceleration:List[int]
+        Data variable for the yellow puck's linear acceleration values
     puck_1_load_cell:List[int]
         Data variable for the yellow puck's load cell value
     puck_1_quaternion:List[int]
@@ -104,13 +104,13 @@ class PuckLogger(object):
 
         self.puck_0_acceleration = None
         self.puck_0_gyroscope = None
-        self.puck_0_velocity = None
+        self.puck_0_linear_acceleration = None
         self.puck_0_load_cell = None
         self.puck_0_quaternion = None
 
         self.puck_1_acceleration = None
         self.puck_1_gyroscope = None
-        self.puck_1_velocity = None
+        self.puck_1_linear_acceleration = None
         self.puck_1_load_cell = None
         self.puck_1_quaternion = None
 
@@ -166,8 +166,8 @@ class PuckLogger(object):
                 self.puck_0_acceleration[0:self.samples_taken, :]
             self.puck_0_gyroscope =\
                 self.puck_0_gyroscope[0:self.samples_taken, :]
-            self.puck_0_velocity =\
-                self.puck_0_velocity[0:self.samples_taken, :]
+            self.puck_0_linear_acceleration =\
+                self.puck_0_linear_acceleration[0:self.samples_taken, :]
             self.puck_0_load_cell =\
                 self.puck_0_load_cell[0:self.samples_taken, :]
             self.puck_0_quaternion =\
@@ -177,8 +177,8 @@ class PuckLogger(object):
                 self.puck_1_acceleration[0:self.samples_taken, :]
             self.puck_1_gyroscope =\
                 self.puck_1_gyroscope[0:self.samples_taken, :]
-            self.puck_1_velocity =\
-                self.puck_1_velocity[0:self.samples_taken, :]
+            self.puck_1_linear_acceleration =\
+                self.puck_1_linear_acceleration[0:self.samples_taken, :]
             self.puck_1_load_cell =\
                 self.puck_1_load_cell[0:self.samples_taken, :]
             self.puck_1_quaternion =\
@@ -227,13 +227,13 @@ class PuckLogger(object):
         # samples needed
         self.puck_0_acceleration = np.zeros([max_samples_needed, 3])
         self.puck_0_gyroscope = np.zeros([max_samples_needed, 3])
-        self.puck_0_velocity = np.zeros([max_samples_needed, 3])
+        self.puck_0_linear_acceleration = np.zeros([max_samples_needed, 3])
         self.puck_0_load_cell = np.zeros([max_samples_needed, 1])
         self.puck_0_quaternion = np.zeros([max_samples_needed, 4])
 
         self.puck_1_acceleration = np.zeros([max_samples_needed, 3])
         self.puck_1_gyroscope = np.zeros([max_samples_needed, 3])
-        self.puck_1_velocity = np.zeros([max_samples_needed, 3])
+        self.puck_1_linear_acceleration = np.zeros([max_samples_needed, 3])
         self.puck_1_load_cell = np.zeros([max_samples_needed, 1])
         self.puck_1_quaternion = np.zeros([max_samples_needed, 4])
 
@@ -243,8 +243,8 @@ class PuckLogger(object):
         Extracts each data type from the pucks total data.
 
         Saves each puck's PuckPacket class variables for the accelerometer,
-        gyroscope, velocity, load_cell, and quaternion. Then the sample number
-        is incremented.
+        gyroscope, linear acceleration, load_cell, and quaternion. Then the
+        sample number is incremented.
 
         Parameters
         ----------
@@ -256,15 +256,18 @@ class PuckLogger(object):
         self.puck_0_acceleration[self.samples_taken, :] =\
             puck_0_packet.accelerometer
         self.puck_0_gyroscope[self.samples_taken, :] = puck_0_packet.gyroscope
-        self.puck_0_velocity[self.samples_taken, :] = puck_0_packet.velocity
-        self.puck_0_load_cell[self.samples_taken, :] = puck_0_packet.load_cell
+        self.puck_0_linear_acceleration[self.samples_taken, :] =\
+            puck_0_packet.linear_acceleration
+        self.puck_0_load_cell[self.samples_taken, :] =\
+            puck_0_packet.load_cell
         self.puck_0_quaternion[self.samples_taken, :] =\
             puck_0_packet.quaternion
 
         self.puck_1_acceleration[self.samples_taken, :] =\
             puck_1_packet.accelerometer
         self.puck_1_gyroscope[self.samples_taken, :] = puck_1_packet.gyroscope
-        self.puck_1_velocity[self.samples_taken, :] = puck_1_packet.velocity
+        self.puck_1_linear_acceleration[self.samples_taken, :] =\
+            puck_1_packet.linear_acceleration
         self.puck_1_load_cell[self.samples_taken, :] = puck_1_packet.load_cell
         self.puck_1_quaternion[self.samples_taken, :] =\
             puck_1_packet.quaternion
@@ -282,13 +285,13 @@ class PuckLogger(object):
         data_dictionary = {
             "puck_0_acceleration": self.puck_0_acceleration,
             "p0_gyroscope": self.puck_0_gyroscope,
-            "p0_velocity": self.puck_0_velocity,
+            "p0_linear_acceleration": self.puck_0_linear_acceleration,
             "p0_load_cell": self.puck_0_load_cell,
             "p0_quaternion": self.puck_0_quaternion,
 
             "puck_1_acceleration": self.puck_1_acceleration,
             "p1_gyroscope": self.puck_1_gyroscope,
-            "p1_velocity": self.puck_1_velocity,
+            "p1_linear_acceleration": self.puck_1_linear_acceleration,
             "p1_load_cell": self.puck_1_load_cell,
             "p1_quaternion": self.puck_1_quaternion
             }

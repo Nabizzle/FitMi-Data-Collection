@@ -35,8 +35,8 @@ class RecordingApp(ctk.CTk):
         CTKFrame for getting the blue puck's accelerometer data
     blue_puck_gyroscope_frame:  PuckFileName object
         CTKFrame for getting the blue puck's gyroscope data
-    blue_puck_velocity_frame:  PuckFileName object
-        CTKFrame for getting the blue puck's velocity data
+    blue_puck_linear_acceleration_frame:  PuckFileName object
+        CTKFrame for getting the blue puck's linear acceleration data
     blue_puck_load_cell_frame:  PuckFileName object
         CTKFrame for getting the blue puck's load cell data
     blue_puck_quaternion_frame:  PuckFileName object
@@ -45,8 +45,8 @@ class RecordingApp(ctk.CTk):
         CTKFrame for getting the blue puck's accelerometer data
     yellow_puck_gyroscope_frame:  PuckFileName object
         CTKFrame for getting the blue puck's gyroscope data
-    yellow_puck_velocity_frame:  PuckFileName object
-        CTKFrame for getting the blue puck's velocity data
+    yellow_puck_linear_acceleration_frame:  PuckFileName object
+        CTKFrame for getting the blue puck's linear acceleration data
     yellow_puck_load_cell_frame:  PuckFileName object
         CTKFrame for getting the blue puck's load cell data
     yellow_puck_quaternion_frame:  PuckFileName object
@@ -118,11 +118,12 @@ class RecordingApp(ctk.CTk):
         self.blue_puck_gyroscope_frame.grid(row=1, column=0, padx=10,
                                             pady=10)
 
-        self.blue_puck_velocity_frame =\
-            PuckFileName(self, puck_sensor_name="Blue Puck Velocity",
-                         puck_file_name="puck_0_velocity")
-        self.blue_puck_velocity_frame.grid(row=2, column=0, padx=10,
-                                           pady=10)
+        self.blue_puck_linear_acceleration_frame =\
+            PuckFileName(self, puck_sensor_name="Blue Puck Linear"
+                         " Acceleration",
+                         puck_file_name="puck_0_linear_acceleration")
+        self.blue_puck_linear_acceleration_frame.grid(row=2, column=0, padx=10,
+                                                      pady=10)
 
         self.blue_puck_load_cell_frame =\
             PuckFileName(self, puck_sensor_name="Blue Puck Load Cell",
@@ -149,11 +150,12 @@ class RecordingApp(ctk.CTk):
         self.yellow_puck_gyroscope_frame.grid(row=1, column=1, padx=10,
                                               pady=10)
 
-        self.yellow_puck_velocity_frame =\
-            PuckFileName(self, puck_sensor_name="Yellow Puck Velocity",
-                         puck_file_name="puck_1_velocity")
-        self.yellow_puck_velocity_frame.grid(row=2, column=1, padx=10,
-                                             pady=10)
+        self.yellow_puck_linear_acceleration_frame =\
+            PuckFileName(self,
+                         puck_sensor_name="Yellow Puck Linear Acceleration",
+                         puck_file_name="puck_1_linear_acceleration")
+        self.yellow_puck_linear_acceleration_frame.grid(row=2, column=1,
+                                                        padx=10, pady=10)
 
         self.yellow_puck_load_cell_frame =\
             PuckFileName(self, puck_sensor_name="Yellow Puck Load Cell",
@@ -251,44 +253,44 @@ class RecordingApp(ctk.CTk):
         # crop away any unused space.
         if self.puck_logger.samples_taken < self.puck_logger.max_samples:
             self.puck_logger.puck_0_acceleration =\
-                self.puck_logger.puck_0_acceleration[0:
-                    self.puck_logger.samples_taken, :]
+                self.puck_logger.\
+                puck_0_acceleration[0:self.puck_logger.samples_taken, :]
             self.puck_logger.puck_0_gyroscope =\
-                self.puck_logger.puck_0_gyroscope[0:
-                    self.puck_logger.samples_taken, :]
-            self.puck_logger.puck_0_velocity =\
-                self.puck_logger.puck_0_velocity[0:
-                    self.puck_logger.samples_taken, :]
+                self.puck_logger.\
+                puck_0_gyroscope[0:self.puck_logger.samples_taken, :]
+            self.puck_logger.puck_0_linear_acceleration =\
+                self.puck_logger.\
+                puck_0_linear_acceleration[0:self.puck_logger.samples_taken, :]
             self.puck_logger.puck_0_load_cell =\
-                self.puck_logger.puck_0_load_cell[0:
-                    self.puck_logger.samples_taken, :]
+                self.puck_logger.\
+                puck_0_load_cell[0:self.puck_logger.samples_taken, :]
             self.puck_logger.puck_0_quaternion =\
-                self.puck_logger.puck_0_quaternion[0:
-                    self.puck_logger.samples_taken, :]
+                self.puck_logger.\
+                puck_0_quaternion[0:self.puck_logger.samples_taken, :]
 
             self.puck_logger.puck_1_acceleration =\
-                self.puck_logger.puck_1_acceleration[0:
-                    self.puck_logger.samples_taken, :]
+                self.puck_logger.\
+                puck_1_acceleration[0:self.puck_logger.samples_taken, :]
             self.puck_logger.puck_1_gyroscope =\
-                self.puck_logger.puck_1_gyroscope[0:
-                    self.puck_logger.samples_taken, :]
-            self.puck_logger.puck_1_velocity =\
-                self.puck_logger.puck_1_velocity[0:
-                    self.puck_logger.samples_taken, :]
+                self.puck_logger.\
+                puck_1_gyroscope[0:self.puck_logger.samples_taken, :]
+            self.puck_logger.puck_1_linear_acceleration =\
+                self.puck_logger.\
+                puck_1_linear_acceleration[0:self.puck_logger.samples_taken, :]
             self.puck_logger.puck_1_load_cell =\
-                self.puck_logger.puck_1_load_cell[0:
-                    self.puck_logger.samples_taken, :]
+                self.puck_logger.\
+                puck_1_load_cell[0:self.puck_logger.samples_taken, :]
             self.puck_logger.puck_1_quaternion =\
-                self.puck_logger.puck_1_quaternion[0:
-                    self.puck_logger.samples_taken, :]
+                self.puck_logger.\
+                puck_1_quaternion[0:self.puck_logger.samples_taken, :]
 
         data_dictionary = {
             self.blue_puck_acceleration_frame.get_text():
                 self.puck_logger.puck_0_acceleration,
             self.blue_puck_gyroscope_frame.get_text():
                 self.puck_logger.puck_0_gyroscope,
-            self.blue_puck_velocity_frame.get_text():
-                self.puck_logger.puck_0_velocity,
+            self.blue_puck_linear_acceleration_frame.get_text():
+                self.puck_logger.puck_0_linear_acceleration,
             self.blue_puck_load_cell_frame.get_text():
                 self.puck_logger.puck_0_load_cell,
             self.blue_puck_quaternion_frame.get_text():
@@ -298,8 +300,8 @@ class RecordingApp(ctk.CTk):
                 self.puck_logger.puck_1_acceleration,
             self.yellow_puck_gyroscope_frame.get_text():
                 self.puck_logger.puck_1_gyroscope,
-            self.yellow_puck_velocity_frame.get_text():
-                self.puck_logger.puck_1_velocity,
+            self.yellow_puck_linear_acceleration_frame.get_text():
+                self.puck_logger.puck_1_linear_acceleration,
             self.yellow_puck_load_cell_frame.get_text():
                 self.puck_logger.puck_1_load_cell,
             self.yellow_puck_quaternion_frame.get_text():
@@ -368,14 +370,16 @@ class RecordingApp(ctk.CTk):
         self.puck_logger.puck_0_acceleration =\
             np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_0_gyroscope = np.zeros([max_samples_needed, 3])
-        self.puck_logger.puck_0_velocity = np.zeros([max_samples_needed, 3])
+        self.puck_logger.puck_0_linear_acceleration =\
+            np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_0_load_cell = np.zeros([max_samples_needed, 1])
         self.puck_logger.puck_0_quaternion = np.zeros([max_samples_needed, 4])
 
         self.puck_logger.puck_1_acceleration =\
             np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_1_gyroscope = np.zeros([max_samples_needed, 3])
-        self.puck_logger.puck_1_velocity = np.zeros([max_samples_needed, 3])
+        self.puck_logger.puck_1_linear_acceleration =\
+            np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_1_load_cell = np.zeros([max_samples_needed, 1])
         self.puck_logger.puck_1_quaternion = np.zeros([max_samples_needed, 4])
 
