@@ -19,9 +19,9 @@ class PlottingApp(ctk.CTk):
     App for showing the output of the FitMi Pucks.
 
     Displays the blue and yellow pucks' data for roll, pitch, yaw, gyroscope
-    angles, acceleration, linear acceleration, and the force on the load cell.
-    At the bottom of the app is a button to start and stop the recording of
-    data and a slider to change the displayed buffer size of data.
+    angles, rotational acceleration, linear acceleration, and the force on the
+    load cell. At the bottom of the app is a button to start and stop the
+    recording of data and a slider to change the displayed buffer size of data.
 
     Attributes
     ----------
@@ -47,10 +47,10 @@ class PlottingApp(ctk.CTk):
         The upper bound of the gyroscope plots
     GYRO_YMIN: int
         The lower bound of the gyroscope plots
-    ACCELERATION_YMAX: int
-        The upper bound of the accelerometer plots
-    ACCELERATION_YMIN: int
-        The lower bound of the accelerometer plots
+    ROTATIONAL_ACCELERATION_YMAX: int
+        The upper bound of the rotational accelerometer plots
+    ROTATIONAL_ACCELERATION_YMIN: int
+        The lower bound of the rotational accelerometer plots
     LINEAR_ACCELERATION_YMAX: int
         The upper bound of the linear acceleration plots
     LINEAR_ACCELERATION_YMIN: int
@@ -75,21 +75,21 @@ class PlottingApp(ctk.CTk):
         Plots the y coordinate of the gyroscope of one or both pucks
     z_gyro_plot : DataSubplot object
         Plots the x coordinate of the gyroscope of one or both pucks
-    x_acceleration_plot : DataSubplot object
+    x_rotational_acceleration_plot : DataSubplot object
         Plots the x rotational acceleration of the accelerometer of one or both
         pucks
-    y_acceleration_plot : DataSubplot object
+    y_rotational_acceleration_plot : DataSubplot object
         Plots the y rotational acceleration of the accelerometer of one or both
         pucks
-    z_acceleration_plot : DataSubplot object
+    z_rotational_acceleration_plot : DataSubplot object
         Plots the z rotational acceleration of the accelerometer of one or both
         pucks
     x_linear_acceleration_plot : DataSubplot object
-        Plots the x linear linear acceleration of one or both pucks
+        Plots the x linear acceleration of one or both pucks
     y_linear_acceleration_plot : DataSubplot object
-        Plots the y linear linear acceleration of one or both pucks
+        Plots the y linear acceleration of one or both pucks
     z_linear_acceleration_plot : DataSubplot object
-        Plots the z linear linear acceleration of one or both pucks
+        Plots the z linear acceleration of one or both pucks
     load_cell_plot : DataSubplot object
         Plots the force on the load cell of one or both pucks
     start_button: CTKButton
@@ -137,9 +137,9 @@ class PlottingApp(ctk.CTk):
     GYRO_YMAX = 1100
     GYRO_YMIN = -GYRO_YMAX
 
-    # y axis range of the accelerometer plots
-    ACCELERATION_YMAX = 1000
-    ACCELERATION_YMIN = -ACCELERATION_YMAX
+    # y axis range of the rotational accelerometer plots
+    ROTATIONAL_ACCELERATION_YMAX = 1000
+    ROTATIONAL_ACCELERATION_YMIN = -ROTATIONAL_ACCELERATION_YMAX
 
     # y axis range of the linear acceleration plots
     LINEAR_ACCELERATION_YMAX = 500
@@ -224,35 +224,38 @@ class PlottingApp(ctk.CTk):
                               pady=self.PAD_Y)
         self.z_gyro_plot.set_title("z gyroscope")
 
-        self.x_acceleration_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
-                                               fig_y=self.PLOT_Y / 100,
-                                               buffer_min=self.BUFFER_MIN,
-                                               buffer_max=self.BUFFER_MAX,
-                                               y_min=self.ACCELERATION_YMIN,
-                                               y_max=self.ACCELERATION_YMAX)
-        self.x_acceleration_plot.grid(row=2, column=0, padx=self.PAD_X,
-                                      pady=self.PAD_Y)
-        self.x_acceleration_plot.set_title("x acceleration")
+        self.x_rotational_acceleration_plot =\
+            DataSubplot(self, fig_x=self.PLOT_X / 100, fig_y=self.PLOT_Y / 100,
+                        buffer_min=self.BUFFER_MIN, buffer_max=self.BUFFER_MAX,
+                        y_min=self.ROTATIONAL_ACCELERATION_YMIN,
+                        y_max=self.ROTATIONAL_ACCELERATION_YMAX)
+        self.x_rotational_acceleration_plot.grid(row=2, column=0,
+                                                 padx=self.PAD_X,
+                                                 pady=self.PAD_Y)
+        self.x_rotational_acceleration_plot.set_title("x rotational"
+                                                      " acceleration")
 
-        self.y_acceleration_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
-                                               fig_y=self.PLOT_Y / 100,
-                                               buffer_min=self.BUFFER_MIN,
-                                               buffer_max=self.BUFFER_MAX,
-                                               y_min=self.ACCELERATION_YMIN,
-                                               y_max=self.ACCELERATION_YMAX)
-        self.y_acceleration_plot.grid(row=2, column=1, padx=self.PAD_X,
-                                      pady=self.PAD_Y)
-        self.y_acceleration_plot.set_title("y acceleration")
+        self.y_rotational_acceleration_plot =\
+            DataSubplot(self, fig_x=self.PLOT_X / 100, fig_y=self.PLOT_Y / 100,
+                        buffer_min=self.BUFFER_MIN, buffer_max=self.BUFFER_MAX,
+                        y_min=self.ROTATIONAL_ACCELERATION_YMIN,
+                        y_max=self.ROTATIONAL_ACCELERATION_YMAX)
+        self.y_rotational_acceleration_plot.grid(row=2, column=1,
+                                                 padx=self.PAD_X,
+                                                 pady=self.PAD_Y)
+        self.y_rotational_acceleration_plot.set_title("y rotational"
+                                                      " acceleration")
 
-        self.z_acceleration_plot = DataSubplot(self, fig_x=self.PLOT_X / 100,
-                                               fig_y=self.PLOT_Y / 100,
-                                               buffer_min=self.BUFFER_MIN,
-                                               buffer_max=self.BUFFER_MAX,
-                                               y_min=self.ACCELERATION_YMIN,
-                                               y_max=self.ACCELERATION_YMAX)
-        self.z_acceleration_plot.grid(row=2, column=2, padx=self.PAD_X,
-                                      pady=self.PAD_Y)
-        self.z_acceleration_plot.set_title("z acceleration")
+        self.z_rotational_acceleration_plot =\
+            DataSubplot(self, fig_x=self.PLOT_X / 100, fig_y=self.PLOT_Y / 100,
+                        buffer_min=self.BUFFER_MIN, buffer_max=self.BUFFER_MAX,
+                        y_min=self.ROTATIONAL_ACCELERATION_YMIN,
+                        y_max=self.ROTATIONAL_ACCELERATION_YMAX)
+        self.z_rotational_acceleration_plot.grid(row=2, column=2,
+                                                 padx=self.PAD_X,
+                                                 pady=self.PAD_Y)
+        self.z_rotational_acceleration_plot.set_title("z rotational"
+                                                      " acceleration")
 
         self.x_linear_acceleration_plot =\
             DataSubplot(self, fig_x=self.PLOT_X / 100,
@@ -368,9 +371,9 @@ class PlottingApp(ctk.CTk):
         self.y_gyro_plot.set_xlim(slider_value)
         self.z_gyro_plot.set_xlim(slider_value)
 
-        self.x_acceleration_plot.set_xlim(slider_value)
-        self.y_acceleration_plot.set_xlim(slider_value)
-        self.z_acceleration_plot.set_xlim(slider_value)
+        self.x_rotational_acceleration_plot.set_xlim(slider_value)
+        self.y_rotational_acceleration_plot.set_xlim(slider_value)
+        self.z_rotational_acceleration_plot.set_xlim(slider_value)
 
         self.x_linear_acceleration_plot.set_xlim(slider_value)
         self.y_linear_acceleration_plot.set_xlim(slider_value)
@@ -416,9 +419,9 @@ class PlottingApp(ctk.CTk):
         self.y_gyro_plot.draw()
         self.z_gyro_plot.draw()
 
-        self.x_acceleration_plot.draw()
-        self.y_acceleration_plot.draw()
-        self.z_acceleration_plot.draw()
+        self.x_rotational_acceleration_plot.draw()
+        self.y_rotational_acceleration_plot.draw()
+        self.z_rotational_acceleration_plot.draw()
 
         self.x_linear_acceleration_plot.draw()
         self.y_linear_acceleration_plot.draw()
@@ -466,12 +469,15 @@ class PlottingApp(ctk.CTk):
         self.z_gyro_plot.update(puck_0_data.gyroscope[2],
                                 puck_1_data.gyroscope[2])
 
-        self.x_acceleration_plot.update(puck_0_data.accelerometer[0],
-                                        puck_1_data.accelerometer[0])
-        self.y_acceleration_plot.update(puck_0_data.accelerometer[1],
-                                        puck_1_data.accelerometer[1])
-        self.z_acceleration_plot.update(puck_0_data.accelerometer[2],
-                                        puck_1_data.accelerometer[2])
+        self.x_rotational_acceleration_plot.\
+            update(puck_0_data.rotational_accelerometer[0],
+                   puck_1_data.rotational_accelerometer[0])
+        self.y_rotational_acceleration_plot.\
+            update(puck_0_data.rotational_accelerometer[1],
+                   puck_1_data.rotational_accelerometer[1])
+        self.z_rotational_acceleration_plot.\
+            update(puck_0_data.rotational_accelerometer[2],
+                   puck_1_data.rotational_accelerometer[2])
 
         self.x_linear_acceleration_plot.\
             update(puck_0_data.linear_acceleration[0],

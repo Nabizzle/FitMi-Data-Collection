@@ -14,8 +14,8 @@ class PuckPacket(object):
 
     Attributes
     ----------
-    accelerometer : numpy array
-        The x, y, and z accelerometer values of this puck
+    rotational_accelerometer : numpy array
+        The x, y, and z rotational accelerometer values of this puck
     gyroscope : numpy array
         The x, y, and z gyroscope values of this puck
     magnetometer : numpy array
@@ -76,7 +76,7 @@ class PuckPacket(object):
         Sets all data variables to 0 and sets up the definition of the data
         packet.
         '''
-        self.accelerometer = np.array([0, 0, 0])
+        self.rotational_accelerometer = np.array([0, 0, 0])
         self.gyroscope = np.array([0, 0, 0])
         self.magnetometer = np.array([0.0, 0.0, 0.0])
         # only updates if activated when puck connected to.
@@ -107,15 +107,15 @@ class PuckPacket(object):
         str
             The assembled data message format
         '''
-        accelerometer = "hhh"  # three shorts
+        rotational_accelerometer = "hhh"  # three shorts
         gyroscope = "hhh"  # three shorts
         magnetometer = "hhh"  # three shorts
         quaternion = "hhhh"  # four shorts
         load_cell = "h"  # one short
         battery = "B"  # one char
         status = "B"  # one char
-        return "<" + accelerometer + gyroscope + magnetometer + quaternion +\
-            load_cell + battery + status
+        return "<" + rotational_accelerometer + gyroscope + magnetometer +\
+            quaternion + load_cell + battery + status
 
     def parse(self, raw_data: bytearray) -> None:
         '''
@@ -135,8 +135,8 @@ class PuckPacket(object):
 
         # Save the data from the packet into the data variables
         self.gyroscope[0:3] = data[0:3]
-        self.accelerometer[0:3] = data[3:6]
-        # This is either the linear_acceleration or magnetometer based on what
+        self.rotational_accelerometer[0:3] = data[3:6]
+        # This is either the linear acceleration or magnetometer based on what
         # the puck was asked for
         vel_or_mag = data[6:9]
 
@@ -150,7 +150,7 @@ class PuckPacket(object):
         # takes the last char and separates it further
         self.parse_status(data[15])
 
-        # if linear_acceleration polling is enabled, update
+        # if linear acceleration polling is enabled, update
         # linear_acceleration. else update magnetometer
         if (self.linear_acceleration_measured):
             self.linear_acceleration[0:3] = vel_or_mag
@@ -172,7 +172,7 @@ class PuckPacket(object):
 
         Separates the status char into the variables for if the puck is
         connected, if the imu is functioning, if the puck is touched, if the
-        linear_acceleration of the puck was asked for, the state of the puck
+        linear acceleration of the puck was asked for, the state of the puck
         and for res_v5.
 
         Parameters
@@ -291,11 +291,11 @@ class PuckPacket(object):
         output_string : str
             The extracted data with labels
         '''
-        output_string = (self.accelerometer, self.gyroscope, self.magnetometer,
-                         self.quaternion, self.load_cell, self.battery,
-                         self.charging, self.connected, self.touch,
-                         self.imu_ok)
-        return "accelerometer: %s, gyroscope: %s, magnetometer: %s,\
+        output_string = (self.rotational_accelerometer, self.gyroscope,
+                         self.magnetometer, self.quaternion, self.load_cell,
+                         self.battery, self.charging, self.connected,
+                         self.touch, self.imu_ok)
+        return "rotational accelerometer: %s, gyroscope: %s, magnetometer: %s,\
             linear acceleration: %s, quaternion: %s, load cell: %s,\
             battery: %s, charging: %s, connected: %s, touch: %s,\
             imu ok: %s" % output_string

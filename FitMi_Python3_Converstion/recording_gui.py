@@ -31,8 +31,8 @@ class RecordingApp(ctk.CTk):
         data
     title: str
         Name of the app
-    blue_puck_acceleration_frame:  PuckFileName object
-        CTKFrame for getting the blue puck's accelerometer data
+    blue_puck_rotational_acceleration_frame:  PuckFileName object
+        CTKFrame for getting the blue puck's rotational accelerometer data
     blue_puck_gyroscope_frame:  PuckFileName object
         CTKFrame for getting the blue puck's gyroscope data
     blue_puck_linear_acceleration_frame:  PuckFileName object
@@ -41,8 +41,8 @@ class RecordingApp(ctk.CTk):
         CTKFrame for getting the blue puck's load cell data
     blue_puck_quaternion_frame:  PuckFileName object
         CTKFrame for getting the blue puck's quaternion data
-    yellow_puck_acceleration_frame:  PuckFileName object
-        CTKFrame for getting the blue puck's accelerometer data
+    yellow_puck_rotational_acceleration_frame:  PuckFileName object
+        CTKFrame for getting the blue puck's rotational accelerometer data
     yellow_puck_gyroscope_frame:  PuckFileName object
         CTKFrame for getting the blue puck's gyroscope data
     yellow_puck_linear_acceleration_frame:  PuckFileName object
@@ -106,11 +106,12 @@ class RecordingApp(ctk.CTk):
         self.grid_rowconfigure((0, 1, 2, 3, 4), weight=0)
 
         # Create the blue puck data inputs
-        self.blue_puck_acceleration_frame =\
-            PuckFileName(self, puck_sensor_name="Blue Puck Accelerometer",
-                         puck_file_name="puck_0_acceleration")
-        self.blue_puck_acceleration_frame.grid(row=0, column=0, padx=10,
-                                               pady=10)
+        self.blue_puck_rotational_acceleration_frame =\
+            PuckFileName(self, puck_sensor_name="Blue Puck Rotational"
+                         " Accelerometer",
+                         puck_file_name="puck_0_rotational_acceleration")
+        self.blue_puck_rotational_acceleration_frame.grid(row=0, column=0,
+                                                          padx=10, pady=10)
 
         self.blue_puck_gyroscope_frame =\
             PuckFileName(self, puck_sensor_name="Blue Puck Gyroscope",
@@ -138,11 +139,12 @@ class RecordingApp(ctk.CTk):
                                              pady=10)
 
         # Create the yellow puck data inputs
-        self.yellow_puck_acceleration_frame =\
-            PuckFileName(self, puck_sensor_name="Yellow Puck Accelerometer",
-                         puck_file_name="puck_1_acceleration")
-        self.yellow_puck_acceleration_frame.grid(row=0, column=1, padx=10,
-                                                 pady=10)
+        self.yellow_puck_rotational_acceleration_frame =\
+            PuckFileName(self, puck_sensor_name="Yellow Puck Rotational"
+                         " Accelerometer",
+                         puck_file_name="puck_1_rotational_acceleration")
+        self.yellow_puck_rotational_acceleration_frame.grid(row=0, column=1,
+                                                            padx=10, pady=10)
 
         self.yellow_puck_gyroscope_frame =\
             PuckFileName(self, puck_sensor_name="Yellow Puck Gyroscope",
@@ -252,9 +254,10 @@ class RecordingApp(ctk.CTk):
         '''
         # crop away any unused space.
         if self.puck_logger.samples_taken < self.puck_logger.max_samples:
-            self.puck_logger.puck_0_acceleration =\
+            self.puck_logger.puck_0_rotational_acceleration =\
                 self.puck_logger.\
-                puck_0_acceleration[0:self.puck_logger.samples_taken, :]
+                puck_0_rotational_acceleration[0:self.
+                                               puck_logger.samples_taken, :]
             self.puck_logger.puck_0_gyroscope =\
                 self.puck_logger.\
                 puck_0_gyroscope[0:self.puck_logger.samples_taken, :]
@@ -268,9 +271,10 @@ class RecordingApp(ctk.CTk):
                 self.puck_logger.\
                 puck_0_quaternion[0:self.puck_logger.samples_taken, :]
 
-            self.puck_logger.puck_1_acceleration =\
+            self.puck_logger.puck_1_rotational_acceleration =\
                 self.puck_logger.\
-                puck_1_acceleration[0:self.puck_logger.samples_taken, :]
+                puck_1_rotational_acceleration[0:self.
+                                               puck_logger.samples_taken, :]
             self.puck_logger.puck_1_gyroscope =\
                 self.puck_logger.\
                 puck_1_gyroscope[0:self.puck_logger.samples_taken, :]
@@ -285,8 +289,8 @@ class RecordingApp(ctk.CTk):
                 puck_1_quaternion[0:self.puck_logger.samples_taken, :]
 
         data_dictionary = {
-            self.blue_puck_acceleration_frame.get_text():
-                self.puck_logger.puck_0_acceleration,
+            self.blue_puck_rotational_acceleration_frame.get_text():
+                self.puck_logger.puck_0_rotational_acceleration,
             self.blue_puck_gyroscope_frame.get_text():
                 self.puck_logger.puck_0_gyroscope,
             self.blue_puck_linear_acceleration_frame.get_text():
@@ -296,8 +300,8 @@ class RecordingApp(ctk.CTk):
             self.blue_puck_quaternion_frame.get_text():
                 self.puck_logger.puck_0_quaternion,
 
-            self.yellow_puck_acceleration_frame.get_text():
-                self.puck_logger.puck_1_acceleration,
+            self.yellow_puck_rotational_acceleration_frame.get_text():
+                self.puck_logger.puck_1_rotational_acceleration,
             self.yellow_puck_gyroscope_frame.get_text():
                 self.puck_logger.puck_1_gyroscope,
             self.yellow_puck_linear_acceleration_frame.get_text():
@@ -367,7 +371,7 @@ class RecordingApp(ctk.CTk):
 
         # initialize the data arrays of each puck to the total number of
         # samples needed
-        self.puck_logger.puck_0_acceleration =\
+        self.puck_logger.puck_0_rotational_acceleration =\
             np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_0_gyroscope = np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_0_linear_acceleration =\
@@ -375,7 +379,7 @@ class RecordingApp(ctk.CTk):
         self.puck_logger.puck_0_load_cell = np.zeros([max_samples_needed, 1])
         self.puck_logger.puck_0_quaternion = np.zeros([max_samples_needed, 4])
 
-        self.puck_logger.puck_1_acceleration =\
+        self.puck_logger.puck_1_rotational_acceleration =\
             np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_1_gyroscope = np.zeros([max_samples_needed, 3])
         self.puck_logger.puck_1_linear_acceleration =\

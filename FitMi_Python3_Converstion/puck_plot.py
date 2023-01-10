@@ -36,13 +36,13 @@ class PuckPlotter(object):
         Plots the y coordinate of the gyroscope of one or both pucks
     z_gyro_plot : AniPlot object
         Plots the x coordinate of the gyroscope of one or both pucks
-    x_acceleration_plot : AniPlot object
+    x_rotational_acceleration_plot : AniPlot object
         Plots the x rotational acceleration of the accelerometer of one or both
         pucks
-    y_acceleration_plot : AniPlot object
+    y_rotational_acceleration_plot : AniPlot object
         Plots the y rotational acceleration of the accelerometer of one or both
         pucks
-    z_acceleration_plot : AniPlot object
+    z_rotational_acceleration_plot : AniPlot object
         Plots the z rotational acceleration of the accelerometer of one or both
         pucks
     x_linear_acceleration_plot : AniPlot object
@@ -91,9 +91,9 @@ class PuckPlotter(object):
         gyro_ymax = 1100
         gyro_ymin = -gyro_ymax
 
-        # y axis range of the accelerometer plots
-        acceleration_ymax = 1000
-        acceleration_ymin = -acceleration_ymax
+        # y axis range of the rotational accelerometer plots
+        rotational_acceleration_ymax = 1000
+        rotational_acceleration_ymin = -rotational_acceleration_ymax
 
         # y axis range of the linear acceleration plots
         linear_acceleration_ymax = 500
@@ -134,20 +134,26 @@ class PuckPlotter(object):
                                    gyro_ymin, gyro_ymax, second_puck=True)
         self.z_gyro_plot.set_ylabel("z gyroscope")
 
-        # create and label the accelerometer plots. NOTE: These are angular
-        # accelerations
-        self.x_acceleration_plot = AniPlot(self.fig, [5, 3, 7], buffer_min,
-                                           buffer_max, acceleration_ymin,
-                                           acceleration_ymax, second_puck=True)
-        self.x_acceleration_plot.set_ylabel("x acceleration")
-        self.y_acceleration_plot = AniPlot(self.fig, [5, 3, 8], buffer_min,
-                                           buffer_max, acceleration_ymin,
-                                           acceleration_ymax, second_puck=True)
-        self.y_acceleration_plot.set_ylabel("y acceleration")
-        self.z_acceleration_plot = AniPlot(self.fig, [5, 3, 9], buffer_min,
-                                           buffer_max, acceleration_ymin,
-                                           acceleration_ymax, second_puck=True)
-        self.z_acceleration_plot.set_ylabel("z acceleration")
+        # create and label the rotational accelerometer plots.
+        # NOTE: These are angular accelerations
+        self.x_rotational_acceleration_plot =\
+            AniPlot(self.fig, [5, 3, 7], buffer_min, buffer_max,
+                    rotational_acceleration_ymin,
+                    rotational_acceleration_ymax, second_puck=True)
+        self.x_rotational_acceleration_plot.set_ylabel("x rotational"
+                                                       " acceleration")
+        self.y_rotational_acceleration_plot =\
+            AniPlot(self.fig, [5, 3, 8], buffer_min, buffer_max,
+                    rotational_acceleration_ymin,
+                    rotational_acceleration_ymax, second_puck=True)
+        self.y_rotational_acceleration_plot.set_ylabel("y rotational"
+                                                       " acceleration")
+        self.z_rotational_acceleration_plot =\
+            AniPlot(self.fig, [5, 3, 9], buffer_min, buffer_max,
+                    rotational_acceleration_ymin,
+                    rotational_acceleration_ymax, second_puck=True)
+        self.z_rotational_acceleration_plot.set_ylabel("z rotational"
+                                                       " acceleration")
 
         # create and label the linear acceleration plots
         self.x_linear_acceleration_plot =\
@@ -230,9 +236,9 @@ class PuckPlotter(object):
         self.y_gyro_plot.draw(self.fig)
         self.z_gyro_plot.draw(self.fig)
 
-        self.x_acceleration_plot.draw(self.fig)
-        self.y_acceleration_plot.draw(self.fig)
-        self.z_acceleration_plot.draw(self.fig)
+        self.x_rotational_acceleration_plot.draw(self.fig)
+        self.y_rotational_acceleration_plot.draw(self.fig)
+        self.z_rotational_acceleration_plot.draw(self.fig)
 
         self.x_linear_acceleration_plot.draw(self.fig)
         self.y_linear_acceleration_plot.draw(self.fig)
@@ -280,12 +286,15 @@ class PuckPlotter(object):
         self.z_gyro_plot.update(puck_0_data.gyroscope[2],
                                 puck_1_data.gyroscope[2])
 
-        self.x_acceleration_plot.update(puck_0_data.accelerometer[0],
-                                        puck_1_data.accelerometer[0])
-        self.y_acceleration_plot.update(puck_0_data.accelerometer[1],
-                                        puck_1_data.accelerometer[1])
-        self.z_acceleration_plot.update(puck_0_data.accelerometer[2],
-                                        puck_1_data.accelerometer[2])
+        self.x_rotational_acceleration_plot.\
+            update(puck_0_data.rotational_accelerometer[0],
+                   puck_1_data.rotational_accelerometer[0])
+        self.y_rotational_acceleration_plot.\
+            update(puck_0_data.rotational_accelerometer[1],
+                   puck_1_data.rotational_accelerometer[1])
+        self.z_rotational_acceleration_plot.\
+            update(puck_0_data.rotational_accelerometer[2],
+                   puck_1_data.rotational_accelerometer[2])
 
         self.x_linear_acceleration_plot.\
             update(puck_0_data.linear_acceleration[0],
